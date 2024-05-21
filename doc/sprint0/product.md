@@ -5,16 +5,6 @@
 
 #### Q1: What are you planning to build?
 
- * Short (2-5 min' read)
- * Start with a single sentence, high-level description of the product.
- * Be clear - Describe the problem you are solving in simple terms.
- * Be concrete. For example:
-    * What are you planning to build? Is it a website, mobile app,
-   browser extension, command-line app, etc.?      
-    * When describing the problem/need, give concrete examples of common use cases.
- * Focus on *what* your product does, and avoid discussing *how* you're going to implement it.      
-   For example: This is not the time or the place to talk about which programming language and/or framework you are planning to use.
- * **Feel free (and very much encouraged) to include useful diagrams, mock-ups and/or links**.
 TalentTrade is a marketplace web app designed for individuals with various skills and trades to connect and exchange their services.
 
 It solves the following problems:
@@ -28,12 +18,12 @@ It solves the following problems:
     * Problem: Many individuals waste time/effort searching for services or clients through traditional methods, which can be inefficient and frustrating.
     * Solution: TalentTrade uses a matchmaking algorithm that considers geographical location, along with a rating system, it makes it easier for users to find local matches for service exchanges.
 
-The overall flow/user experience of TalentTrade will be similar to existing marketplace apps such as Kijiji.
+The overall flow/user experience of TalentTrade will be similar to existing marketplace apps such as Kijiji and Fiverr.
 
 Two key feautures of our platform are verification and the matchmaking algorithm.
 
  * Verification and trust: To build trust within the community, we implement a verification system, consisting of user reviews and ratings.
- * Matchmaking algorithm: We developed an algorithm to efficiently match users based on their skills, needs, and geographical location.
+ * Matchmaking algorithm: We developed an algorithm to efficiently match users based on their skills, needs, and location.
 
 #### Q2: Who are your target users? (2-3 personas)
 
@@ -82,9 +72,8 @@ YOUR ANSWER GOES HERE ...
 
 
 #### Q4: What does "DONE" means to your Team 
- * The whole team needs to agree as to what ”done” means for the features you will
-   implement.
- * Definition of done applies to all userstories
+ * Functionality of story is completely implemented with modular and readable code.
+ * No major bugs and few minor bugs allowed.
 
 ----
 
