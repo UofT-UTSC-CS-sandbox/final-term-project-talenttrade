@@ -1,7 +1,5 @@
 # TalentTrade
 
- > _Note:_ This document is meant to evolve throughout the planning phase of your project.    
- > That is, it makes sense for you commit regularly to this file while working on the project (especially edits/additions/deletions to the _Highlights_ section).
 
 #### Q1: What are you planning to build?
 
@@ -27,37 +25,41 @@ Two key feautures of our platform are verification and the matchmaking algorithm
 
 #### Q2: Who are your target users? (2-3 personas)
 
-##### Persona 1: Emily Stephens
+##### Persona 1: Paula Williams
 Age: 26
 Occupation: Freelance Graphic Designer
-Location: Toronto, Ontario
+Residence: Toronto, Ontario
 Education: Bachelor's degree in Fine Arts
 Background:
-Emily has been working as a freelance graphic designer for the past five years. She enjoys the flexibility of freelancing but often struggles to find reliable clients. She uses social media and freelance platforms to showcase her work and attract new business. Emily lives in a small apartment with her cat, Luna.
-Motivations:
- * To find potential clients for her graphic design services.
- * To save money by exchanging her design skills for other needed services, like website development or marketing.
- * To network with other creative professionals and potential clients.
+Paula has been working as a freelance graphic designer for the past five years. She enjoys the flexibility of freelancing but often struggles to find reliable clients. She uses social media and freelance platforms to showcase her work and attract new business. Paula lives in a small apartment with her boyfriend.
 
-Challenges:
- * Inconsistent income and the high cost of living in downtown Toronto.
- * Difficulty in finding trustworthy and skilled professionals for services she needs.
+Her goals are to find potential clients for her graphic design services. Also to save money by exchanging her design skills for other needed services, like website development or marketing. As well as to network with other creatives and potential clients.
+
+Some challenges she faces are inconsistent income and the high cost of living in downtown Toronto. And difficulty in finding trustworthy and skilled professionals for services she needs.
 
 ##### Persona 2: Carlos Juarez
 Age: 45
 Occupation: Plumber
-Location: Markham, Ontario
+Residence: Markham, Ontario
 Education: Certification in plumbing
 Background:
 Carlos is a plumber with 20 years of experience. He runs a small plumbing business and often finds himself needing services like accounting, marketing, and website maintenance but finds them expensive. He is married with two children and enjoys spending weekends fishing with his family and playing pickleball with friends.
 
-Motivations:
- * To find affordable professional services to help run his business more efficiently.
- * To increase his customer base.
- 
-Challenges:
- * Limited budget for hiring professional services.
- * Limited time to spend finding professionals for non-plumbing services.
+His goals are to find affordable professional services to help run his business more efficiently. To get local advertising without high cost. And to increase his customer base.
+
+Some challenges he faces are having limited budget for hiring and professional services and limited time to spend finding professionals for non-plumbing services.
+
+##### Persona 3: Tammy Mansard
+Age: 32
+Occupation: Elementary School Teacher
+Residence: Calgary, Alberta
+Education: Master's degree in Education
+Background:
+Tammy is an elementary school teacher who loves spending her free time on creative hobbies. She enjoys baking, handmade arts and crafts, and gardening. Tammy often gives her creations as gifts or uses them to decorate her home and classroom. She is active in local hobbyist groups and frequently participates in craft fairs.
+
+She would like to find opportunities to trade her baking and crafting skills for other services, such as home repairs or tech support. She would also like to connect with other hobbyists and enthusiasts to share ideas and collaborate on projects. 
+
+A challenge she faces is having a limited budget for home improvements. She also has trouble finding ways to monetize or make use of her hobbyist skills.
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
 
