@@ -61,14 +61,22 @@ Challenges:
 
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
 
-YOUR ANSWER GOES HERE ...
+We highlight three main benefits TalentTrade would bring over current solutions.
 
- * Short (2-5 min' read max)
- * We want you to "connect the dots" for us - Why does your product (as described in your answer to Q1) fits the needs of your users (as described in your answer to Q2)?
- * Explain the benefits of your product explicitly & clearly. For example:
-    * Save users time (how much?)
-    * Allow users to discover new information (which information? And, why couldn't they discover it before?)
-    * Provide users with more accurate and/or informative data (what kind of data? Why is it useful to them?)
+##### Freelancers and Professionals:
+Current Solutions: Freelance platforms (e.g., Upwork, Fiverr), social media.
+Limitations: High competition, platform fees, and inconsistent service quality. Finding affordable professional services for their own needs is difficult.
+TalentTrade's Solution: Keeping skill trades local minimizes competition, rating/review system helps with consistency. Allows it to be more affordable by using skills to replace some or all of the monetary cost.
+
+##### Tradespeople and Handymen:
+Current Solutions: Word of mouth, local advertising.
+Limitations: High cost for advertising, limited reach for finding new clients.
+TalentTrade's Solution: Advertising and good reach to other users is built-in through the local matching algorithm. 
+
+##### Hobbyists and Enthusiasts:
+Current Solutions: Community forums, hobbyist groups.
+Limitations: Limited opportunities to monetize or trade their skills, difficulty in finding relevant and trustworthy service exchanges.
+TalentTrade's Solution: Provides a dedicated platform for hobbyists to showcase and trade their skills, will make easier to find relevancy for their services.
 
 
 #### Q4: What does "DONE" means to your Team 
@@ -81,16 +89,7 @@ YOUR ANSWER GOES HERE ...
 
 ### Highlights
 
-YOUR ANSWER GOES HERE ...
+AMMENDEMENT 0:
 
-Specify 3 - 5 key decisions and/or insights that came up during your meetings
-and/or collaborative process. Here are few questions that can guide you
-
- * Short (5 min' read max)
- * Decisions can be related to the product and/or the team process.
-    * Mention which alternatives you were considering.
-    * Present the arguments for each alternative.
-    * Explain why the option you decided on makes the most sense for your team/product/users.
- * Essentially, we want to understand how (and why) you ended up with your current product plan.
- * How did you organise the team? Which tools did you use, if any?
- * How frequently did you meet?
+A group member voiced that we should not restrict users to have to trade their skill for someone else's, but that there should be an option to recieve service in exchange for money. Though what differentiates our platform is the ability to exchange skills, having this as an option is easy to do. It can only benefit the platform as long as the main focus/emphasis of the product is still on trading skills.
+We discussed this and came to this conclusion during an in-person meeting.
