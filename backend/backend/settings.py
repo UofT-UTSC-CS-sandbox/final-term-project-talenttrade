@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'sampleapp',
+    'accounts',
 ]
 
 REST_FRAMEWORK = {
@@ -79,6 +79,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+
+# User Model
+AUTH_USER_MODEL = 'auth.User'
 
 
 # Database
