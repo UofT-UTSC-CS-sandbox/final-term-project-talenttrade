@@ -12,7 +12,7 @@ class PostListCreate(generics.ListCreateAPIView):
 
     def delete(self, request, *args, **kwargs):
         Post.objects.all().delete()
-        return Response(status=status.HTTP_203_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
