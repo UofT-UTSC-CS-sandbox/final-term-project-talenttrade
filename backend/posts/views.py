@@ -10,8 +10,9 @@ from django.contrib.auth.models import User
 # Create your views here.
 class PostListCreate(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-
     def get_queryset(self):
+        #return Post.objects.filter(author=self.request.user)
+        
         return Post.objects.filter(author_id= 4)
     
     

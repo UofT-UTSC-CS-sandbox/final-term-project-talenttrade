@@ -1,36 +1,49 @@
 import axios from "axios"; 
 import { useEffect, useState } from "react";
-import './ViewPost.css';
+import host from  "../utils/links"
+import Post from "./Post";
+import { PostType } from "./Post";
+import './Post.css';
 
-function ViewPost() {
-    const [postList, setPostList] = useState([]);
 
+const ViewPost: React.FC = () => {
+    const [postList, setPostList] = useState<PostType[]>([]);
 
     useEffect(() => {
         getPostList();
-
     }, []); 
 
     const getPostList = async () => {
-        axios.get("http://127.0.0.1:8000/posts/post/")
+        axios.get(`${host}/posts/`)
         .then((res) => setPostList(res.data))
         .catch((error) => alert(error));
     }
 
-    return (
-       
-        <div class="post">
-             <div> Posts: </div>
-        {postList.map((post) => (
-            <div >
-                <div> Looking for: {post.need} </div>
-                <div> Can offer: {post.offer}</div>
-                <div> description: {post.description}</div>
-                <div> date: {new Date(post.published).toLocaleDateString("en-US")}</div>
-            </div>
+    const deleteButton = async (id: number) => {
+        axios.delete(`${host}/posts/${id}/`).then((res) => {
+            if (res.status === 204) {
+                alert("the Post was deleted successfully");
+                setPostList(postList.filter(post => post.id !== id));
+            }else alert("Error deleting the post.");
+        })
+        .catch((error) => alert(error));
 
-        ))}
-    </div>
+
+    }
+
+    return (
+        <div>
+            <h1> Your Posts </h1>
+            {postList.length === 0 ? <h2> No Posts Available</h2>
+            : postList.map((post) => (
+                <div >
+                    <Post post={post}/>
+                    <button onClick={() => deleteButton(post.id)}>Delete </button>
+                    <button> Edit</button>
+                </div>
+            ))}
+        </div>
+
         
            
     );
