@@ -14,7 +14,7 @@ export default function CreatePost () {
   const [applicants, setApplicants] = useState(0);
   const [active, setActive] = useState(true);
   const [id, setId] = useState(-1);
-  const [create, setCreate] = useState(true);
+  const [create, setCreate] = useState(false);
   const [message, setMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackSeverity, setSnackSeverity] = useState<AlertColor>('success');
@@ -32,7 +32,7 @@ export default function CreatePost () {
       setLocation("test");
       setApplicants(0);
       setActive(true);
-      setId(1);
+      setId(7);
     }
   }, [])
 
@@ -73,10 +73,7 @@ export default function CreatePost () {
       active: active
     }
 
-    axios.put(`${host}/posts/${id}`, post, {headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    }})
+    axios.put(`${host}/posts/${id}/`, post)
     .then(res => {
       console.log(res);
       console.log(res.data);
