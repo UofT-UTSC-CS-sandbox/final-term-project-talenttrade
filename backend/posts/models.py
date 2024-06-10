@@ -16,4 +16,4 @@ class Post(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.need+" "+self.offer+" "+self.published
+        return self.need

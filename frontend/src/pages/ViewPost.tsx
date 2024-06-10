@@ -32,16 +32,18 @@ const ViewPost: React.FC = () => {
     }
 
     return (
-        <div>
+        <div >
             <h1> Your Posts </h1>
-            {postList.length === 0 ? <h2> No Posts Available</h2>
-            : postList.map((post) => (
-                <div >
-                    <Post post={post}/>
-                    <button onClick={() => deleteButton(post.id)}>Delete </button>
-                    <button> Edit</button>
-                </div>
-            ))}
+            <div className= "post-container ">
+                {postList.length === 0 ? <h2> No Posts Available</h2>
+                : postList.map((post) => (
+                    <div key={post.id}>
+                        <Post post={post}/>
+                        <button onClick={() => deleteButton(post.id)}>Delete</button>
+                        <button> Edit</button>
+                    </div>
+                ))}
+            </div>
         </div>
 
         

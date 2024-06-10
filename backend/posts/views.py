@@ -36,3 +36,9 @@ class PostListByAuthor(APIView):
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AnnotatedPostList(APIView):
+    def get(self, request):
+        annotated_posts = Post.objects.values('need').annotate(need_count=Count('need')).order_by('-need_count')
+        serializer = AnnotatedPostSerializer(annotated_posts, many=True)
+        return Response(serializer.data)

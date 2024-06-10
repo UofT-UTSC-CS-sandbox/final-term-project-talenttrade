@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useState } from 'react';
 export interface PostType {
     id: number;
     need: string;
@@ -13,18 +13,24 @@ export interface PostProps {
     post: PostType;
 }
 
+
 const Post: React.FC<PostProps> = ({ post }) => {
-    return (
-        <div className="post">
-            <div>
-                <div>Looking for: {post.need}</div>
-                <div>Can offer: {post.offer}</div>
-                <div>Description: {post.description}</div>
-                <div>Date: {new Date(post.published).toLocaleDateString("en-US")}</div>
-                {post.active ? <div>Active Post</div> : <div>Inactive Post</div>}
-            </div>
-        </div>
-    );
+        const [expand , SetExpand] = useState(false)
+
+        return (
+            <a href="#"  className={`post ${expand ? 'expand' : ''}`} onClick={() => post.description.length > 50 && SetExpand(!expand)}>
+                <div className="text"><span>Looking for: </span>{post.need}</div>
+                <div className="text"><span>Can offer: </span>{post.offer}</div>
+                <div className="text"><span>Description: </span>{expand ? post.description : post.description.length > 50 ? `${post.description.substring(0, 50)}...` : post.description}</div>
+                <div className="text">Date: {new Date(post.published).toLocaleDateString("en-US")}</div>
+                {post.active ? <div style={{ color: 'green' }}>Active</div> : <div style={{ color: '#aa0000' }}>Inactive</div>}
+            </a>
+
+        );
+        
 };
+
+
+
 
 export default Post;
