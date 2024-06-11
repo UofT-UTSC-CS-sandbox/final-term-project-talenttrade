@@ -14,7 +14,7 @@ export default function CreatePost () {
   const [applicants, setApplicants] = useState(0);
   const [active, setActive] = useState(true);
   const [id, setId] = useState(-1);
-  const [create, setCreate] = useState(false);
+  const [create, setCreate] = useState(true);
   const [message, setMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackSeverity, setSnackSeverity] = useState<AlertColor>('success');
