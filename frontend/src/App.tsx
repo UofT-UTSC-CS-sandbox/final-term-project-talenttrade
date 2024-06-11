@@ -1,21 +1,28 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import host from "./utils/links";
+import "./App.css";
+import SignupPage from "./pages/SignupPage";
+import LogInPage from "./pages/LoginPage";
+import NotFound from "./pages/NotFound";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import AuthProvider from "./utils/AuthService";
 
 function App() {
-
-
   return (
     <>
-      <h1>React + Django backend</h1>
-      <div className="card">
-        <img src={reactLogo} alt="React Logo" />
-        <img src={viteLogo} alt="Vite Logo" />
-      </div>
+      <Router>
+        <AuthProvider>
+          <div>
+            <div style={{ marginTop: "60px" }}>
+              <Routes>
+                <Route path="login/" element={<LogInPage />} />
+                <Route path="signup/" element={<SignupPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </div>
+        </AuthProvider>
+      </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
