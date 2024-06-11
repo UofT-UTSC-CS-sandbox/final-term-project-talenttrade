@@ -1,0 +1,34 @@
+.post {
+    align-items:flex-start;
+}
+
+.title {
+    text-align: left;
+    font-size: 1.8rem;
+    color: black;
+    white-space: pre-line;
+}
+
+.author {
+    text-align: left;
+    font-size: 1.5rem;
+    color: rgb(151, 151, 151);
+    white-space: pre-line;
+}
+
+.descriptionTitle {
+    text-align: left;
+    color: black;
+    white-space: pre-line;
+}
+
+.description {
+    text-align: left;
+    color: black;
+    white-space: pre-line;
+}
+
+.messageButton {
+    color: white;
+
+}

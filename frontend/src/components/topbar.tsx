@@ -80,8 +80,8 @@ const TopBar = () => {
             >
               My Listings
             </Link>
-            <Link to="/logout" className="dropdownItem" onClick={closeDropdown}>
-              logout
+            <Link to="/Logout" className="dropdownItem" onClick={closeDropdown}>
+              Logout
             </Link>
           </div>
         )}

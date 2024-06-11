@@ -1,43 +1,24 @@
-import React from "react";
-import Category from "../components/category";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import host from "../utils/links";
 import "./Post.css";
 
-export interface TopNeedType {
+interface TopNeedType {
   need: string;
   count: number;
 }
-export interface TopOfferType {
+interface TopOfferType {
   offer: string;
   count: number;
 }
 
-export interface TopTradeType {
+interface TopTradeType {
   offer: string;
   need: string;
   count: number;
 }
 
-const HomePage: React.FC = () => {
-  //placeholder:
-  // const needed = [
-  //   { trade: "Graphic Designer", numPopularTrades: 18 },
-  //   { trade: "Plumber", numPopularTrades: 13 },
-  //   { trade: "Web Developer", numPopularTrades: 8 },
-  // ];
-  // const offered = [
-  //   { trade: "Web Developer", numPopularTrades: 25 },
-  //   { trade: "Mechanic", numPopularTrades: 11 },
-  //   { trade: "Wood Working", numPopularTrades: 10 },
-  // ];
-  // const trades = [
-  //   { trade: ["Web Developer", "Graphic Designer"], numPopularTrades: 12 },
-  //   { trade: ["Plumber", "Mechanic"], numPopularTrades: 7 },
-  //   { trade: ["Wood Working", "Web Developer"], numPopularTrades: 4 },
-  // ];
-
+const ViewPost: React.FC = () => {
   const [topNeed, setTopNeed] = useState<TopNeedType[]>([]);
 
   useEffect(() => {
@@ -48,7 +29,6 @@ const HomePage: React.FC = () => {
     axios
       .get(`${host}/posts/need/`)
       .then((res) => setTopNeed(res.data))
-      .then(() => console.log())
       .catch((error) => alert(error));
   };
 
@@ -80,11 +60,45 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <Category title="Most Needed Talents" popularListings={topNeed} />
-      <Category title="Most Offered Talents" popularListings={topOffer} />
-      <Category title="Most Popular Trades" popularListings={topTrade} />
+      <h1> Categories </h1>
+      <div>
+        <h2> Top Needs </h2>
+        <div>
+          {topNeed.map((top, index) => (
+            <div key={index}>
+              <div> {top.need}</div>
+              <div> {top.count} posts </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2> Top Offers </h2>
+        <div>
+          {topOffer.map((top, index) => (
+            <div key={index}>
+              <div> {top.offer}</div>
+              <div> {top.count} posts </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2> Top Trades </h2>
+        <div>
+          {topTrade.map((top, index) => (
+            <div key={index}>
+              <div> Need: {top.need}</div>
+              <div> Offer: {top.offer}</div>
+              <div> {top.count} posts </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default HomePage;
+export default ViewPost;
