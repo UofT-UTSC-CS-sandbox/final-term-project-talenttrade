@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-q1g9$j0k=9_o4=ug!--#dbsl97l5%#wr-7v*lsy6f@z9&4jik4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -38,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'sampleapp',
+    'posts',
+    'rest_framework',
+    'corsheaders',
+    'accounts',
 ]
 
 REST_FRAMEWORK = {
@@ -51,13 +54,13 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -79,6 +82,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+
+# User Model
+AUTH_USER_MODEL = 'auth.User'
 
 
 # Database
