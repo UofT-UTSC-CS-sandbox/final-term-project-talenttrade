@@ -28,12 +28,11 @@ const ViewPost: React.FC = () => {
         })
         .catch((error) => alert(error));
 
-
     }
 
     return (
         <div >
-            <h1> Your Posts </h1>
+            <h1> Your Posts: </h1>
             <div className= "post-container ">
                 {postList.length === 0 ? <h2> No Posts Available</h2>
                 : postList.map((post) => (
