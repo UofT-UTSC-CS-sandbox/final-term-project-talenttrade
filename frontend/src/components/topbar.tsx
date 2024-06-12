@@ -50,7 +50,7 @@ const TopBar = () => {
             value={searchInput}
             onChange={handleChange}
           />
-          <button type="submit" className="button">
+          <button type="submit" className="submit-button">
             Go
           </button>
         </form>
