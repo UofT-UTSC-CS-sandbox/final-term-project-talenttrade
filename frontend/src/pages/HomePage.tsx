@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <Category title="Most Needed Talents" popularListings={topNeed} />
       <Category title="Most Offered Talents" popularListings={topOffer} />
       <Category title="Most Popular Trades" popularListings={topTrade} />
