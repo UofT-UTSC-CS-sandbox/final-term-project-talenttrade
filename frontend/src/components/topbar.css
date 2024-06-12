@@ -27,6 +27,9 @@
     display: flex;
     align-items: center;
     min-width: 400px;
+    margin: 0px;
+    padding: 0px;
+    
   }
   
   .filterDropdown {
@@ -69,6 +72,7 @@
     border-radius: 0px;
     border-top-right-radius: 7px;
     border-bottom-right-radius: 7px;
+    margin: 0;
   }
   .button:hover {
     background: #565656;

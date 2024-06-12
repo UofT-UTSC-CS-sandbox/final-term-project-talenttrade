@@ -3,7 +3,6 @@ import Category from "../components/category";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import host from "../utils/links";
-import "./Post.css";
 
 export interface TopNeedType {
   need: string;
@@ -21,23 +20,6 @@ export interface TopTradeType {
 }
 
 const HomePage: React.FC = () => {
-  //placeholder:
-  // const needed = [
-  //   { trade: "Graphic Designer", numPopularTrades: 18 },
-  //   { trade: "Plumber", numPopularTrades: 13 },
-  //   { trade: "Web Developer", numPopularTrades: 8 },
-  // ];
-  // const offered = [
-  //   { trade: "Web Developer", numPopularTrades: 25 },
-  //   { trade: "Mechanic", numPopularTrades: 11 },
-  //   { trade: "Wood Working", numPopularTrades: 10 },
-  // ];
-  // const trades = [
-  //   { trade: ["Web Developer", "Graphic Designer"], numPopularTrades: 12 },
-  //   { trade: ["Plumber", "Mechanic"], numPopularTrades: 7 },
-  //   { trade: ["Wood Working", "Web Developer"], numPopularTrades: 4 },
-  // ];
-
   const [topNeed, setTopNeed] = useState<TopNeedType[]>([]);
 
   useEffect(() => {

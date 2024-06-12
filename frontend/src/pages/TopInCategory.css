@@ -1,0 +1,25 @@
+.top-categories {
+    display: flex;
+    gap: 100px;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 0;
+}
+.category {
+    display: flex;
+    align-items: center;
+    height: 150px;
+    padding: 0;
+  }
+  .title {
+    color: black;
+    font-size: 1.8rem;
+  }
+.category-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    width: 100%;
+    margin-left:0;
+    padding-left: 0;
+}

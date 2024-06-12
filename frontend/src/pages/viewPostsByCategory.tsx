@@ -5,7 +5,6 @@ import Post from "./Post";
 import { PostType } from "./Post";
 import React from "react";
 import "./viewPostsByCategory.css";
-import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 // interface PostListProps {
@@ -44,7 +43,7 @@ const ViewPostByCategory: React.FC = () => {
   };
 
   return (
-    <div className="Container">
+    <div>
       <div className="header">
         <h1>Showing results for:</h1>
         {need && offer ? (
@@ -55,7 +54,7 @@ const ViewPostByCategory: React.FC = () => {
           <h2> {`Offer: ${offer}`}</h2>
         )}
       </div>
-      <div className="posts">
+      <div className="post-container ">
         {postList.length === 0 ? (
           <h3> No Posts Available</h3>
         ) : (

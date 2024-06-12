@@ -32,6 +32,7 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
                     : `/view-posts-by-category?offer=${top.offer}`
                 }
                 key={index}
+                className="card-link"
               >
                 <div className="card">
                   <div>
@@ -52,7 +53,16 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
           </h1>
         }
 
-        <Link to={`/${title}`} className="link">
+        <Link
+          to={
+            title == "Most Popular Trades"
+              ? `MostPopularTrades`
+              : title == "Most Needed Talents"
+              ? `MostNeededTalents`
+              : `MostOfferedTalents`
+          }
+          className="link"
+        >
           <button className="more-button">More</button>
         </Link>
       </div>
