@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, ChangeEvent, FormEvent } from "react";
 import "./topbar.css";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -12,6 +13,10 @@ const TopBar = () => {
   const closeDropdown = () => {
     setIsDropdownOpen(false);
   };
+
+  const navigateCreate = () => {
+    navigate("/CreatePost", {state:{create: true}});
+  }
 
   const [searchInput, setSearchInput] = useState<string>("");
 
@@ -55,7 +60,9 @@ const TopBar = () => {
           </button>
         </form>
       </div>
-      <button className="makePostButton">Make a post</button>
+      <button className="makePostButton" onClick={navigateCreate}>Make a post</button>
+      {/* <Link className="makePostButton" to="/CreatePost">Make a post</Link> */}
+
 
       <div className="profileContainer">
         <img
