@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
+import useRequest from "../utils/requestHandler";
 
 import host from '../utils/links';
 import './CreatePost.css';
@@ -24,6 +25,7 @@ export default function CreatePost () {
 
   const navigate = useNavigate();
   const locationRouter = useLocation();
+  const apiFetch = useRequest();
 
   const INPUT_LEN = 30;
 
@@ -35,12 +37,9 @@ export default function CreatePost () {
   }, [])
 
   const getAndSetUser = async () => {
-    axios.get(`${host}/accounts/get-current-user-id/`)
-    .then(res => {
-      console.log(res);
-      setUserId(res.data.user_id);
-    })
-    .catch((error) => alert(error));
+    const response = await apiFetch("accounts/get-current-user-id", { method: "GET" });
+    setUserId(response.user_id);
+    setUserName(response.user_name);
   }
 
   const getAndSetPost = async (id: number) => {
@@ -59,8 +58,8 @@ export default function CreatePost () {
 
   const createPost = async () => {
     const post = {
-      author_id: 0, // temp
-      author_name: "DEFAULT_NAME", // temp
+      author_id: userId, // temp
+      author_name: userName, // temp
       need: need,
       offer: offer,
       description: description,
@@ -82,8 +81,8 @@ export default function CreatePost () {
 
   const editPost = async () => {
     const post = {
-      author_id: 0, // temp
-      author_name: "DEFAULT_NAME", // temp
+      author_id: userId, // temp
+      author_name: userName, // temp
       need: need,
       offer: offer,
       description: description,
