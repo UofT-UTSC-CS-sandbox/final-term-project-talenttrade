@@ -7,11 +7,6 @@ import React from "react";
 import "./viewPostsByCategory.css";
 import { useLocation } from "react-router-dom";
 
-// interface PostListProps {
-//   need?: string;
-//   offer?: string;
-// }
-
 const ViewPostByCategory: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
