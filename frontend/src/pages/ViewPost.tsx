@@ -4,19 +4,23 @@ import host from "../utils/links";
 import Post from "./Post";
 import { PostType } from "./Post";
 import "./Post.css";
+import { useNavigate } from "react-router-dom";
+import useRequest from "../utils/requestHandler";
+
 
 const ViewPost: React.FC = () => {
   const [postList, setPostList] = useState<PostType[]>([]);
+  const navigate = useNavigate();
+  const apiFetch = useRequest();
+
 
   useEffect(() => {
     getPostList();
   }, []);
 
   const getPostList = async () => {
-    axios
-      .get(`${host}/posts/`)
-      .then((res) => setPostList(res.data))
-      .catch((error) => alert(error));
+    const response = await apiFetch("posts/", { method: "GET" });
+    setPostList(response);
   };
 
   const deleteButton = async (id: number) => {
@@ -31,6 +35,10 @@ const ViewPost: React.FC = () => {
       .catch((error) => alert(error));
   };
 
+  const navigateEdit = (id: number) => {
+    navigate("/CreatePost", {state: {create:false, id: id}});
+  };
+
   return (
     <div>
       <h1> Your Posts: </h1>
@@ -42,7 +50,7 @@ const ViewPost: React.FC = () => {
             <div key={post.id}>
               <Post post={post} />
               <button onClick={() => deleteButton(post.id)}>Delete</button>
-              <button> Edit</button>
+              <button onClick={() => navigateEdit(post.id)}>Edit</button>
             </div>
           ))
         )}

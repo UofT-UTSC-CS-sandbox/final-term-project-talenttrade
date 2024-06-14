@@ -17,7 +17,8 @@ from rest_framework.decorators import api_view
 @api_view(['GET'])
 def get_current_user_id(request):
     user_id = request.user.id
-    return Response({"user_id": user_id})
+    user_name = request.user.first_name + " " + request.user.last_name
+    return Response({"user_id": user_id, "user_name": user_name})
         
 class SignupView(APIView):
     def post(self, request):

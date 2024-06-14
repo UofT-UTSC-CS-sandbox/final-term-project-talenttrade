@@ -37,7 +37,7 @@ const TopInCategory: React.FC<Category> = ({ category }) => {
           ? `Top Needs:\n`
           : `Top Offers:\n`}
       </h1>
-      <div className="category">
+      <div className="top-category">
         {
           <h1 className="category-cards">
             {top.map((top, index) => (

@@ -11,7 +11,9 @@ from django.http import JsonResponse
 
 # Create your views here.
 class PostListCreate(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
+    def get_queryset(self):
+      user = self.request.user.id
+      return Post.objects.filter(author_id=user)
     serializer_class = PostSerializer
     def delete(self, request, *args, **kwargs):
         Post.objects.all().delete()
@@ -21,19 +23,6 @@ class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = "pk"
-
-class PostListByAuthor(APIView):
-    def get(self, request, format=None):
-        authour_id = request.query_params.get("authour_id", "")
-
-        if authour_id:
-            posts = Post.objects.filter(author_id__exact=authour_id)
-        else:
-            posts = Post.objects.all()
-
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-		
 
 class ListPopular(APIView):
     def get_most_popular(self, title):

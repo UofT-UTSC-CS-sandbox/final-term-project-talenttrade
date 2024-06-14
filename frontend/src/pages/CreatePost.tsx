@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
+import useRequest from "../utils/requestHandler";
 
 import host from '../utils/links';
 import './CreatePost.css';
@@ -13,33 +15,51 @@ export default function CreatePost () {
   const [location, setLocation] = useState("");
   const [applicants, setApplicants] = useState(0);
   const [active, setActive] = useState(true);
-  const [id, setId] = useState(-1);
+  const [postId, setPostId] = useState(-1);
   const [create, setCreate] = useState(true);
   const [message, setMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackSeverity, setSnackSeverity] = useState<AlertColor>('success');
+  const [userId, setUserId] = useState(-1);
+  const [userName, setUserName] = useState("");
+
+  const navigate = useNavigate();
+  const locationRouter = useLocation();
+  const apiFetch = useRequest();
 
   const INPUT_LEN = 30;
 
   useEffect(() => {
-    console.log("use effect");
-    // check if its an edit or create
-    // if its edit then set all above
-    if (!create) {
-      setNeed("test");
-      setOffer("test");
-      setDescription("test");
-      setLocation("test");
-      setApplicants(0);
-      setActive(true);
-      setId(7);
-    }
+    setCreate(locationRouter.state.create);
+    getAndSetUser();
+    if (!locationRouter.state.create)
+      getAndSetPost(locationRouter.state.id);
   }, [])
+
+  const getAndSetUser = async () => {
+    const response = await apiFetch("accounts/get-current-user-id", { method: "GET" });
+    setUserId(response.user_id);
+    setUserName(response.user_name);
+  }
+
+  const getAndSetPost = async (id: number) => {
+    axios.get(`${host}/posts/${id}`)
+    .then(res => {
+      setPostId(res.data.id);
+      setNeed(res.data.need);
+      setOffer(res.data.offer);
+      setDescription(res.data.description);
+      setLocation(res.data.location);
+      setApplicants(res.data.applicants);
+      setActive(res.data.active);
+    })
+    .catch((error) => alert(error));
+  }
 
   const createPost = async () => {
     const post = {
-      authour_id: 0, // temp
-      authour_name: "DEFAULT_NAME", // temp
+      author_id: userId, // temp
+      author_name: userName, // temp
       need: need,
       offer: offer,
       description: description,
@@ -49,23 +69,21 @@ export default function CreatePost () {
     }
 
     axios.post(`${host}/posts/`, post)
-    .then(res => {
-      console.log(res);
-      console.log(res.data);
-    })
+    .then(res => {})
     .catch((error) => alert(error));
 
     setMessage("Post Created Successfully!");
     setSnackSeverity('success');
     setOpenSnackbar(true);
-    //go back
+
+    navigate("/");
   }
 
   const editPost = async () => {
     const post = {
-      authour_id: 0, // temp
-      authour_name: "DEFAULT_NAME", // temp
-      need: "test",
+      author_id: userId, // temp
+      author_name: userName, // temp
+      need: need,
       offer: offer,
       description: description,
       location: location,
@@ -73,17 +91,15 @@ export default function CreatePost () {
       active: active
     }
 
-    axios.put(`${host}/posts/${id}/`, post)
-    .then(res => {
-      console.log(res);
-      console.log(res.data);
-    })
+    axios.put(`${host}/posts/${postId}/`, post)
+    .then(res => {})
     .catch((error) => alert(error));
 
     setMessage("Post Edited Successfully!");
     setSnackSeverity('success');
     setOpenSnackbar(true);
-    //go back
+
+    navigate("/MyListings");
   }
 
   const handleSubmit = () => {
@@ -112,7 +128,6 @@ export default function CreatePost () {
       setOpenSnackbar(true);
       return;
     }
-    // console.log(need + offer + description + location)
 
     if (create)
       createPost();
