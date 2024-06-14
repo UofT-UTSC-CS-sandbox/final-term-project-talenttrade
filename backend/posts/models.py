@@ -1,0 +1,17 @@
+from django.db import models
+from django.conf import settings
+
+# Create your models here.
+class Post(models.Model):
+    author_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author_name = models.CharField(max_length=30, default="DEFAULT NAME")  
+    need = models.CharField(max_length=30)
+    offer = models.CharField(max_length=30)
+    description = models.TextField()
+    location = models.CharField(max_length=30)
+    published = models.DateTimeField(auto_now_add=True)
+    applicants = models.PositiveIntegerField()
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.need+" "+self.offer+" "+self.published
