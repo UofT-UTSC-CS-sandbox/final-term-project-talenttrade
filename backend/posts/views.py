@@ -67,7 +67,7 @@ class PostListByNeed(APIView):
         need = request.query_params.get("need", "")
 
         if need:
-            posts = Post.objects.filter(need=need)
+            posts = Post.objects.filter(need__iexact=need)
         else:
             posts = None
 
@@ -79,7 +79,7 @@ class PostListByOffer(APIView):
         offer = request.query_params.get("offer", "")
 
         if offer:
-            posts = Post.objects.filter(offer=offer)
+            posts = Post.objects.filter(offer__iexact=offer)
         else:
             posts = None
 
@@ -88,11 +88,11 @@ class PostListByOffer(APIView):
 
 class PostListByTrade(APIView):
     def get(self, request, format=None):
-        offer = request.query_params.get("offer", "")
-        need = request.query_params.get("need", "")
+        offer = request.query_params.get("offer", "").lower()
+        need = request.query_params.get("need", "").lower()
 
         if offer and need:
-            posts = Post.objects.filter(offer=offer, need=need)
+            posts = Post.objects.filter(offer__iexact=offer, need__iexact=need)
         else:
             posts = None
 

@@ -15,8 +15,8 @@ const TopBar = () => {
   };
 
   const navigateCreate = () => {
-    navigate("/CreatePost", {state:{create: true}});
-  }
+    navigate("/CreatePost", { state: { create: true } });
+  };
 
   const [searchInput, setSearchInput] = useState<string>("");
 
@@ -60,9 +60,10 @@ const TopBar = () => {
           </button>
         </form>
       </div>
-      <button className="makePostButton" onClick={navigateCreate}>Make a post</button>
+      <button className="makePostButton" onClick={navigateCreate}>
+        Make a post
+      </button>
       {/* <Link className="makePostButton" to="/CreatePost">Make a post</Link> */}
-
 
       <div className="profileContainer">
         <img
