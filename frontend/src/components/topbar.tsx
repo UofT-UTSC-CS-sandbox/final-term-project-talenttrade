@@ -5,6 +5,11 @@ import "./topbar.css";
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [selectedValue, setSelectedValue] = useState('need'); // Default value in lower case
+
+  const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(event.target.value.toLowerCase());
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -26,8 +31,7 @@ const TopBar = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // handle search logic here
-    console.log(`Searching for ${searchInput}...`);
+    navigate(`/view-posts-by-category?${selectedValue.toLowerCase()}=${searchInput}`,  { state: { create: true } });
   };
 
   return (
@@ -38,7 +42,7 @@ const TopBar = () => {
         </Link>
       </div>
       <div className="searchContainer">
-        <select className="filterDropdown">
+        <select className="filterDropdown" onChange={handleOptionChange}>
           <option value="Need">Need</option>
           <option value="Offer">Offer</option>
         </select>

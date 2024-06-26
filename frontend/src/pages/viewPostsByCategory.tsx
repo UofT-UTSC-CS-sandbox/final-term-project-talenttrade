@@ -16,7 +16,7 @@ const ViewPostByCategory: React.FC = () => {
 
   useEffect(() => {
     getPostList();
-  }, []);
+  });
 
   const getPostList = async () => {
     if (need && offer) {
