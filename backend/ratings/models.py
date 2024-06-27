@@ -4,8 +4,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Rating(models.Model):
-  rater = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rater', on_delete=models.CASCADE)
-  receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver', on_delete=models.CASCADE)
+  rater = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='%(class)s_rater', on_delete=models.CASCADE)
+  receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='%(class)s_receiver', on_delete=models.CASCADE)
   rating = models.IntegerField(
         validators=[
             MinValueValidator(1),
