@@ -1,10 +1,10 @@
 import Ratings from "./ratings";
-import OfferFilter from "./offerFilter";
+// import OfferFilter from "./offerFilter";
 
 const FilterBar = () => {
   return (
     <div>
-      <OfferFilter />
+      {/* <OfferFilter /> */}
       <Ratings />
     </div>
   );

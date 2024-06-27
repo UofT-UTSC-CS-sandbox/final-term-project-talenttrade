@@ -5,10 +5,10 @@ import "./topbar.css";
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [selectedValue, setSelectedValue] = useState('need'); // Default value in lower case
+  const [selectedValue, setSelectedValue] = useState("need");
 
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(event.target.value.toLowerCase());
+    setSelectedValue(event.target.value);
   };
 
   const toggleDropdown = () => {
@@ -31,7 +31,9 @@ const TopBar = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate(`/view-posts-by-category?${selectedValue.toLowerCase()}=${searchInput}`,  { state: { create: true } });
+    navigate(`/view-posts-by-category?${selectedValue}=${searchInput}`, {
+      state: { create: true },
+    });
   };
 
   return (
