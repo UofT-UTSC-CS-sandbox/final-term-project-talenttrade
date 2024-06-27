@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AuthProvider from "./utils/AuthService";
 import ViewPostByCategory from "./pages/viewPostsByCategory";
 import TopInCategory from "./pages/TopInCategory";
+import FilterBar from "./components/filterBar";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="signup/" element={<SignupPage />} />
                 <Route path="/MyListings" element={<ViewPost />} />
                 <Route path="/CreatePost" element={<CreatePost />} />
+                <Route path="/filter" element={<FilterBar />} />
                 <Route
                   path="/view-posts-by-category"
                   Component={ViewPostByCategory}

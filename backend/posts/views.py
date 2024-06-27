@@ -74,6 +74,7 @@ class PostListByNeed(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
 class PostListByOffer(APIView):
     def get(self, request, format=None):
         offer = request.query_params.get("offer", "")
@@ -88,8 +89,8 @@ class PostListByOffer(APIView):
 
 class PostListByTrade(APIView):
     def get(self, request, format=None):
-        offer = request.query_params.get("offer", "").lower()
-        need = request.query_params.get("need", "").lower()
+        offer = request.query_params.get("offer", "")
+        need = request.query_params.get("need", "")
 
         if offer and need:
             posts = Post.objects.filter(offer__iexact=offer, need__iexact=need)
@@ -97,4 +98,21 @@ class PostListByTrade(APIView):
             posts = None
 
         serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class FilterPosts(APIView):
+    def get(self, request, format=None):
+        need = request.GET.get('need', None)
+        offers = request.GET.getlist('offer[]', [])
+        print(need, offers)
+        
+        if need and offers:
+            posts = Post.objects.filter(need__iexact=need, offer__in=offers)
+        elif need:
+            posts = Post.objects.filter(need__iexact=need)
+        else:
+            posts = Post.objects.all()
+
+        serializer = PostSerializer(posts, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)

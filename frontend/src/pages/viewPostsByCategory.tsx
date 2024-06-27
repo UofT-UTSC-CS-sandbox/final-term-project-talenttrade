@@ -6,6 +6,11 @@ import { PostType } from "./Post";
 import React from "react";
 import "./viewPostsByCategory.css";
 import { useLocation } from "react-router-dom";
+import OfferFilter from "../components/offerFilter";
+
+export interface selectedOffersType {
+  title: string;
+}
 
 const ViewPostByCategory: React.FC = () => {
   const location = useLocation();
@@ -13,10 +18,18 @@ const ViewPostByCategory: React.FC = () => {
   const need = queryParams.get("need");
   const offer = queryParams.get("offer");
   const [postList, setPostList] = useState<PostType[]>([]);
+  const [filteredPostList, setFilteredPostList] = useState<PostType[]>([]);
+  const [selectedOffers, setSelectedOffers] = useState<selectedOffersType[]>(
+    []
+  );
 
   useEffect(() => {
     getPostList();
-  });
+  }, [need]);
+
+  useEffect(() => {
+    filterPosts();
+  }, [selectedOffers, postList]);
 
   const getPostList = async () => {
     if (need && offer) {
@@ -37,8 +50,33 @@ const ViewPostByCategory: React.FC = () => {
     }
   };
 
+  const filterPosts = () => {
+    if (selectedOffers.length === 0) {
+      setFilteredPostList(postList);
+    } else {
+      let params: any = {};
+      if (need) {
+        params.need = need;
+      }
+      if (selectedOffers.length > 0) {
+        let offers = selectedOffers.map((offer) => offer.title);
+        axios
+          .get(`${host}/posts/filter/`, {
+            params: { need: need, offer: offers },
+          })
+          .then((res) => setFilteredPostList(res.data))
+          .catch((error) => alert(error));
+        console.log(filteredPostList);
+      }
+    }
+  };
+
   return (
     <div>
+      <OfferFilter
+        selectedOffers={selectedOffers}
+        setSelectedOffers={setSelectedOffers}
+      />
       <div className="header">
         <h1>Showing results for:</h1>
         {need && offer ? (
@@ -53,8 +91,8 @@ const ViewPostByCategory: React.FC = () => {
         {postList.length === 0 ? (
           <h3> No Posts Available</h3>
         ) : (
-          postList.map((post) => (
-            <div>
+          filteredPostList.map((post) => (
+            <div key={post.id}>
               <Post post={post} />
             </div>
           ))
