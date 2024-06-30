@@ -7,6 +7,12 @@ from .serializers import PostSerializer
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import JsonResponse
+import json, googlemaps, math, datetime
+from django.utils import timezone
+
+api_key = "AIzaSyAgfAWhb_ZqvR_DkfqqQeJ_wW9adqrTmH0"  # Replace with your actual API key
+
+gmap_client = googlemaps.Client(key=api_key)
 
 
 # Create your views here.
@@ -116,3 +122,59 @@ class FilterPosts(APIView):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FilterPostsByDistance(APIView):
+
+    def get(self, request, pk, pk_list, format=None):
+        distance_wanted = float(pk)  
+        #print(distance_wanted)
+
+        #source = self.user.location 
+
+        posts = []
+        #source_latitude = "43.6629"
+        #source_longitude = "-79.3957"
+        #source = f"{source_latitude},{source_longitude}"
+        source = "Toronto"
+
+        postList = json.loads(pk_list)
+
+        print("current user", postList, request.user.username, len(postList))
+
+        for post in postList:
+            curr_post = Post.objects.filter(id=post["id"])
+            print("this is a post", curr_post)
+            if request.user and (request.user.username != str(curr_post[0].author_id)):
+                #lat = post.latitude
+                #long = post.longitude
+                destination = curr_post[0].location
+                #destination = f"{lat},{long}"
+                #print(destination)
+                try:
+                    departure_time = timezone.now()
+                    result = gmap_client.directions(source, destination, mode="driving", departure_time=departure_time)
+
+                    if result:
+                        distance_meters = result[0]['legs'][0]['distance']['value']
+                        distance_km = distance_meters / 1000
+                        print("distance", distance_km)
+                        if math.floor(distance_km) <= distance_wanted and distance_km > 0:
+                            posts.append(curr_post[0])
+
+
+                        print(f"Distance: {distance_km} km")
+                    else:
+                        print("No results found")
+                
+                except Exception as e:
+                    print(f"Error fetching directions: {str(e)}")
+
+        print("length of list", len(posts))
+        serializer = PostSerializer(posts, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+# Correcting the coordinates format
+#source = "43.6629,-79.3957"
+#destination = "43.5483,-79.6636"
+
