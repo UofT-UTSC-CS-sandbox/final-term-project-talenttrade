@@ -16,6 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        validated_data['first_name'] = validated_data['first_name'].capitalize()
+        validated_data['last_name'] = validated_data['last_name'].capitalize()
         return User.objects.create_user(**validated_data)
 
     def validate_password(self, value):

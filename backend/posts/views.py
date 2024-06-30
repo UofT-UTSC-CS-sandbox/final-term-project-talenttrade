@@ -116,3 +116,4 @@ class FilterPosts(APIView):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
