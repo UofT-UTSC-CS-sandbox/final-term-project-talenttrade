@@ -11,6 +11,7 @@ import AuthProvider from "./utils/AuthService";
 import ViewPostByCategory from "./pages/viewPostsByCategory";
 import TopInCategory from "./pages/TopInCategory";
 import FilterBar from "./components/filterBar";
+import SearchUser from "./pages/SearchUsers";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
                   path="/MostOfferedTalents"
                   element={<TopInCategory category="offer" />}
                 />
+                <Route path="/search-users" Component={SearchUser} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

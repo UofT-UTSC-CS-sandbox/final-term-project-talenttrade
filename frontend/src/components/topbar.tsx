@@ -5,7 +5,7 @@ import "./topbar.css";
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [selectedValue, setSelectedValue] = useState("need");
+  const [selectedValue, setSelectedValue] = useState("Need");
 
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
@@ -31,9 +31,11 @@ const TopBar = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate(`/view-posts-by-category?${selectedValue}=${searchInput}`, {
-      state: { create: true },
-    });
+    if (selectedValue == "Need") {
+      navigate(`/view-posts-by-category?need=${searchInput}`);
+    } else if (selectedValue == "User") {
+      navigate(`/search-users?username=${searchInput}`);
+    }
   };
 
   return (
@@ -46,7 +48,7 @@ const TopBar = () => {
       <div className="searchContainer">
         <select className="filterDropdown" onChange={handleOptionChange}>
           <option value="Need">Need</option>
-          <option value="Offer">Offer</option>
+          <option value="User">User</option>
         </select>
         <form
           role="search"
