@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .models import Rating
 from .serializers import RatingSerializer
 from django.http import JsonResponse
+from rest_framework.decorators import api_view
 
 # Create your views here.
 class RatingListCreate(generics.ListCreateAPIView):
@@ -17,27 +18,27 @@ class RatingRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
   lookup_field = "pk"
 
 # get average ratings for given user
-class GetAvgRating(APIView):
-  def get(self, request):
-    receiver = request.query_params.get("receiver", "")
+def GetAvgRating(request):
+  receiver = request.GET.get("receiver", "")
 
-    if receiver:
-      ratings = Rating.objects.filter(receiver=receiver)
-      num = 0.0
-      tot = 0.0
-      for rating in ratings:
-        num += rating.rating
-        tot += 1
-      avg = num/tot
-    else:
-      avg = 0
-    return JsonResponse({'average': avg})
+  if receiver:
+    ratings = Rating.objects.filter(receiver=receiver)
+    num = 0.0
+    tot = 0.0
+    for rating in ratings:
+      num += rating.rating
+      tot += 1
+    avg = num/tot
+  else:
+    avg = 0
+  return JsonResponse({'average': avg})
 
 # get the rating the current user gave to the given user
-class GetRating(APIView):
-  def get (self, request):
-    rater = self.request.user.id
-    receiver = request.query_params.get("receiver", "")
+@api_view(('GET',))
+def GetRating (request):
+    rater = request.GET.get("rater")
+    receiver = request.GET.get("receiver")
+    
     if rater and receiver:
       rating = Rating.objects.filter(rater=rater, receiver=receiver)
     else:
