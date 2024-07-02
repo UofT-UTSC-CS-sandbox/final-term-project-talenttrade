@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AuthProvider from "./utils/AuthService";
 import ViewPostByCategory from "./pages/viewPostsByCategory";
 import TopInCategory from "./pages/TopInCategory";
+import ViewProfile from "./pages/ViewProfile";
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function App() {
             <div style={{ marginTop: "60px" }}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="login/" element={<LogInPage />} />
-                <Route path="signup/" element={<SignupPage />} />
+                <Route path="/login" element={<LogInPage />} />
+                <Route path="/signup" element={<SignupPage />} />
                 <Route path="/MyListings" element={<ViewPost />} />
                 <Route path="/CreatePost" element={<CreatePost />} />
                 <Route
@@ -41,6 +42,8 @@ function App() {
                   path="/MostOfferedTalents"
                   element={<TopInCategory category="offer" />}
                 />
+                <Route path="/profile/:userId" element={<ViewProfile />} />
+                <Route path="/profile" element={<ViewProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

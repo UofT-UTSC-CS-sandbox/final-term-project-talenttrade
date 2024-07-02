@@ -27,6 +27,8 @@ class SignupView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
+            user_profile = UserProfile.objects.create(user=serializer.instance)
             return Response({'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
         
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -86,9 +88,12 @@ class ProfileCreateView(APIView):
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 class ProfileView(APIView):
-    def get(self, request, user_id):
+    def get(self, request, user_id=None):
         try:
-            user_profile = UserProfile.objects.get(user_id=user_id)
+            if user_id:
+                user_profile = UserProfile.objects.get(user_id=user_id)
+            else:
+                user_profile = UserProfile.objects.get(user=request.user)
             serializer = ProfileSerializer(user_profile)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserProfile.DoesNotExist:

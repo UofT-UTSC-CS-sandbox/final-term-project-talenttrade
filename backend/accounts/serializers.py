@@ -23,25 +23,33 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
 class ProfileSerializer(serializers.Serializer):
-    bio = serializers.CharField(required=False)
-    location_name = serializers.CharField(required=False)
-    location_coords = serializers.CharField(required=False)
-    date_of_birth = serializers.DateField(required=False)
-    profile_picture = serializers.ImageField(required=False)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    location_name = serializers.CharField(required=False, allow_blank=True)
+    location_coords = serializers.CharField(required=False, allow_blank=True)
+    date_of_birth = serializers.DateField(required=False, allow_null=True)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    
+    def update(self, instance, validated_data):
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.location_name = validated_data.get('location_name', instance.location_name)
+        instance.location_coords = validated_data.get('location_coords', instance.location_coords)
+        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
+        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        instance.save()
+        return instance
+    # def validate_location_coords(self, value):
+    #     if value:
+    #         try:
+    #             lat, lon = value.split(',')
+    #             lat = float(lat)
+    #             lon = float(lon)
+    #         except ValueError:
+    #             raise ValidationError('Invalid location coordinates')
+    #     return value
 
-    def validate_location_coords(self, value):
-        if value:
-            try:
-                lat, lon = value.split(',')
-                lat = float(lat)
-                lon = float(lon)
-            except ValueError:
-                raise ValidationError('Invalid location coordinates')
-        return value
-
-    def validate_profile_picture(self, value):
-        if value:
-            if value.size > 2 * 1024 * 1024:
-                raise ValidationError('Profile picture is too large')
-        return value
+    # def validate_profile_picture(self, value):
+    #     if value:
+    #         if value.size > 2 * 1024 * 1024:
+    #             raise ValidationError('Profile picture is too large')
+    #     return value
     
