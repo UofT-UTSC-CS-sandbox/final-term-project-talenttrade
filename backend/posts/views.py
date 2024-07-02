@@ -123,7 +123,6 @@ class FilterPosts(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class FilterPostsByDistance(APIView):
 
     def get(self, request, pk, pk_list, format=None):
@@ -140,11 +139,9 @@ class FilterPostsByDistance(APIView):
 
         postList = json.loads(pk_list)
 
-        print("current user", postList, request.user.username, len(postList))
 
         for post in postList:
             curr_post = Post.objects.filter(id=post["id"])
-            print("this is a post", curr_post)
             if request.user and (request.user.username != str(curr_post[0].author_id)):
                 #lat = post.latitude
                 #long = post.longitude

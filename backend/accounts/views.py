@@ -61,3 +61,14 @@ class LogoutView(APIView):
                 return Response({'error': 'User is not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SearchByUser(APIView):
+    def get(self, request, format=None):
+        username = request.GET.get('username', None)
+        
+        if username:
+            users = User.objects.filter(username__istartswith=username)
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    

@@ -73,12 +73,15 @@ const ViewPostByCategory: React.FC = () => {
 
   return (
     <div>
-      <OfferFilter
-        selectedOffers={selectedOffers}
-        setSelectedOffers={setSelectedOffers}
-      />
+      {!offer && need && (
+          <OfferFilter
+            selectedOffers={selectedOffers}
+            setSelectedOffers={setSelectedOffers}
+          />
+        )}
       {filteredPostList &&
-      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>}
+      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>
+
       <div className="header">
         <h1>Showing results for:</h1>
         {need && offer ? (
