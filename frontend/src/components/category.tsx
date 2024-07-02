@@ -26,10 +26,10 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
               <Link
                 to={
                   isTopTradeType(top)
-                    ? `/view-posts-by-category?need=${top.need}&offer=${top.offer}`
+                    ? `/view-posts-by-category?need=${top.need}&offer=${top.offer}&show=${false}`
                     : isTopNeedType(top)
-                    ? `/view-posts-by-category?need=${top.need}`
-                    : `/view-posts-by-category?offer=${top.offer}`
+                    ? `/view-posts-by-category?need=${top.need}&show=${false}`
+                    : `/view-posts-by-category?offer=${top.offer}&show=${false}`
                 }
                 key={index}
                 className="card-link"

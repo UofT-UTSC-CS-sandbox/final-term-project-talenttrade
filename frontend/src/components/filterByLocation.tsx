@@ -16,11 +16,6 @@ const [filteredPostList, setFilteredPostList] = filterState ;
   const [oldPostList, setOldPostList] = useState<any[]>([]);
   const apiFetch = useRequest();
 
-  console.log("thdsfsd",filteredPostList);
-
-
-
-
   const marks = [
     { value: 0, label: '0 KM' },
     { value: 50, label: '50 KM' },

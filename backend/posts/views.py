@@ -10,7 +10,7 @@ from django.http import JsonResponse
 import json, googlemaps, math, datetime
 from django.utils import timezone
 
-api_key = "AIzaSyAgfAWhb_ZqvR_DkfqqQeJ_wW9adqrTmH0"  # Replace with your actual API key
+api_key = "AIzaSyAgfAWhb_ZqvR_DkfqqQeJ_wW9adqrTmH0" 
 
 gmap_client = googlemaps.Client(key=api_key)
 
@@ -146,6 +146,7 @@ class FilterPostsByDistance(APIView):
                 #lat = post.latitude
                 #long = post.longitude
                 destination = curr_post[0].location
+                print(destination)
                 #destination = f"{lat},{long}"
                 #print(destination)
                 try:

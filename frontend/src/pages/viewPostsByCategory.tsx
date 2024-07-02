@@ -17,6 +17,8 @@ const ViewPostByCategory: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const need = queryParams.get("need");
   const offer = queryParams.get("offer");
+  const show = queryParams.get("show");
+  const [showBool, setShowBool] = useState(false);
   const [postList, setPostList] = useState<PostType[]>([]);
   const [filteredPostList, setFilteredPostList] = useState<PostType[]>([]);
   const [selectedOffers, setSelectedOffers] = useState<selectedOffersType[]>(
@@ -25,16 +27,19 @@ const ViewPostByCategory: React.FC = () => {
 
   useEffect(() => {
     getPostList();
+    if (show === "true"){
+      setShowBool(true);
+    }
   }, [need]);
 
   useEffect(() => {
     filterPosts();
-  }, [selectedOffers, postList]);
+  }, [selectedOffers, postList, filteredPostList]);
 
   const getPostList = async () => {
     if (need && offer) {
       axios
-        .get(`${host}/posts/post-trade/`, { params: { need, offer } })
+        .get(`${host}/posts/post-trade/`, { params: { need, offer} })
         .then((res) => setPostList(res.data))
         .catch((error) => alert(error));
     } else if (need) {
@@ -73,13 +78,13 @@ const ViewPostByCategory: React.FC = () => {
 
   return (
     <div>
-      {!offer && need && (
+      {showBool && (
           <OfferFilter
             selectedOffers={selectedOffers}
             setSelectedOffers={setSelectedOffers}
           />
         )}
-      {filteredPostList &&
+      {filteredPostList && showBool &&
       <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>}
 
       <div className="header">
@@ -94,7 +99,7 @@ const ViewPostByCategory: React.FC = () => {
       </div>
       <div className="post-container ">
         {postList.length === 0 ? (
-          <h3> No osts Available</h3>
+          <h3> No Posts Available</h3>
         ) : (
           filteredPostList.map((post) => (
             <div key={post.id}>
