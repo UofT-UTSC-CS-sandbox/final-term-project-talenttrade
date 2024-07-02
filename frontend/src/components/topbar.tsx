@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, ChangeEvent, FormEvent } from "react";
 import "./topbar.css";
+import { useAuth } from "../utils/AuthService";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -9,6 +10,17 @@ const TopBar = () => {
 
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
+  const { logOut } = useAuth();
+
+  const logoutFunction = async () => {
+    closeDropdown();
+    const sucess = await logOut();
+    console.log(sucess);
+    if (sucess! === true) {
+      navigate("/login");
+    } else {
+      alert(sucess);
+    }
   };
 
   const toggleDropdown = () => {
@@ -71,8 +83,6 @@ const TopBar = () => {
       <button className="makePostButton" onClick={navigateCreate}>
         Make a post
       </button>
-      {/* <Link className="makePostButton" to="/CreatePost">Make a post</Link> */}
-
       <div className="profileContainer">
         <img
           src="/Default_pfp.png"
@@ -83,7 +93,7 @@ const TopBar = () => {
         {isDropdownOpen && (
           <div className="dropdown">
             <Link
-              to="/MyProfile"
+              to="/profile"
               className="dropdownItem"
               onClick={closeDropdown}
             >
@@ -96,7 +106,7 @@ const TopBar = () => {
             >
               My Listings
             </Link>
-            <Link to="/Logout" className="dropdownItem" onClick={closeDropdown}>
+            <Link to="/login" className="dropdownItem" onClick={logoutFunction}>
               Logout
             </Link>
           </div>
@@ -105,5 +115,5 @@ const TopBar = () => {
     </div>
   );
 };
-
+}
 export default TopBar;

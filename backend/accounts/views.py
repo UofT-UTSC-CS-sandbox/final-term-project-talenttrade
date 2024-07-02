@@ -1,11 +1,12 @@
 from datetime import timezone
+from .models import UserProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from accounts.serializers import UserSerializer
+from .serializers import ProfileSerializer, UserSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -26,6 +27,8 @@ class SignupView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
+            user_profile = UserProfile.objects.create(user=serializer.instance)
             return Response({'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
         
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -72,3 +75,47 @@ class SearchByUser(APIView):
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+class ProfileCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = ProfileSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user_profile = UserProfile.objects.create(user=request.user, **serializer.validated_data)
+            return Response({'message': 'Profile creation successful'}, status=status.HTTP_201_CREATED)
+        
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Profile update successful'}, status=status.HTTP_200_OK)
+        
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+class ProfileView(APIView):
+    def get(self, request, user_id=None):
+        try:
+            if user_id:
+                user_profile = UserProfile.objects.get(user_id=user_id)
+            else:
+                user_profile = UserProfile.objects.get(user=request.user)
+            serializer = ProfileSerializer(user_profile)
+            serializer.data['full_name'] = request.user.first_name + " " + request.user.last_name
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+class ProfileDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.delete()
+        return Response({'message': 'Profile deletion successful'}, status=status.HTTP_200_OK)
+

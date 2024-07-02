@@ -12,6 +12,7 @@ import ViewPostByCategory from "./pages/viewPostsByCategory";
 import TopInCategory from "./pages/TopInCategory";
 import FilterBar from "./components/filterBar";
 import SearchUser from "./pages/SearchUsers";
+import ViewProfile from "./pages/ViewProfile";
 
 function App() {
   return (
@@ -23,8 +24,8 @@ function App() {
             <div style={{ marginTop: "60px" }}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="login/" element={<LogInPage />} />
-                <Route path="signup/" element={<SignupPage />} />
+                <Route path="/login" element={<LogInPage />} />
+                <Route path="/signup" element={<SignupPage />} />
                 <Route path="/MyListings" element={<ViewPost />} />
                 <Route path="/CreatePost" element={<CreatePost />} />
                 <Route path="/filter" element={<FilterBar />} />
@@ -45,6 +46,8 @@ function App() {
                   element={<TopInCategory category="offer" />}
                 />
                 <Route path="/search-users" Component={SearchUser} />
+                <Route path="/profile/:userId" element={<ViewProfile />} />
+                <Route path="/profile" element={<ViewProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

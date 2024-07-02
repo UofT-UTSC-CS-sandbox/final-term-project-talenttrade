@@ -16,4 +16,8 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('search-user/', SearchByUser.as_view(), name='search_by_user'),
-    ]
+    path('profile/create/', ProfileCreateView.as_view(), name='profile_create'),
+    path('profile/<int:user_id>/', ProfileView.as_view(), name='profile_view'),
+    path('profile/', ProfileView.as_view(), name='profile_view_without_id'),
+    path('profile/delete/', ProfileDeleteView.as_view(), name='profile_delete'),
+]
