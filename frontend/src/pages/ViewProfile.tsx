@@ -187,7 +187,7 @@ const ViewProfile: React.FC = () => {
                                     />
                                     <TextField
                                         name="location_name"
-                                        label="Location"
+                                        label="City/Town"
                                         value={editableProfile?.location_name || ""}
                                         onChange={handleChange}
                                         fullWidth
