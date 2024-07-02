@@ -127,7 +127,11 @@ const SignupPage = () => {
           marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
+          p: 3,
           alignItems: 'center',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 1,
         }}
       >
         <Typography component="h1" variant="h5">
