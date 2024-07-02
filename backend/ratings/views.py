@@ -28,7 +28,10 @@ def GetAvgRating(request):
     for rating in ratings:
       num += rating.rating
       tot += 1
-    avg = num/tot
+    if num == 0.0:
+      avg = 0
+    else:
+      avg = num/tot
   else:
     avg = 0
   return JsonResponse({'average': avg})
