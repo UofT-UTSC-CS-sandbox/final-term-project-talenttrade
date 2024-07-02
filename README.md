@@ -65,7 +65,12 @@ The platform is designed to build trust within the community through user review
    python manage.py migrate
    ```
 
-4. Start the Django development server:
+4. Initialize the World Cities database:
+   ```sh
+   python manage.py populate_worldcities
+   ```
+
+5. Start the Django development server:
    ```sh
    python manage.py runserver
    ```

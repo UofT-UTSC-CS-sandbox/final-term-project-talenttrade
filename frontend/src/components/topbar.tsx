@@ -1,10 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, ChangeEvent, FormEvent } from "react";
 import "./topbar.css";
+import { useAuth } from "../utils/AuthService";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const { logOut } = useAuth();
+
+  const logoutFunction = async () => {
+    closeDropdown();
+    const sucess = await logOut();
+    console.log(sucess);
+    if (sucess! === true) {
+      navigate("/login");
+    } else {
+      alert(sucess);
+    }
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -15,7 +28,7 @@ const TopBar = () => {
   };
 
   const navigateCreate = () => {
-    navigate("/CreatePost", {state:{create: true}});
+    navigate("/CreatePost", { state: { create: true } });
   }
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -74,7 +87,7 @@ const TopBar = () => {
         {isDropdownOpen && (
           <div className="dropdown">
             <Link
-              to="/MyProfile"
+              to="/profile"
               className="dropdownItem"
               onClick={closeDropdown}
             >
@@ -87,7 +100,7 @@ const TopBar = () => {
             >
               My Listings
             </Link>
-            <Link to="/Logout" className="dropdownItem" onClick={closeDropdown}>
+            <Link to="/login" className="dropdownItem" onClick={logoutFunction}>
               Logout
             </Link>
           </div>
