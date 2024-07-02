@@ -95,6 +95,7 @@ class ProfileView(APIView):
             else:
                 user_profile = UserProfile.objects.get(user=request.user)
             serializer = ProfileSerializer(user_profile)
+            serializer.data['full_name'] = request.user.first_name + " " + request.user.last_name
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
