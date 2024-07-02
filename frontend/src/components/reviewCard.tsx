@@ -15,7 +15,7 @@ const ReviewCard: React.FC<reviewProps> = ({review, date}) => {
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="body1" gutterBottom>
           {review}
         </Typography>
         <Typography variant="body2" color="text.secondary">
