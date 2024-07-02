@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from .models import Review
 from .serializers import ReviewSerializer
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -19,9 +20,13 @@ class RatingRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 # get all reviews for given user
 def GetAll(request):
   receiver = request.GET.get("receiver", "")
+  page = request.GET.get("page", "")
   if receiver:
     reviews = Review.objects.filter(receiver=receiver).order_by('-published')
-    response_data = [{'review': item.review, 'published': item.published} for item in reviews]
+    paginator = Paginator(reviews, 5)
+    if (int(page) > paginator.num_pages):
+      return JsonResponse([], safe=False, status=204)
+    response_data = [{'review': item.review, 'published': item.published, 'pages': paginator.num_pages} for item in paginator.page(page)]
   else:
-    response_data = [{'review': "", 'published': -1}]
+    response_data = []
   return JsonResponse(response_data, safe=False)

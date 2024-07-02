@@ -12,6 +12,16 @@ interface dialogProps {
   handleClose: () => void;
 }
 
+/* Code to use Review Dialog
+import ReviewDialog from "../components/reviewDialog";
+const [openDialog, setOpenDialog] = useState(false);
+
+//button may need additional styling
+<button onClick={() => setOpenDialog(true)}>temp</button>
+<ReviewDialog receiverId={___} receiverName={___} open={openDialog} handleClose={() => setOpenDialog(false)}/>
+*/
+
+
 const ReviewDialog: React.FC<dialogProps> = ({receiverId, receiverName, open, handleClose}) => {
 
   const [rating, setRating] = React.useState<number | null>(0);
