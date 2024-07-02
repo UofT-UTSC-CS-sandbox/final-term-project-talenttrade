@@ -14,5 +14,5 @@ urlpatterns = [
   path('post-trade/', views.PostListByTrade.as_view(), name='post_list_by_trade'),
 
   path('filter/', views.FilterPosts.as_view(), name='filter_posts'),
-  
+  path('filterByDistance/<int:pk>/<str:pk_list>', views.FilterPostsByDistance.as_view(), name="filter_by_distance")
 ]

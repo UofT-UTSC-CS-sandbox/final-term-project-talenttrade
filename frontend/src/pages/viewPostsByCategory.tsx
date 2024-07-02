@@ -7,7 +7,7 @@ import React from "react";
 import "./viewPostsByCategory.css";
 import { useLocation } from "react-router-dom";
 import OfferFilter from "../components/offerFilter";
-
+import FilterByLocation from "../components/filterByLocation";
 export interface selectedOffersType {
   title: string;
 }
@@ -74,11 +74,13 @@ const ViewPostByCategory: React.FC = () => {
   return (
     <div>
       {!offer && need && (
-        <OfferFilter
-          selectedOffers={selectedOffers}
-          setSelectedOffers={setSelectedOffers}
-        />
-      )}
+          <OfferFilter
+            selectedOffers={selectedOffers}
+            setSelectedOffers={setSelectedOffers}
+          />
+        )}
+      {filteredPostList &&
+      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>
 
       <div className="header">
         <h1>Showing results for:</h1>
@@ -92,7 +94,7 @@ const ViewPostByCategory: React.FC = () => {
       </div>
       <div className="post-container ">
         {postList.length === 0 ? (
-          <h3> No Posts Available</h3>
+          <h3> No osts Available</h3>
         ) : (
           filteredPostList.map((post) => (
             <div key={post.id}>
