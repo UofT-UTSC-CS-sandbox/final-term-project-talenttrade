@@ -9,8 +9,8 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 const FilterByLocation  = ({filterState }) => {
 const [filteredPostList, setFilteredPostList] = filterState ;
-  const [value, setValue] = useState(60); // Initial value
-  const [open, setOpen] = useState(false); // Dropdown visibility
+  const [value, setValue] = useState(60); 
+  const [open, setOpen] = useState(false); 
   const [refresh, SetRefresh] = useState(true);
   const [postList, setPostList] = useState<any[]>([]); 
   const [oldPostList, setOldPostList] = useState<any[]>([]);
@@ -28,7 +28,7 @@ const [filteredPostList, setFilteredPostList] = filterState ;
   ];
 
   const handleChange = async (event, newValue) => {
-    setValue(newValue); // Update slider value state
+    setValue(newValue);
   };
 
   const getPostList = async (distance) => {

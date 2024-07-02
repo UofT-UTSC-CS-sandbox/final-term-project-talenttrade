@@ -80,7 +80,7 @@ const ViewPostByCategory: React.FC = () => {
           />
         )}
       {filteredPostList &&
-      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>
+      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>}
 
       <div className="header">
         <h1>Showing results for:</h1>

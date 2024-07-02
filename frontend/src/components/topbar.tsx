@@ -10,6 +10,7 @@ const TopBar = () => {
 
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
+  }
   const { logOut } = useAuth();
 
   const logoutFunction = async () => {
@@ -115,5 +116,4 @@ const TopBar = () => {
     </div>
   );
 };
-}
 export default TopBar;
