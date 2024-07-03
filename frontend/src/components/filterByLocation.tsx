@@ -7,13 +7,10 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 
 
-const FilterByLocation  = ({filterState }) => {
-const [filteredPostList, setFilteredPostList] = filterState ;
-  const [value, setValue] = useState(60); 
+const FilterByLocation  = ({ distanceState}) => {
+  const [distance, setDistance] = distanceState;
   const [open, setOpen] = useState(false); 
-  const [refresh, SetRefresh] = useState(true);
-  const [postList, setPostList] = useState<any[]>([]); 
-  const [oldPostList, setOldPostList] = useState<any[]>([]);
+  const [tempDistance, setTempDistance] = useState(-1);
   const apiFetch = useRequest();
 
   const marks = [
@@ -23,58 +20,27 @@ const [filteredPostList, setFilteredPostList] = filterState ;
   ];
 
   const handleChange = async (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const getPostList = async (distance) => {
-    try {
-      console.log("this",JSON.stringify(postList), typeof(JSON.stringify(postList)));
-      const response = await apiFetch(`posts/filterByDistance/${distance}/${JSON.stringify(oldPostList)}`, { method: 'GET' });
-      console.log("the response", response)
-      return response
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+    setTempDistance(newValue);
   };
 
   const handleButtonClick = () => {
-    if (refresh){
-        SetRefresh(false)
-        setOldPostList(filteredPostList) 
-        setPostList(filteredPostList)  
-        console.log("first tie", postList, filteredPostList)
-    }
 
     setOpen((prev) => !prev);
 
-    console.log("how many times")
   };
 
-
+  const handleFilter = () =>{
+    setDistance(tempDistance);
+  }
   const handleClickAway = () => {
     setOpen(false);
-    console.log("post List:" , filteredPostList) 
 
   };
 
   const handleReset = () => {
     setOpen(false); 
-    setFilteredPostList(oldPostList);
-    setPostList(oldPostList);
-  };
-
-
-  const handleFilter =  async () => {
-    const response = await getPostList(value);
-    console.log("response 2", response);
-    if (response){
-        setPostList(response);
-        console.log("post List1:" , postList) 
-        setFilteredPostList(response);
-        console.log("post List2:" , filteredPostList) 
-
-    }
-
+    setDistance(-1);
+    setTempDistance(-1);
   };
   
 
@@ -86,6 +52,8 @@ const [filteredPostList, setFilteredPostList] = filterState ;
                     onClick={handleButtonClick}
                     sx={{
                         backgroundColor: open ? 'black' : 'white',
+                        height: '57px',
+                        fontSize: '16px',
                         color: open ? 'white' : 'black',
                         '&:hover': {
                         backgroundColor: open ? 'black' : 'lightgrey',
@@ -111,17 +79,18 @@ const [filteredPostList, setFilteredPostList] = filterState ;
                     alignItems: 'center',
                     borderRadius: 2,
                     }}
-                >
-                    <div>Under {value} KM</div>
+                >    
+                    {tempDistance === -1 ? <div> Under 0 KM </div>
+                    : <div>Under {tempDistance} KM</div>}
                     <Slider
                     aria-label="Custom marks"
                     defaultValue={60}
-                    getAriaValueText={(value) => `${value} KM`}
+                    getAriaValueText={(tempDistance) => `${tempDistance} KM`}
                     step={10}
                     valueLabelDisplay="auto"
                     marks={marks}
                     onChange={handleChange}
-                    value={value}
+                    value={tempDistance}
                     sx={{
                         mt: 2, 
                         width:'80%',

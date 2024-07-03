@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Post
 from .serializers import PostSerializer
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.db.models import Count
 from django.http import JsonResponse
 import json, googlemaps, math, datetime
@@ -106,39 +107,28 @@ class PostListByTrade(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+
 class FilterPosts(APIView):
-    def get(self, request, format=None):
-        need = request.GET.get('need', None)
-        offers = request.GET.getlist('offer[]', [])
-        print(need, offers)
-        
-        if need and offers:
-            posts = Post.objects.filter(need__iexact=need, offer__in=offers)
-        elif need:
-            posts = Post.objects.filter(need__iexact=need)
-        else:
-            posts = Post.objects.all()
+    permission_classes =[permissions.IsAuthenticated]
 
-        serializer = PostSerializer(posts, many=True)
+    def get(self, request, pk, pk_list, offer_list, format=None):
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        offers = json.loads(offer_list)
 
-class FilterPostsByDistance(APIView):
+        post_ids =[]
 
-    def get(self, request, pk, pk_list, format=None):
         distance_wanted = float(pk)  
         #print(distance_wanted)
 
         #source = self.user.location 
 
-        posts = []
         #source_latitude = "43.6629"
         #source_longitude = "-79.3957"
         #source = f"{source_latitude},{source_longitude}"
         source = "Toronto"
 
         postList = json.loads(pk_list)
-
 
         for post in postList:
             curr_post = Post.objects.filter(id=post["id"])
@@ -149,26 +139,33 @@ class FilterPostsByDistance(APIView):
                 print(destination)
                 #destination = f"{lat},{long}"
                 #print(destination)
-                try:
-                    departure_time = timezone.now()
-                    result = gmap_client.directions(source, destination, mode="driving", departure_time=departure_time)
+                if(distance_wanted == -1):
+                    post_ids.append(curr_post[0].id)
+                else:
+                    try:
+                        departure_time = timezone.now()
+                        result = gmap_client.directions(source, destination, mode="driving", departure_time=departure_time)
 
-                    if result:
-                        distance_meters = result[0]['legs'][0]['distance']['value']
-                        distance_km = distance_meters / 1000
-                        print("distance", distance_km)
-                        if math.floor(distance_km) <= distance_wanted and distance_km > 0:
-                            posts.append(curr_post[0])
+                        if result:
+                            distance_meters = result[0]['legs'][0]['distance']['value']
+                            distance_km = distance_meters / 1000
+                            print("distance", distance_km)
+                            if math.floor(distance_km) <= distance_wanted and distance_km > 0:
+                                post_ids.append(curr_post[0].id)
 
 
-                        print(f"Distance: {distance_km} km")
-                    else:
-                        print("No results found")
-                
-                except Exception as e:
-                    print(f"Error fetching directions: {str(e)}")
+                            print(f"Distance: {distance_km} km")
+                        else:
+                            print("No results found")
+                    
+                    except Exception as e:
+                        print(f"Error fetching directions: {str(e)}")
 
-        print("length of list", len(posts))
+        if (len(offers)> 0):
+            posts = Post.objects.filter(id__in=post_ids, offer__in=offers)
+        else:
+             posts = Post.objects.filter(id__in=post_ids)
+
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)
 

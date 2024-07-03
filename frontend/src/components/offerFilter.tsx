@@ -35,17 +35,37 @@ const OfferFilter: React.FC<OfferFilterProps> = ({
           {option.title}
         </li>
       )}
-      style={{ width: 500 }}
+      style={{ width: '255px',backgroundColor: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.2)', 
+        borderRadius: 4, 
+    }}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Filter By My Offerings"
+          label="FILTER BY MY OFFERINGS"
           placeholder="Offers"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'transparent',
+              },
+              '&:hover fieldset': {
+                borderColor: 'grey',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'black',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'black',
+            },
+            '& .MuiInputBase-input': {
+              color: 'black',
+            },
+          }}
         />
       )}
       value={selectedOffers}
       onChange={(_event, newValue) => {
-        // const offerTitles = newValue.map((offer) => offer.title);
         setSelectedOffers(newValue);
       }}
     />

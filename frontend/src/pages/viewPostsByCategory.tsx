@@ -8,6 +8,7 @@ import "./viewPostsByCategory.css";
 import { useLocation } from "react-router-dom";
 import OfferFilter from "../components/offerFilter";
 import FilterByLocation from "../components/filterByLocation";
+import useRequest from "../utils/requestHandler";
 export interface selectedOffersType {
   title: string;
 }
@@ -18,12 +19,15 @@ const ViewPostByCategory: React.FC = () => {
   const need = queryParams.get("need");
   const offer = queryParams.get("offer");
   const show = queryParams.get("show");
+  const [distance, setDistance] = useState(-1);
   const [showBool, setShowBool] = useState(false);
   const [postList, setPostList] = useState<PostType[]>([]);
   const [filteredPostList, setFilteredPostList] = useState<PostType[]>([]);
   const [selectedOffers, setSelectedOffers] = useState<selectedOffersType[]>(
     []
   );
+  const apiFetch = useRequest();
+
 
   useEffect(() => {
     getPostList();
@@ -33,8 +37,8 @@ const ViewPostByCategory: React.FC = () => {
   }, [need]);
 
   useEffect(() => {
-    filterPosts();
-  }, [selectedOffers, postList, filteredPostList]);
+    filterPosts(distance);
+  }, [selectedOffers, postList, distance]);
 
   const getPostList = async () => {
     if (need && offer) {
@@ -55,38 +59,39 @@ const ViewPostByCategory: React.FC = () => {
     }
   };
 
-  const filterPosts = () => {
-    if (selectedOffers.length === 0) {
+  const filterPosts = async(distance) => {
+    console.log("the current list before filtering", filteredPostList)
+    if (selectedOffers.length === 0 && distance == -1) {
       setFilteredPostList(postList);
-    } else {
-      let params: any = {};
-      if (need) {
-        params.need = need;
-      }
-      if (selectedOffers.length > 0) {
-        let offers = selectedOffers.map((offer) => offer.title);
-        axios
-          .get(`${host}/posts/filter/`, {
-            params: { need: need, offer: offers },
-          })
-          .then((res) => setFilteredPostList(res.data))
-          .catch((error) => alert(error));
-        console.log(filteredPostList);
+    } else{
+      let offers = selectedOffers.map((offer) => offer.title);
+      try {
+        console.log("this",JSON.stringify(postList), typeof(JSON.stringify(postList)), JSON.stringify(offers));
+        const response = await apiFetch(`posts/filter/${distance.toString()}/${JSON.stringify(postList)}/${JSON.stringify(offers)}`, { method: 'GET' });
+        setFilteredPostList(response);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     }
   };
 
+
+
+
   return (
     <div>
-      {showBool && (
-          <OfferFilter
-            selectedOffers={selectedOffers}
-            setSelectedOffers={setSelectedOffers}
-          />
-        )}
-      {filteredPostList && showBool &&
-      <FilterByLocation filterState={[filteredPostList, setFilteredPostList]}/>}
-
+      <div className="FilteringContainer">
+        <div className="Filtering">
+          {showBool && (
+              <OfferFilter
+                selectedOffers={selectedOffers}
+                setSelectedOffers={setSelectedOffers}
+              />
+            )}
+          {filteredPostList && showBool &&
+          <FilterByLocation distanceState={[distance, setDistance]}/>}
+        </div>
+      </div>
       <div className="header">
         <h1>Showing results for:</h1>
         {need && offer ? (
@@ -101,7 +106,7 @@ const ViewPostByCategory: React.FC = () => {
         {postList.length === 0 ? (
           <h3> No Posts Available</h3>
         ) : (
-          filteredPostList.map((post) => (
+          filteredPostList && filteredPostList.map((post) => (
             <div key={post.id}>
               <Post post={post} />
             </div>
