@@ -39,8 +39,6 @@
 
 ## Create Review
 
-Requires Authentication
-
 - URL: `/reviews`
 - Method: `POST`
 - Data Params: `{reviewer: int, receiver: int, review: string}`
