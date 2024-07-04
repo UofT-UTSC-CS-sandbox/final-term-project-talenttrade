@@ -103,10 +103,10 @@ export default function CreatePost() {
 
   const editPost = async () => {
     const post = {
-      author_id: userId, // temp
-      author_name: userName, // temp
-      need: need,
-      offer: offer,
+      author_id: userId,
+      author_name: userName,
+      need: formatText(need),
+      offer: formatText(offer),
       description: description,
       location: location,
       applicants: applicants,

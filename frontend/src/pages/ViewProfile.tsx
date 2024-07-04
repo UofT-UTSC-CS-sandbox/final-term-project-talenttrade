@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Button, Card, CardContent, Typography, Avatar, TextField, List, ListItem, ListItemText, Checkbox, FormControlLabel, Snackbar, CircularProgress } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography, Avatar, TextField, List, ListItem, ListItemText, Checkbox, FormControlLabel, Snackbar, CircularProgress, Rating } from "@mui/material";
 import useRequest from "../utils/requestHandler";
 import host from "../utils/links";
 import "./ViewProfile.css";
+import ReviewCard from "../components/reviewCard";
 
 interface UserProfileType {
     user: number;
@@ -22,6 +23,12 @@ interface LocationResult {
     lng: string;
 }
 
+interface Review {
+  review: string;
+  published: string;
+  pages: number;
+}
+
 const ViewProfile: React.FC = () => {
     const [profile, setProfile] = useState<UserProfileType | null>(null);
     const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -31,6 +38,10 @@ const ViewProfile: React.FC = () => {
     const [useExactLocation, setUseExactLocation] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [rating, setRating] = useState(0);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
@@ -45,6 +56,10 @@ const ViewProfile: React.FC = () => {
     useEffect(() => {
         getProfile();
         getAndSetUser();
+        if (userId){
+          getAvgRating(parseInt(userId));
+          getReviews(parseInt(userId), 1);
+        }
     }, [userId]);
 
     const getProfile = async () => {
@@ -144,6 +159,37 @@ const ViewProfile: React.FC = () => {
             setLocationResults([]);
         }
     };
+
+    const getAvgRating = async (id: number) => {
+      const response = await apiFetch(`ratings/avg/?receiver=${id}`, {method: "GET"});
+      setRating(response.average);
+    }
+
+    const getReviews = async (id: number, pageNum: number) => {
+      const response = await apiFetch(`reviews/all/?receiver=${id}&page=${pageNum}`, {method: "GET"});
+      if (!response.length){
+        setReviews([])
+        setTotalPages(0)
+      }
+      else{
+        setReviews(response);
+        setTotalPages(response[0].pages);
+      }
+    }
+
+    const handleBackPage = () => {
+      if (page != 1 && userId){
+        setPage(page-1)
+        getReviews(parseInt(userId), page-1)
+      }
+    }
+
+    const handleNextPage = () => {
+      if (page < totalPages && userId){
+        setPage(page+1)
+        getReviews(parseInt(userId), page+1)
+      }
+    }
 
     const handlePreview = () => {
         navigate(`/profile/${currentUserId}`);
@@ -245,6 +291,42 @@ const ViewProfile: React.FC = () => {
                                     <Typography variant="body2" color="textSecondary" className="profile-detail">
                                         Date of Birth: {profile.date_of_birth}
                                     </Typography>
+                                    <Typography variant="body1" color="textPrimary" className="profile-detail" sx={{paddingTop: 2}}>
+                                        Rating
+                                    </Typography>
+                                    <Rating
+                                      name="read-only"
+                                      size="medium"
+                                      value={rating}
+                                      readOnly
+                                    />
+                                    <Typography variant="body1" color="textPrimary" className="profile-detail" sx={{paddingTop: 2}}>
+                                        Reviews
+                                    </Typography>
+                                    {reviews.length ? 
+                                      <div>
+                                        {reviews.map((review) => (
+                                          <div className="review-card">
+                                            <ReviewCard review={review.review} date={review.published}/>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    :
+                                      <div>
+                                        <Typography variant="body2" color="textSecondary" className="profile-detail">
+                                            There are no reviews
+                                        </Typography>
+                                      </div>
+                                    }
+                                    
+                                    <Box className="profile-actions">
+                                        <Button variant="contained" color="primary" onClick={handleBackPage} disabled={page == 1}>
+                                          Back
+                                        </Button>
+                                        <Button variant="contained" color="primary" onClick={handleNextPage} disabled={page >= totalPages}>
+                                          Next
+                                        </Button>
+                                    </Box>
                                     {currentUserId === parseInt(userId) && (
                                         <Box className="profile-actions">
                                             <Button variant="contained" color="primary" onClick={handleBack}>
