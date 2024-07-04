@@ -58,8 +58,8 @@ export default function CreatePost () {
 
   const createPost = async () => {
     const post = {
-      author_id: userId, // temp
-      author_name: userName, // temp
+      author_id: userId,
+      author_name: userName,
       need: need,
       offer: offer,
       description: description,
@@ -81,8 +81,8 @@ export default function CreatePost () {
 
   const editPost = async () => {
     const post = {
-      author_id: userId, // temp
-      author_name: userName, // temp
+      author_id: userId,
+      author_name: userName,
       need: need,
       offer: offer,
       description: description,
