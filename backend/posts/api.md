@@ -152,6 +152,7 @@
   - `pk`: the distance filter (in kilometers).
   - `pk_list`: list of post IDs to filter.
   - `offer_list`: list of offers to filter by.
+  - `loc-coords`: String containing latitude and longitude of the location.
 - Success Response:
   - `200`
     - Content: `[{id: int, author_id: int, author_name: string, need: string, offer: string, description: string, location: string, published: datetime, applicants: int}, ...]`
