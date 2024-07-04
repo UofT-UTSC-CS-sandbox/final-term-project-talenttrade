@@ -27,8 +27,6 @@ const User: React.FC<UserProps> = ({ user }) => {
 
   useEffect(() => {
     getAvgRating(user.id);
-    console.log(user.id);
-    console.log(user.first_name);
   }, [rating]);
 
   const getAvgRating = async (user_id: number) => {

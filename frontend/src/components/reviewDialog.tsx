@@ -54,12 +54,12 @@ const ReviewDialog: React.FC<dialogProps> = ({
       method: "GET",
     });
     setId(response.user_id);
-    getAndSetRating();
+    getAndSetRating(response.user_id);
   };
 
-  const getAndSetRating = async () => {
+  const getAndSetRating = async (raterId: number) => {
     const res = await apiFetch(
-      `ratings/rating/?rater=${reviewerId}&receiver=${receiverId}`,
+      `ratings/rating/?rater=${raterId}&receiver=${receiverId}`,
       { method: "GET" }
     );
     if (res.length != 0) {

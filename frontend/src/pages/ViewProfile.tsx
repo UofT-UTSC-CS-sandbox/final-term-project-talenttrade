@@ -93,6 +93,13 @@ const ViewProfile: React.FC = () => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    if (userId) {
+      getAvgRating(parseInt(userId));
+      getReviews(parseInt(userId), 1);
+    }
+  }, [openDialog]);
+
   const getProfile = async () => {
     const response = await apiFetch(
       userId ? `accounts/profile/${userId}/` : `accounts/profile/`,
@@ -390,6 +397,7 @@ const ViewProfile: React.FC = () => {
                       name="read-only"
                       size="medium"
                       value={rating}
+                      precision={0.5}
                       readOnly
                     />
                     <Box> {`(${numRatings})`}</Box>
