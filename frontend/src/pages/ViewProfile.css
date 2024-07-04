@@ -42,3 +42,11 @@
 .profile-bio {
     white-space: pre-line;
 }
+
+.Filtering {
+    display: Flex;
+}
+
+.Filtering-Container {
+    margin-left: 30px;
+}

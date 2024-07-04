@@ -65,6 +65,22 @@ class LogoutView(APIView):
             else:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class SearchByUser(APIView):
+    def get(self, request, username=None, format=None):
+        if username:
+            print(request.user.id)
+            users = User.objects.filter(username__istartswith=username).exclude(id=request.user.id)
+            serializer = UserSerializer(users, many=True)
+            serialized_users = []
+                
+            for user, serialized_data in zip(users, serializer.data):
+                serialized_data['id'] = user.id
+                serialized_users.append(serialized_data)
+
+            return Response(serialized_users, status=status.HTTP_200_OK)
+    
+
 class ProfileCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -96,6 +112,7 @@ class ProfileView(APIView):
                 user_profile = UserProfile.objects.get(user=request.user)
             serializer = ProfileSerializer(user_profile)
             serializer.data['full_name'] = request.user.first_name + " " + request.user.last_name
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)

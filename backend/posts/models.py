@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+
 
 # Create your models here.
 class Post(models.Model):
@@ -14,4 +16,4 @@ class Post(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.need+" "+self.offer+" "+self.published
+        return self.need+" "+self.offer

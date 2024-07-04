@@ -3,3 +3,4 @@ djangorestframework
 djangorestframework-simplejwt
 pillow
 django-cors-headers
+googlemaps
