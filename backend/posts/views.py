@@ -70,11 +70,12 @@ class MostPopularTrade(ListPopular):
 
 
 class PostListByNeed(APIView):
-    def get(self, request, format=None):
-        need = request.query_params.get("need", "")
-
-        if need:
-            posts = Post.objects.filter(need__iexact=need)
+    def get(self, request, need, show, format=None):
+        if show == "false" and need:
+            posts = Post.objects.filter(need__istartswith=need)
+        elif show == "true" and need:
+            print(request.user.id)
+            posts = Post.objects.filter(need__istartswith=need).exclude(author_id=request.user.id)
         else:
             posts = None
 
