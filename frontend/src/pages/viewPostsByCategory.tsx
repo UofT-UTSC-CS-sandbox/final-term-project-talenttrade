@@ -94,16 +94,19 @@ const ViewPostByCategory: React.FC = () => {
 
   return (
     <div>
-      <div className="Filtering"></div>
-      {showBool && (
-        <OfferFilter
-          selectedOffers={selectedOffers}
-          setSelectedOffers={setSelectedOffers}
-        />
-      )}
-      {filteredPostList && showBool && (
-        <FilterByLocation distanceState={[distance, setDistance]} />
-      )}
+      <div className="Filtering-Container">
+        <div className="Filtering">
+          {showBool && (
+            <OfferFilter
+              selectedOffers={selectedOffers}
+              setSelectedOffers={setSelectedOffers}
+            />
+          )}
+          {filteredPostList && showBool && (
+            <FilterByLocation distanceState={[distance, setDistance]} />
+          )}
+        </div>
+      </div>
 
       <div className="header">
         <h1>Showing results for:</h1>
