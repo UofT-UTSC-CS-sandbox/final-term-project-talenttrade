@@ -34,7 +34,7 @@ def GetAvgRating(request):
       avg = num/tot
   else:
     avg = 0
-  return JsonResponse({'average': avg})
+  return JsonResponse({'average': avg, 'numRatings': tot})
 
 # get the rating the current user gave to the given user
 @api_view(('GET',))

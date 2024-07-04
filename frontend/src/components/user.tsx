@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
+import useRequest from "../utils/requestHandler";
+import { useNavigate } from "react-router-dom";
 
 export interface UserType {
   id: number;
@@ -18,14 +20,35 @@ export interface UserProps {
 }
 
 const User: React.FC<UserProps> = ({ user }) => {
-  let value = 2;
-  let numRatings = 3;
+  const [rating, setRating] = useState(0);
+  const apiFetch = useRequest();
+  const navigate = useNavigate();
+  const [numRatings, setNumRatings] = useState(0);
+
+  useEffect(() => {
+    getAvgRating(user.id);
+    console.log(user.id);
+    console.log(user.first_name);
+  }, [rating]);
+
+  const getAvgRating = async (user_id: number) => {
+    const response = await apiFetch(`ratings/avg/?receiver=${user_id}`, {
+      method: "GET",
+    });
+    setRating(response.average);
+    setNumRatings(response.numRatings);
+  };
+
+  const viewOtherUser = () => {
+    navigate(`/profile/${user.id}`);
+  };
 
   return (
     <Card
       sx={{
         width: 200,
       }}
+      onClick={viewOtherUser}
     >
       <CardActionArea>
         <Grid
@@ -56,7 +79,6 @@ const User: React.FC<UserProps> = ({ user }) => {
           </Grid>
           <Grid
             container
-            xs={12}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -104,7 +126,7 @@ const User: React.FC<UserProps> = ({ user }) => {
                 }}
               >
                 <Rating
-                  value={value}
+                  value={rating}
                   readOnly
                   size="small"
                   sx={{

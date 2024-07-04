@@ -45,7 +45,7 @@ const TopBar = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (selectedValue == "Need") {
-      navigate(`/view-posts-by-category?need=${searchInput}`);
+      navigate(`/view-posts-by-category?need=${searchInput}&show=${true}`);
     } else if (selectedValue == "User") {
       navigate(`/search-users?username=${searchInput}`);
     }

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useLocation } from "react-router-dom";
-import host from "../utils/links";
 import User, { UserType } from "../components/user";
 import { Box, Grid } from "@mui/material";
+import useRequest from "../utils/requestHandler";
 
 const SearchUser: React.FC = () => {
   const location = useLocation();
+  const apiFetch = useRequest();
   const queryParams = new URLSearchParams(location.search);
   const username = queryParams.get("username");
   const [userList, setUserList] = useState<UserType[]>([]);
@@ -16,10 +16,10 @@ const SearchUser: React.FC = () => {
   }, [username]);
 
   const getUserList = async () => {
-    axios
-      .get(`${host}/accounts/search-user/`, { params: { username } })
-      .then((res) => setUserList(res.data))
-      .catch((error) => alert(error));
+    const res = await apiFetch(`accounts/search-user/${username}/`, {
+      method: "GET",
+    });
+    setUserList(res);
   };
 
   return (

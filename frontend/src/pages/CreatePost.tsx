@@ -105,8 +105,8 @@ export default function CreatePost() {
     const post = {
       author_id: userId,
       author_name: userName,
-      need: need,
-      offer: offer,
+      need: formatText(need),
+      offer: formatText(offer),
       description: description,
       location: location,
       applicants: applicants,
