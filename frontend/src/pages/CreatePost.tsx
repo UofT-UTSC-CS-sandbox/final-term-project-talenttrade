@@ -16,6 +16,8 @@ import {
   Snackbar,
   Alert,
   AlertColor,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 
 export default function CreatePost() {
@@ -32,6 +34,7 @@ export default function CreatePost() {
   const [snackSeverity, setSnackSeverity] = useState<AlertColor>("success");
   const [userId, setUserId] = useState(-1);
   const [userName, setUserName] = useState("");
+  const [profileLocation, setProfileLocation] = useState("");
 
   const navigate = useNavigate();
   const locationRouter = useLocation();
@@ -51,7 +54,15 @@ export default function CreatePost() {
     });
     setUserId(response.user_id);
     setUserName(response.user_name);
+    getAndSetLocation(response.user_id);
   };
+
+  const getAndSetLocation= async (id: number)  => {
+    const response = await apiFetch(`accounts/profile/${id}`, {
+      method: "GET",
+    });
+    setProfileLocation(response.location_name)
+  }
 
   const formatText = (text: string) => {
     const words = text.split(" ");
@@ -124,6 +135,13 @@ export default function CreatePost() {
 
     navigate("/MyListings");
   };
+
+  const handleCheckboxChange = () => {
+    if (location == profileLocation)
+      setLocation("")
+    else
+      setLocation(profileLocation)
+  }
 
   const handleSubmit = () => {
     if (
@@ -241,6 +259,20 @@ export default function CreatePost() {
                     }}
                   />
                 </FormControl>
+              </div>
+              <div>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={location == profileLocation}
+                      onChange={handleCheckboxChange}
+                      name="is_exact_location"
+                      color="primary"
+                    />
+                  }
+                  label={"Use " + profileLocation}
+                  className="input_field"
+                />
               </div>
             </CardContent>
             <Button onClick={handleSubmit} variant="contained">
