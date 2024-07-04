@@ -12,5 +12,5 @@ urlpatterns = [
   path('post-need/', views.PostListByNeed.as_view(), name='post_list_by_need'),
   path('post-offer/', views.PostListByOffer.as_view(), name='post_list_by_offer'),
   path('post-trade/', views.PostListByTrade.as_view(), name='post_list_by_trade'),
-  path('filter/<str:pk>/<str:pk_list>/<str:offer_list>', views.FilterPosts.as_view(), name="filter"),
+  path('filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>', views.FilterPosts.as_view(), name="filter"),
 ]

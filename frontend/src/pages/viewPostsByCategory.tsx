@@ -66,8 +66,9 @@ const ViewPostByCategory: React.FC = () => {
     } else{
       let offers = selectedOffers.map((offer) => offer.title);
       try {
-        console.log("this",JSON.stringify(postList), typeof(JSON.stringify(postList)), JSON.stringify(offers));
-        const response = await apiFetch(`posts/filter/${distance.toString()}/${JSON.stringify(postList)}/${JSON.stringify(offers)}`, { method: 'GET' });
+        const userId =  await apiFetch("accounts/get-current-user-id", { method: "GET" })
+        const profile = await apiFetch(userId.id ? `accounts/profile/${userId}/` : `accounts/profile/`, { method: "GET" });
+        const response = await apiFetch(`posts/filter/${distance.toString()}/${JSON.stringify(postList)}/${JSON.stringify(offers)}/${profile.location_coords}`, { method: 'GET' });
         setFilteredPostList(response);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -80,18 +81,16 @@ const ViewPostByCategory: React.FC = () => {
 
   return (
     <div>
-      <div className="FilteringContainer">
-        <div className="Filtering">
-          {showBool && (
-              <OfferFilter
-                selectedOffers={selectedOffers}
-                setSelectedOffers={setSelectedOffers}
-              />
-            )}
-          {filteredPostList && showBool &&
-          <FilterByLocation distanceState={[distance, setDistance]}/>}
-        </div>
-      </div>
+      <div className="Filtering"></div>
+      {showBool && (
+          <OfferFilter
+            selectedOffers={selectedOffers}
+            setSelectedOffers={setSelectedOffers}
+          />
+        )}
+      {filteredPostList && showBool &&
+      <FilterByLocation distanceState={[distance, setDistance]}/>}
+
       <div className="header">
         <h1>Showing results for:</h1>
         {need && offer ? (

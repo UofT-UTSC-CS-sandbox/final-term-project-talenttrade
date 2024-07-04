@@ -112,33 +112,29 @@ class PostListByTrade(APIView):
 class FilterPosts(APIView):
     permission_classes =[permissions.IsAuthenticated]
 
-    def get(self, request, pk, pk_list, offer_list, format=None):
+    def get(self, request, pk, pk_list, offer_list, loc_coords, format=None):
 
         offers = json.loads(offer_list)
 
         post_ids =[]
 
         distance_wanted = float(pk)  
-        #print(distance_wanted)
 
-        #source = self.user.location 
-
-        #source_latitude = "43.6629"
-        #source_longitude = "-79.3957"
-        #source = f"{source_latitude},{source_longitude}"
-        source = "Toronto"
+        location = loc_coords.split(",")
+        source_latitude = location[0]
+        source_longitude = location[1]
+        source = f"{source_latitude},{source_longitude}"
 
         postList = json.loads(pk_list)
 
+        print("this is the post list", postList)
         for post in postList:
             curr_post = Post.objects.filter(id=post["id"])
             if request.user and (request.user.username != str(curr_post[0].author_id)):
                 #lat = post.latitude
                 #long = post.longitude
                 destination = curr_post[0].location
-                print(destination)
                 #destination = f"{lat},{long}"
-                #print(destination)
                 if(distance_wanted == -1):
                     post_ids.append(curr_post[0].id)
                 else:
@@ -169,7 +165,4 @@ class FilterPosts(APIView):
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-# Correcting the coordinates format
-#source = "43.6629,-79.3957"
-#destination = "43.5483,-79.6636"
 
