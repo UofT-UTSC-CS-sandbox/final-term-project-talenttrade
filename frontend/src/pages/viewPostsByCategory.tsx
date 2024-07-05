@@ -47,19 +47,19 @@ const ViewPostByCategory: React.FC = () => {
         .catch((error) => alert(error));
     } else if (need) {
       if (showBool) {
-        const response = await apiFetch(`posts/post-need/${need}/${show}`, {
+        const response = await apiFetch(`posts/post-offer/${need}/${show}`, {
           method: "GET",
         });
         setPostList(response);
       } else {
         axios
-          .get(`${host}/posts/post-need/${need}/${show}`)
+          .get(`${host}/posts/post-need/`, { params: { need } })
           .then((res) => setPostList(res.data))
           .catch((error) => alert(error));
       }
     } else if (offer) {
       axios
-        .get(`${host}/posts/post-offer/`, { params: { offer } })
+        .get(`${host}/posts/post-offer/${offer}/${show}`)
         .then((res) => setPostList(res.data))
         .catch((error) => alert(error));
     }

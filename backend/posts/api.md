@@ -115,11 +115,11 @@
 
 ## List Posts by Offer
 
-- URL: `/posts/post-offer/`
+- URL: `/posts/post-offer/<str:offer>/<str:show>`
 - Method: GET
-- URL Params: None
-- Query Params:
+- URL Params:
   - `offer`: the offer to filter posts by.
+  - `show`: `true` if searching, otherwise `false`.
 - Success Response:
   - `200`
     - Content: `[{id: int, author_id: int, author_name: string, need: string, offer: string, description: string, location: string, published: datetime, applicants: int}, ...]`

@@ -69,13 +69,13 @@ class MostPopularTrade(ListPopular):
     
 
 
-class PostListByNeed(APIView):
-    def get(self, request, need, show, format=None):
-        if show == "false" and need:
-            posts = Post.objects.filter(need__istartswith=need)
-        elif show == "true" and need:
+class PostListByOffer(APIView):
+    def get(self, request, offer, show, format=None):
+        if show == "false" and offer:
+            posts = Post.objects.filter(offer__istartswith=offer)
+        elif show == "true" and offer:
             print(request.user.id)
-            posts = Post.objects.filter(need__istartswith=need).exclude(author_id=request.user.id)
+            posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
         else:
             posts = None
 
@@ -83,12 +83,12 @@ class PostListByNeed(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     
-class PostListByOffer(APIView):
+class PostListByNeed(APIView):
     def get(self, request, format=None):
-        offer = request.query_params.get("offer", "")
+        need = request.query_params.get("need", "")
 
-        if offer:
-            posts = Post.objects.filter(offer__iexact=offer)
+        if need:
+            posts = Post.objects.filter(need__iexact=need)
         else:
             posts = None
 
@@ -159,7 +159,7 @@ class FilterPosts(APIView):
                         print(f"Error fetching directions: {str(e)}")
 
         if (len(offers)> 0):
-            posts = Post.objects.filter(id__in=post_ids, offer__in=offers)
+            posts = Post.objects.filter(id__in=post_ids, need__in=offers)
         else:
              posts = Post.objects.filter(id__in=post_ids)
 
