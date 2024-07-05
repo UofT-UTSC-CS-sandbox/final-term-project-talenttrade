@@ -1,12 +1,19 @@
 from django.shortcuts import render
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Post
 from .serializers import PostSerializer
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.db.models import Count
 from django.http import JsonResponse
+import json, googlemaps, math, datetime
+from django.utils import timezone
+
+api_key = "AIzaSyAgfAWhb_ZqvR_DkfqqQeJ_wW9adqrTmH0" 
+
+gmap_client = googlemaps.Client(key=api_key)
 
 
 # Create your views here.
@@ -62,24 +69,26 @@ class MostPopularTrade(ListPopular):
     
 
 
-class PostListByNeed(APIView):
-    def get(self, request, format=None):
-        need = request.query_params.get("need", "")
-
-        if need:
-            posts = Post.objects.filter(need=need)
+class PostListByOffer(APIView):
+    def get(self, request, offer, show, format=None):
+        if show == "false" and offer:
+            posts = Post.objects.filter(offer__istartswith=offer)
+        elif show == "true" and offer:
+            print(request.user.id)
+            posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
         else:
             posts = None
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class PostListByOffer(APIView):
+    
+class PostListByNeed(APIView):
     def get(self, request, format=None):
-        offer = request.query_params.get("offer", "")
+        need = request.query_params.get("need", "")
 
-        if offer:
-            posts = Post.objects.filter(offer=offer)
+        if need:
+            posts = Post.objects.filter(need__iexact=need)
         else:
             posts = None
 
@@ -92,9 +101,69 @@ class PostListByTrade(APIView):
         need = request.query_params.get("need", "")
 
         if offer and need:
-            posts = Post.objects.filter(offer=offer, need=need)
+            posts = Post.objects.filter(offer__iexact=offer, need__iexact=need)
         else:
             posts = None
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+
+class FilterPosts(APIView):
+    permission_classes =[permissions.IsAuthenticated]
+
+    def get(self, request, pk, pk_list, offer_list, loc_coords, format=None):
+
+        offers = json.loads(offer_list)
+
+        post_ids =[]
+
+        distance_wanted = float(pk)  
+
+        location = loc_coords.split(",")
+        source_latitude = location[0]
+        source_longitude = location[1]
+        source = f"{source_latitude},{source_longitude}"
+
+        postList = json.loads(pk_list)
+
+        print("this is the post list", postList)
+        for post in postList:
+            curr_post = Post.objects.filter(id=post["id"])
+            if request.user and (request.user.username != str(curr_post[0].author_id)):
+                #lat = post.latitude
+                #long = post.longitude
+                destination = curr_post[0].location
+                #destination = f"{lat},{long}"
+                if(distance_wanted == -1):
+                    post_ids.append(curr_post[0].id)
+                else:
+                    try:
+                        departure_time = timezone.now()
+                        result = gmap_client.directions(source, destination, mode="driving", departure_time=departure_time)
+
+                        if result:
+                            distance_meters = result[0]['legs'][0]['distance']['value']
+                            distance_km = distance_meters / 1000
+                            print("distance", distance_km)
+                            if math.floor(distance_km) <= distance_wanted and distance_km > 0:
+                                post_ids.append(curr_post[0].id)
+
+
+                            print(f"Distance: {distance_km} km")
+                        else:
+                            print("No results found")
+                    
+                    except Exception as e:
+                        print(f"Error fetching directions: {str(e)}")
+
+        if (len(offers)> 0):
+            posts = Post.objects.filter(id__in=post_ids, need__in=offers)
+        else:
+             posts = Post.objects.filter(id__in=post_ids)
+
+        serializer = PostSerializer(posts, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+

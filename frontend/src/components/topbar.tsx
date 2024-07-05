@@ -1,10 +1,28 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, ChangeEvent, FormEvent } from "react";
 import "./topbar.css";
+import { useAuth } from "../utils/AuthService";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [selectedValue, setSelectedValue] = useState("Need");
+
+  const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(event.target.value);
+  }
+  const { logOut } = useAuth();
+
+  const logoutFunction = async () => {
+    closeDropdown();
+    const sucess = await logOut();
+    console.log(sucess);
+    if (sucess! === true) {
+      navigate("/login");
+    } else {
+      alert(sucess);
+    }
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -15,8 +33,8 @@ const TopBar = () => {
   };
 
   const navigateCreate = () => {
-    navigate("/CreatePost", {state:{create: true}});
-  }
+    navigate("/CreatePost", { state: { create: true } });
+  };
 
   const [searchInput, setSearchInput] = useState<string>("");
 
@@ -26,8 +44,11 @@ const TopBar = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // handle search logic here
-    console.log(`Searching for ${searchInput}...`);
+    if (selectedValue == "Need") {
+      navigate(`/view-posts-by-category?need=${searchInput}&show=${true}`);
+    } else if (selectedValue == "User") {
+      navigate(`/search-users?username=${searchInput}`);
+    }
   };
 
   return (
@@ -38,9 +59,9 @@ const TopBar = () => {
         </Link>
       </div>
       <div className="searchContainer">
-        <select className="filterDropdown">
+        <select className="filterDropdown" onChange={handleOptionChange}>
           <option value="Need">Need</option>
-          <option value="Offer">Offer</option>
+          <option value="User">User</option>
         </select>
         <form
           role="search"
@@ -60,10 +81,9 @@ const TopBar = () => {
           </button>
         </form>
       </div>
-      <button className="makePostButton" onClick={navigateCreate}>Make a post</button>
-      {/* <Link className="makePostButton" to="/CreatePost">Make a post</Link> */}
-
-
+      <button className="makePostButton" onClick={navigateCreate}>
+        Make a post
+      </button>
       <div className="profileContainer">
         <img
           src="/Default_pfp.png"
@@ -74,7 +94,7 @@ const TopBar = () => {
         {isDropdownOpen && (
           <div className="dropdown">
             <Link
-              to="/MyProfile"
+              to="/profile"
               className="dropdownItem"
               onClick={closeDropdown}
             >
@@ -87,7 +107,7 @@ const TopBar = () => {
             >
               My Listings
             </Link>
-            <Link to="/Logout" className="dropdownItem" onClick={closeDropdown}>
+            <Link to="/login" className="dropdownItem" onClick={logoutFunction}>
               Logout
             </Link>
           </div>
@@ -96,5 +116,4 @@ const TopBar = () => {
     </div>
   );
 };
-
 export default TopBar;

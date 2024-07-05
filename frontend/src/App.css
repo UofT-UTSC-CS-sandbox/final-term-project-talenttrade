@@ -1,8 +1,8 @@
 @import url(https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap);
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css);
 
-button{
-  gap:100px 
+button {
+  gap: 100px
 }
 
 
@@ -14,6 +14,7 @@ body {
 
 #root {
   width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 5rem;
+  padding-top: 5rem;
 }
