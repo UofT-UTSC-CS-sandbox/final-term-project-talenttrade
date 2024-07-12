@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'ratings',
     'reviews',
     'worldcities',
+    'chat',
 ]
 
 REST_FRAMEWORK = {
