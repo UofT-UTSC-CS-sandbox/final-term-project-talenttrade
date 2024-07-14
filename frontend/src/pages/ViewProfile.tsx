@@ -105,6 +105,10 @@ const ViewProfile: React.FC = () => {
         if (!userId) {
             setEditableProfile(response);
         }
+        if (!response.date_of_birth) {
+            setNotification("You must fill in your profile.");
+            setSnackbarOpen(true);
+        }
     };
 
     const handleSave = async () => {
