@@ -25,12 +25,13 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
 class ProfileSerializer(serializers.Serializer):
-    bio = serializers.CharField(required=False, allow_blank=True)
+    bio = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     location_name = serializers.CharField(required=False, allow_blank=True)
     location_coords = serializers.CharField(required=False, allow_blank=True)
     is_exact_location = serializers.BooleanField(required=False)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
     profile_picture = serializers.ImageField(required=False, allow_null=True)
+    offerings = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     full_name = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
@@ -43,6 +44,7 @@ class ProfileSerializer(serializers.Serializer):
         instance.is_exact_location = validated_data.get('is_exact_location', instance.is_exact_location)
         instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
         instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        instance.offerings = validated_data.get('offerings', instance.offerings)
         instance.save()
         return instance
     
