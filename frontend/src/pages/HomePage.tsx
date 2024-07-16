@@ -3,6 +3,7 @@ import Category from "../components/category";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import host from "../utils/links";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 export interface TopNeedType {
   need: string;
@@ -69,4 +70,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default withProfileCheck(HomePage);
