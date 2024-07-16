@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import useRequest from "../utils/requestHandler";
+
 export interface PostType {
   id: number;
   author_name: string;
@@ -14,17 +16,29 @@ export interface PostProps {
   post: PostType;
 }
 
-const descriptionLmt = 250;
 
 const Post: React.FC<PostProps> = ({ post }) => {
   const [expand, SetExpand] = useState(false);
+  const descriptionLmt = 250;
+  const apiFetch = useRequest();
+
+
+  const recordClick = async (postId: number) => {
+    const response = await apiFetch(`posts/record-click/${postId}`, {
+      method: "GET",
+    });
+    console.log(response);
+  };
+
 
   return (
     <a
       href="#"
       className={`post ${expand ? "expand" : ""}`}
-      onClick={() =>
-        post.description.length > descriptionLmt && SetExpand(!expand)
+      onClick={() => {
+        recordClick(post.id);
+        if(post.description.length > descriptionLmt) SetExpand(!expand);
+      }
       }
     >
       <div className="text">

@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weekly Suggested Posts</title>
+</head>
+<body>
+    <h1>Weekly Suggested Posts</h1>
+    <ul>
+        {% for post in suggested_posts %}
+            <li>
+                <strong>{{ post.need }}</strong> - {{ post.offer }}<br>
+                {{ post.description }}<br>
+                <em>Location: {{ post.location }}</em><br>
+                <em>Published: {{ post.published }}</em>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

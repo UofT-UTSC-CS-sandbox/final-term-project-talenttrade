@@ -37,6 +37,7 @@ const ViewPostByCategory: React.FC = () => {
 
   useEffect(() => {
     filterPosts(distance);
+
   }, [selectedOffers, postList, distance]);
 
   const getPostList = async () => {
