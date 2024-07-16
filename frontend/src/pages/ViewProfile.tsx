@@ -31,7 +31,7 @@ const [openDialog, setOpenDialog] = useState(false);
 <ReviewDialog receiverId={___} receiverName={___} open={openDialog} handleClose={() => setOpenDialog(false)}/>
 */
 
-interface UserProfileType {
+export interface UserProfileType {
   user: number;
   username: string;
   full_name: string;
