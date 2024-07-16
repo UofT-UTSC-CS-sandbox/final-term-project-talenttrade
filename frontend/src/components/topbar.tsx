@@ -36,10 +36,6 @@ const TopBar = () => {
     navigate("/CreatePost", { state: { create: true } });
   };
 
-  const navigateChat = () => {
-    navigate("/Chat/5");
-  }
-
   const [searchInput, setSearchInput] = useState<string>("");
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -87,9 +83,6 @@ const TopBar = () => {
       </div>
       <button className="makePostButton" onClick={navigateCreate}>
         Make a post
-      </button>
-      <button className="makePostButton" onClick={navigateChat}>
-        TempChat
       </button>
       <div className="profileContainer">
         <img

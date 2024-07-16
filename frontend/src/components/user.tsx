@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
+import { Avatar, Box, Button, CardActionArea, Grid } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
@@ -41,7 +41,12 @@ const User: React.FC<UserProps> = ({ user }) => {
     navigate(`/profile/${user.id}`);
   };
 
+  const navigateChat = () => {
+    navigate(`/Chat/${user.id}`);
+  }
+
   return (
+    <>
     <Card
       sx={{
         width: 200,
@@ -140,6 +145,8 @@ const User: React.FC<UserProps> = ({ user }) => {
         </Grid>
       </CardActionArea>
     </Card>
+    <Button variant="contained" sx={{width: 200}} onClick={navigateChat}>Send Message</Button>
+    </>
   );
 };
 

@@ -47,7 +47,7 @@ export default function Chat() {
           .get(`${host}/chat/messages/${userId}/${otherUser}/`)
           .then((res) => {
             if (res.data.length != 0)
-              setMessages(res.data)
+              setMessages(res.data.reverse())
           })
       } catch (error) {
         console.log(error);
@@ -56,7 +56,7 @@ export default function Chat() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [userId]);
 
   const sendMessage = async () => {
     const msg = {
@@ -78,39 +78,40 @@ export default function Chat() {
 
   return (
     <div className="chat_container">
-      {messages ? (messages.map((msg) =>   
-        <div className="message_container" key={msg.id}>
-          {msg.sender == userId ? 
-          (
-            <div className="right" key={msg.id}>
-              <div className="text">{msg.message}</div>
-              <img
-                src="/Default_pfp.png"
-                alt="Profile"
-                className="profileIcon"
-              />
-            </div>
-          )
-          :
-          (
-            <div className="left" key={msg.id}>
-              <img
-                src="/Default_pfp.png"
-                alt="Profile"
-                className="profileIcon"
-              />
-              <div className="text">{msg.message}</div>
-            </div>
-          )
-          }
-        </div>
-      ))
-      :
-      (
-        <div>Send a message to start a conversation</div>
-      )}
-
-      <div className="input">
+      <div className="message_container">
+        {messages ? (messages.map((msg) =>   
+          <div className="message" key={msg.id}>
+            {msg.sender == userId ? 
+            (
+              <div className="right" key={msg.id}>
+                <div className="text">{msg.message}</div>
+                <img
+                  src="/Default_pfp.png"
+                  alt="Profile"
+                  className="chatProfileIcon"
+                />
+              </div>
+            )
+            :
+            (
+              <div className="left" key={msg.id}>
+                <img
+                  src="/Default_pfp.png"
+                  alt="Profile"
+                  className="chatProfileIcon"
+                />
+                <div className="text">{msg.message}</div>
+              </div>
+            )
+            }
+          </div>
+        ))
+        :
+        (
+          <div>Send a message to start a conversation</div>
+        )}
+      </div>
+      <div className="input_container">
         <TextField 
           id="outlined-basic" 
           placeholder="Click to enter message"
