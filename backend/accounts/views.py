@@ -14,6 +14,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser, FormParser
 
 @api_view(['GET'])
 def get_current_user_id(request):
@@ -83,6 +84,7 @@ class SearchByUser(APIView):
 
 class ProfileCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         serializer = ProfileSerializer(data=request.data)
@@ -94,14 +96,15 @@ class ProfileCreateView(APIView):
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Profile update successful'}, status=status.HTTP_200_OK)
-        
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
     
 class ProfileView(APIView):
     def get(self, request, user_id=None):
@@ -124,4 +127,3 @@ class ProfileDeleteView(APIView):
         user_profile = UserProfile.objects.get(user=request.user)
         user_profile.delete()
         return Response({'message': 'Profile deletion successful'}, status=status.HTTP_200_OK)
-

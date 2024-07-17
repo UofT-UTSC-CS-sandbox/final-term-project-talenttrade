@@ -31,7 +31,7 @@ interface UserProfileType {
     location_name: string;
     location_coords: string;
     date_of_birth: string;
-    profile_picture: string;
+    profile_picture: File | string;
     offerings: string;
     is_exact_location: boolean;
 }
@@ -175,13 +175,21 @@ const ViewProfile: React.FC = () => {
     };
 
     const saveProfile = async (profileData: UserProfileType) => {
+        const formData = new FormData();
+        (Object.keys(profileData) as (keyof UserProfileType)[]).forEach(key => {
+            const value = profileData[key];
+            if (value instanceof File) {
+                formData.append(key, value);
+            } else {
+                formData.append(key, value as string);
+            }
+        });
+
         const response = await apiFetch("accounts/profile/create/", {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(profileData),
-        });
+            body: formData
+        }, "multipart/form-data");
+
         setLoading(false);
         setNotification("Profile updated successfully");
         setSnackbarOpen(true);
@@ -192,17 +200,28 @@ const ViewProfile: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (editableProfile) {
-            setEditableProfile({
-                ...editableProfile,
-                [name]: value,
-            });
+        if (e.target instanceof HTMLInputElement && e.target.files) {
+            const files = e.target.files;
+            if (editableProfile) {
+                setEditableProfile({
+                    ...editableProfile,
+                    [name]: files[0],
+                });
+            }
+        } else {
+            if (editableProfile) {
+                setEditableProfile({
+                    ...editableProfile,
+                    [name]: value,
+                });
 
-            if (name === "location_name") {
-                fetchLocationResults(value);
+                if (name === "location_name") {
+                    fetchLocationResults(value);
+                }
             }
         }
     };
+
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (editableProfile) {
@@ -310,6 +329,13 @@ const ViewProfile: React.FC = () => {
                             </Typography>
                             {!userId ? (
                                 <>
+                                    <TextField
+                                        name="profile_picture"
+                                        type="file"
+                                        onChange={handleChange}
+                                        fullWidth
+                                        margin="normal"
+                                    />
                                     <TextField
                                         name="bio"
                                         label="Bio"
