@@ -146,13 +146,14 @@
 
 ## Filter Posts
 
-- URL: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>`
+- URL: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>/<str:user_list>`
 - Method: GET
 - URL Params:
   - `pk`: the distance filter (in kilometers).
   - `pk_list`: list of post IDs to filter.
   - `offer_list`: list of offers to filter by.
   - `loc-coords`: String containing latitude and longitude of the location.
+  - `user_list`: String containing a list of users to filter by
 - Success Response:
   - `200`
     - Content: `[{id: int, author_id: int, author_name: string, need: string, offer: string, description: string, location: string, published: datetime, applicants: int}, ...]`

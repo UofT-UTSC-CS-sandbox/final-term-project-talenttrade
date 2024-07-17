@@ -397,7 +397,7 @@ const ViewProfile: React.FC = () => {
                       name="read-only"
                       size="medium"
                       value={rating}
-                      precision={0.5}
+                      precision={0.1}
                       readOnly
                     />
                     <Box> {`(${numRatings})`}</Box>

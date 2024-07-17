@@ -107,13 +107,11 @@ class PostListByTrade(APIView):
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
 
 class FilterPosts(APIView):
     permission_classes =[permissions.IsAuthenticated]
 
-    def get(self, request, pk, pk_list, offer_list, loc_coords, format=None):
+    def get(self, request, pk, pk_list, offer_list, loc_coords, user_list, format=None):
 
         offers = json.loads(offer_list)
 
@@ -127,8 +125,14 @@ class FilterPosts(APIView):
         source = f"{source_latitude},{source_longitude}"
 
         postList = json.loads(pk_list)
+        userList = json.loads(user_list)
+        if userList is None: 
+            userList = []
+        else:
+            userList = [int(i) for i in userList]
+        
 
-        print("this is the post list", postList)
+
         for post in postList:
             curr_post = Post.objects.filter(id=post["id"])
             if request.user and (request.user.username != str(curr_post[0].author_id)):
@@ -159,9 +163,9 @@ class FilterPosts(APIView):
                         print(f"Error fetching directions: {str(e)}")
 
         if (len(offers)> 0):
-            posts = Post.objects.filter(id__in=post_ids, need__in=offers)
+            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers)
         else:
-             posts = Post.objects.filter(id__in=post_ids)
+             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids)
 
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)

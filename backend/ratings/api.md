@@ -48,7 +48,7 @@
 - URL: `/ratings`
 - Method: `POST`
 - Data Params: `{rater: int, receiver: int, rating: int}`
-  -  0 < rating < 6
+  - 0 < rating < 6
 - Success Response:
   - `201`
     `{id: int, rater: int, receiver: int, rating: int}`
@@ -80,21 +80,21 @@
   - `200`
     `{id: int, rater: int, receiver: int, rating: int}`
 - Error Response:
- - `400`
-    ```
-    {
-    "rater": [
-        "Invalid pk \"${rater}\" - object does not exist."
-    ],
-    "receiver": [
-        "This field may not be null."
-    ],
-    "rating": [
-        "Ensure this value is less than or equal to 5."
-    ]
-    }
-    ```
-    - Above is a sample, individual fields may or may not be returned depending on the input
+- `400`
+  ```
+  {
+  "rater": [
+      "Invalid pk \"${rater}\" - object does not exist."
+  ],
+  "receiver": [
+      "This field may not be null."
+  ],
+  "rating": [
+      "Ensure this value is less than or equal to 5."
+  ]
+  }
+  ```
+  - Above is a sample, individual fields may or may not be returned depending on the input
 
 ## Delete Rating
 
@@ -109,3 +109,20 @@
   - `404`
     `{"detail": "No Rating matches the given query."}`
     - Result of giving an id that matches no existing rating
+
+## Get Users with Rating Above min_rating
+
+- URL: `/ratings/users-with-rating/<str:min_rating>`
+- Method: `POST`
+- URL Params:
+  - `min_rating`: minimum average rating to filter users.
+- Success Response:
+  - `200 `
+  ```json
+    ["<user_id1>", "<user_id2>",... ]
+  ```
+- Error Response:
+  - Code: `400`
+  ```json
+  { "error": "Rating parameter is required" }
+  ```

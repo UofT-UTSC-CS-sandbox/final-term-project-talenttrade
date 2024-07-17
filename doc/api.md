@@ -112,9 +112,12 @@
 
 ### 5. Search User by Username
 
-**URL**: `/search-user/<str:username>/`  
+**URL**: `/search-user/<str:username>/<str:user_list>`  
 **Method**: `GET`  
-**URL Parameters**: `username` (string)
+**URL Parameters**:
+
+- `username` (string): the username to search for
+- `user_list` (string of a list): the userids to filter by
 
 **Success Response**:
 
@@ -251,6 +254,24 @@
   {
     "message": "Profile deletion successful"
   }
+  ```
+
+**Error Response(s)**: None
+
+### 11. Get List Of All Users
+
+**URL**: `/users/`  
+**Method**: `GET`  
+**URL Parameters**: None
+
+**Success Response**:
+
+- **Code**: 200 OK
+- **Content**:
+  ```json
+  [
+    "<user_id1>", "<user_id2>", ...
+  ]
   ```
 
 **Error Response(s)**: None
@@ -558,7 +579,7 @@
 
 ### 11. Filter Posts
 
-**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>`  
+**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>/<str:user_list>`
 **Method**: `GET`  
 **URL Params**:
 
@@ -566,6 +587,7 @@
 - `pk_list`: list of post IDs to filter.
 - `offer_list`: list of offers to filter by.
 - `loc-coords`: String containing latitude and longitude of the location.
+- `user_list`: String containing a list of users to filter by
 
 **Success Response**:
 
@@ -806,6 +828,31 @@
     ```
   - **Condition**: This occurs when there is no rating with the specified ID.
 
+### 8. Get Users with Rating Above min_rating
+
+**URL**: `/ratings/users-with-rating/<str:min_rating>`  
+**Method**: `POST`  
+**URL Params**:
+
+- `min_rating`: minimum average rating to filter users.
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+    ["<user_id1>", "<user_id2>",... ]
+  ```
+
+**Error Response**:
+
+- **Code**: `400 Bad Request`
+  - **Content**:
+
+```json
+{ "error": "Rating parameter is required" }
+```
+
 ## Reviews Endpoints
 
 ### 1. Get Reviews
@@ -935,8 +982,6 @@
   }
   ```
   - Above is a sample, individual fields may or may not be returned depending on the input
-
-### 5. Update Review
 
 ### 5. Update Review
 
