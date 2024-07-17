@@ -4,3 +4,6 @@ djangorestframework-simplejwt
 pillow
 django-cors-headers
 googlemaps
+celery
+django-celery-beat
+redis

@@ -584,6 +584,61 @@
   { "detail": "No Posts match the given query." }
   ```
 
+### 12. Suggested Posts
+
+**URL**: `/posts/suggested-posts/`
+**Method**: GET
+**URL Params**: None
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+  [{"id": "int", "author_id": "int", "author_name": "string", "need": "string", "offer": "string", "description": "string", "location": "string", "published": "datetime", "applicants": "int"}, ...]
+  ```
+
+**Error Responses**:
+
+- **Code**: `401` Unauthorized
+  - **Content**:
+    ```json
+    { "detail": "Authentication credentials were not provided." }
+    ```
+- **Code**:`500 ` Internal Server Error
+  - **Content**:
+  ```json
+  { "detail": "Internal server error occurred." }
+  ```
+
+### 13. Record Post Click
+
+**URL**: `/posts/record-click/<int:post_id>`
+**Method**: GET, POST
+**URL Params**:
+
+- `post_id`: id of the post that is clicked.
+
+**Success Response**:
+
+- **Code**: `201 Created`
+ - **Content**:
+ ```json
+    {"message": "Click recorded"}`
+  ```
+**Error Responses**:
+
+- **Code**:`400 ` Bad Request
+  - **Content**:
+  ```json
+  { "detail": "Invalid request dat." }
+  ```
+- **Code**:`404` Not Found
+  **Content**: 
+   ```json
+  {"detail": "Post not found."}
+   ```
+
 ## Ratings Endpoints
 
 ### 1. Get Ratings

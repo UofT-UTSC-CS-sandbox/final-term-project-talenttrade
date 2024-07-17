@@ -93,7 +93,7 @@ const HomePage: React.FC = () => {
       .catch((error) => alert(error)); */
     if(loggedIn){
       const response = await apiFetch(`posts/suggested-posts`,  { method: "GET", });
-      response !== 'User unauthorized' && setPostList(response)
+      response && setPostList(response)
       }
     }
 

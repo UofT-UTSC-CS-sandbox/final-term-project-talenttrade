@@ -191,146 +191,142 @@ class PostSuggestions(APIView):
 
     def get(self, request, format=None):
 
-        if request.user.username:
 
-            user_post_needs = []
-            user_post_offers = []
+        user_post_needs = []
+        user_post_offers = []
 
-            #store key words from User's current posts
+        #store key words from User's current posts
 
-            user_posts = Post.objects.filter(author_id=request.user.id)
+        user_posts = Post.objects.filter(author_id=request.user.id)
 
-            for post in user_posts:
-                user_post_needs.append(post.need)
-                user_post_offers.append(post.offer)
-                print("USER POSTS post need:", post.need, "then offer", post.offer)
+        for post in user_posts:
+            user_post_needs.append(post.need)
+            user_post_offers.append(post.offer)
 
+        # post not by current User
+        posts_not_by_user = Post.objects.exclude(author_id=request.user.id)
+        
+        #hard coded currently 
+        user_offerings = ["Software engineer", "Plumber","Graphic Design"]
+        # user_offerings = 
 
-            # post not by current User
-            posts_not_by_user = Post.objects.exclude(author_id=request.user.id)
-            
-            #hard coded currently 
-            user_offerings = ["Software engineer", "Plumber","Graphic Design" ]
+        # post id's of posts clicked by current user
+        clicked_posts_ids = Click.objects.filter(user_id=request.user.id).values_list('post_id', flat=True)
 
-            # post id's of posts clicked by current user
-            clicked_posts_ids = Click.objects.filter(user_id=request.user.id).values_list('post_id', flat=True)
+        # posts clicked by user
+        posts_clicked_by_user = posts_not_by_user.filter(id__in=clicked_posts_ids)
 
-            # posts clicked by user
-            posts_clicked_by_user = posts_not_by_user.filter(id__in=clicked_posts_ids)
+        user_clicked_posts_need = []
+        user_clicked_posts_offer = []
 
-            user_clicked_posts_need = []
-            user_clicked_posts_offer = []
+        for post in posts_clicked_by_user:
+            user_clicked_posts_need.append(post.need)
+            user_clicked_posts_offer.append(post.offer)
+            print("CLICKED POST post they need:", post.need, "then they are", post.offer)
 
-            for post in posts_clicked_by_user:
-                user_clicked_posts_need.append(post.need)
-                user_clicked_posts_offer.append(post.offer)
-                print("CLICKED POST post they need:", post.need, "then they are", post.offer)
+        # get posts that are not clicked by user 
+        posts_not_clicked_by_user = posts_not_by_user.exclude(id__in=clicked_posts_ids)
 
-            # get posts that are not clicked by user 
-            posts_not_clicked_by_user = posts_not_by_user.exclude(id__in=clicked_posts_ids)
-
-            score = posts_not_clicked_by_user.annotate(
-                # user offerings 
-                offering_match_score=Case(
-                    *[When(need__icontains=offering, then=Value(1.0)) for offering in user_offerings],
-                    default=Value(0.0),
-                    output_field=FloatField()
-                ),
-                match_user_posts_need_score=Case(
-                    *[When(need__icontains=offering, then=Value(0.5)) for offering in user_post_offers],
-                    default=Value(0.0),
-                    output_field=FloatField()
-                ),
-                match_user_posts_offer_score=Case(
-                    *[When(offer__icontains=need, then=Value(0.5)) for need in user_post_needs],
-                    default=Value(0.0),
-                    output_field=FloatField()
-                ),
-                match_user_clicked_posts_offer_score=Case(
-                    *[When(offer__icontains=offer, then=Value(0.5)) for offer in user_clicked_posts_offer],
-                    default=Value(0.0),
-                    output_field=FloatField()
-                ),
-                match_user_clicked_posts_need_score=Case(
-                    *[When(need__icontains=need, then=Value(0.5)) for need in user_clicked_posts_need],
-                    default=Value(0.0),
-                    output_field=FloatField()
-                ),
-                combined_score=ExpressionWrapper(
-                    (F('offering_match_score') + F('match_user_posts_need_score') + F('match_user_posts_offer_score') +
-                    F('match_user_clicked_posts_offer_score') + F('match_user_clicked_posts_need_score') ) / 3,
-                    output_field = FloatField()
-                )
-
+        score = posts_not_clicked_by_user.annotate(
+            # user offerings 
+            offering_match_score=Case(
+                *[When(need__icontains=offering, then=Value(1.0)) for offering in user_offerings],
+                default=Value(0.0),
+                output_field=FloatField()
+            ),
+            match_user_posts_need_score=Case(
+                *[When(need__icontains=offering, then=Value(0.5)) for offering in user_post_offers],
+                default=Value(0.0),
+                output_field=FloatField()
+            ),
+            match_user_posts_offer_score=Case(
+                *[When(offer__icontains=need, then=Value(0.5)) for need in user_post_needs],
+                default=Value(0.0),
+                output_field=FloatField()
+            ),
+            match_user_clicked_posts_offer_score=Case(
+                *[When(offer__icontains=offer, then=Value(0.5)) for offer in user_clicked_posts_offer],
+                default=Value(0.0),
+                output_field=FloatField()
+            ),
+            match_user_clicked_posts_need_score=Case(
+                *[When(need__icontains=need, then=Value(0.5)) for need in user_clicked_posts_need],
+                default=Value(0.0),
+                output_field=FloatField()
+            ),
+            combined_score=ExpressionWrapper(
+                (F('offering_match_score') + F('match_user_posts_need_score') + F('match_user_posts_offer_score') +
+                F('match_user_clicked_posts_offer_score') + F('match_user_clicked_posts_need_score') ) / 3,
+                output_field = FloatField()
             )
 
-            for i in score:
-                print("NDNSNDSNDSDN",
-                "they need", i.need,"they are", i.offer, i.offering_match_score, i.match_user_posts_need_score, i.match_user_posts_offer_score, 
-                i.match_user_clicked_posts_offer_score, i.match_user_clicked_posts_need_score, i.combined_score)
+        )
 
-            max_click_count = -1 
-            # get posts by num of clicks 
-            if len(Click.objects.all()) > 0:
-                posts_with_click_counts =  score.annotate(click_count=Count('click')) 
-                max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click']
-            else:
-                posts_with_click_counts = score
+        for i in score:
+            print("they need", i.need,"they are", i.offer, i.offering_match_score, i.match_user_posts_need_score, i.match_user_posts_offer_score, 
+            i.match_user_clicked_posts_offer_score, i.match_user_clicked_posts_need_score, i.combined_score)
 
-            # Calculate the time range
-            max_age = timezone.now() - datetime.timedelta(days=30)
+        max_click_count = -1 
+        # get posts by num of clicks 
+        if len(Click.objects.all()) > 0:
+            posts_with_click_counts =  score.annotate(click_count=Count('click')) 
+            max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click']
+        else:
+            posts_with_click_counts = score
 
-            if max_click_count > -1:
+        # Calculate the time range
+        max_age = timezone.now() - datetime.timedelta(days=30)
 
-                # Sort posts based on newer posts vs older posts and by the freq of clicks
-                posts_weighted = posts_with_click_counts.annotate(
-                    age_days=ExpressionWrapper(
-                        (timezone.now() - F('published')) / timezone.timedelta(days=1),
-                        output_field=FloatField()
-                    ),
-                    recency_score=ExpressionWrapper(
-                        (30.0 - F('age_days')) / 30.0,
-                        output_field= FloatField()
-                    ),
-                    popularity_score=ExpressionWrapper(
-                        F('click_count') / float(max_click_count),
-                        output_field= FloatField()
-                    ),
-                    combined_score2=ExpressionWrapper(
-                        (F('recency_score') + F('popularity_score')) / 2,
-                        output_field = FloatField()
-                    ),
-                    total_score = ExpressionWrapper(
-                        (F('combined_score2') + F('combined_score'))/2,
-                        output_field = FloatField())
-                ).filter(published__gte=max_age)
+        if max_click_count > -1:
 
-                posts_sorted = posts_weighted.order_by('-total_score', '-published')
+            # Sort posts based on newer posts vs older posts and by the freq of clicks
+            posts_weighted = posts_with_click_counts.annotate(
+                age_days=ExpressionWrapper(
+                    (timezone.now() - F('published')) / timezone.timedelta(days=1),
+                    output_field=FloatField()
+                ),
+                recency_score=ExpressionWrapper(
+                    (30.0 - F('age_days')) / 30.0,
+                    output_field= FloatField()
+                ),
+                popularity_score=ExpressionWrapper(
+                    F('click_count') / float(max_click_count),
+                    output_field= FloatField()
+                ),
+                combined_score2=ExpressionWrapper(
+                    (F('recency_score') + F('popularity_score')) / 2,
+                    output_field = FloatField()
+                ),
+                total_score = ExpressionWrapper(
+                    (F('combined_score2') + F('combined_score'))/2,
+                    output_field = FloatField())
+            ).filter(published__gte=max_age)
 
-            else: 
-                posts_weighted = score.filter(published__gte=max_age)
-                posts_sorted = posts_weighted.order_by('-combined_score', '-published')
+            posts_sorted = posts_weighted.order_by('-total_score', '-published')
 
-           # for post in posts_weighted:
-               # print(f"Post ID: {post.id}, {post.age_days}, Recency Score: {post.recency_score}, Popularity Score: {post.popularity_score}, Combined Score: {post.combined_score2}, Combined score: {post.combined_score}, total_score {post.total_score}")
+        else: 
+            posts_weighted = score.filter(published__gte=max_age)
+            posts_sorted = posts_weighted.order_by('-combined_score', '-published')
 
-           
+        # for post in posts_weighted:
+            # print(f"Post ID: {post.id}, {post.age_days}, Recency Score: {post.recency_score}, Popularity Score: {post.popularity_score}, Combined Score: {post.combined_score2}, Combined score: {post.combined_score}, total_score {post.total_score}")
 
-            print("posts sorted", len(posts_sorted))
-            
-            store_suggested_post, created = StoreSuggestedPost.objects.get_or_create(user=request.user, email=str(request.user.email))
-            store_suggested_post.suggested_posts.set(posts_sorted[:10])
-            store_suggested_post.save()
-            print("posts sorted", store_suggested_post.email)
-            
+        
 
-
-            serializer = PostSerializer(posts_sorted[:10], many=True)
-                    
-            return JsonResponse(serializer.data, safe=False)
+        print("posts sorted", len(posts_sorted))
+        
+        store_suggested_post, created = StoreSuggestedPost.objects.get_or_create(user=request.user, email=str(request.user.email))
+        store_suggested_post.suggested_posts.set(posts_sorted[:10])
+        store_suggested_post.save()
+        print("posts sorted", store_suggested_post.email)
+        
 
 
-        return Response({'message': 'User unauthorized'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = PostSerializer(posts_sorted[:10], many=True)
+                
+        return JsonResponse(serializer.data, safe=False)
+
+
     
 
 
