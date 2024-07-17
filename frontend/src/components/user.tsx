@@ -3,7 +3,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
-import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
 import { useNavigate } from "react-router-dom";

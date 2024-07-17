@@ -110,7 +110,7 @@ const HomePage: React.FC = () => {
             component="img"
             sx={{ maxHeight: "200px", maxWidth: "200px" }}
             alt="The house from the offer."
-            src="./../public/hammer.jpg"
+            src="./hammer.jpg"
           />
           <Stack>
             <Typography
