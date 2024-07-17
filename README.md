@@ -29,6 +29,7 @@ The platform is designed to build trust within the community through user review
 
 - Node.js and npm installed on your machine.
 - Python and pip installed on your machine.
+- Redis installed on your machine.
 
 ### Frontend Setup
 
@@ -69,8 +70,12 @@ The platform is designed to build trust within the community through user review
    ```sh
    python manage.py populate_worldcities
    ```
+5. Apply Migrations for django_celery_beat app:
+   ```sh
+   python3  manage.py  migrate django_celery_beat
+   ```
 
-5. Start the Django development server:
+7. Start the Django development server:
    ```sh
    python manage.py runserver
    ```
