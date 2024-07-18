@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Post from "./Post";
 import { PostType } from "./Post";
-import "./Post.css";
 import useRequest from "../utils/requestHandler";
 
 const ViewPost: React.FC = () => {

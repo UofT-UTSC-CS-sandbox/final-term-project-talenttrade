@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./category.css"; // Import the CSS file
 import { TopNeedType, TopOfferType, TopTradeType } from "../pages/HomePage";
 import { Button, InputAdornment, Stack, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
