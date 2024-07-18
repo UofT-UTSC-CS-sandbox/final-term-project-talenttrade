@@ -36,11 +36,12 @@ class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "pk"
 
 class ListPopular(APIView):
-    def get_most_popular(self, title):
+    def get_most_popular(self, title, user_id):
         if title=="trade":
             popular = (
                 Post.objects
                 .values('offer', 'need')
+                .exclude(author_id=user_id)
                 .annotate(count=Count('id'))
                 .order_by('-count')
             )
@@ -48,6 +49,7 @@ class ListPopular(APIView):
             popular = (
                 Post.objects
                 .values(title)
+                .exclude(author_id=user_id)
                 .annotate(count=Count(title))
                 .order_by('-count')
             )
@@ -55,19 +57,19 @@ class ListPopular(APIView):
 
 class MostPopularNeed(ListPopular):
     def get(self, request):
-        most_popular_need = self.get_most_popular("need")
+        most_popular_need = self.get_most_popular("need", request.user.id)
         response_data = [{'need': item['need'], 'count': item['count']} for item in most_popular_need]
         return JsonResponse(response_data, safe=False)
 
 class MostPopularOffer(ListPopular):
     def get(self, request):
-        most_popular_offer = self.get_most_popular("offer")
+        most_popular_offer = self.get_most_popular("offer", request.user.id)
         response_data = [{'offer': item['offer'], 'count': item['count']} for item in most_popular_offer]
         return JsonResponse(response_data, safe=False)
 
 class MostPopularTrade(ListPopular):
     def get(self, request):
-        most_popular_trade = self.get_most_popular("trade")
+        most_popular_trade = self.get_most_popular("trade", request.user.id)
         response_data = [{'offer': item['offer'], 'need': item['need'], 'count': item['count']} for item in most_popular_trade]
         return JsonResponse(response_data, safe=False)
     
@@ -75,23 +77,18 @@ class MostPopularTrade(ListPopular):
 
 class PostListByOffer(APIView):
     def get(self, request, offer, show, format=None):
-        if show == "false" and offer:
-            posts = Post.objects.filter(offer__istartswith=offer)
-        elif show == "true" and offer:
-            posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
-        else:
-            posts = None
+        posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     
 class PostListByNeed(APIView):
-    def get(self, request, format=None):
-        need = request.query_params.get("need", "")
+    def get(self, request, need, format=None):
+        print(request.user.id)
 
         if need:
-            posts = Post.objects.filter(need__iexact=need)
+            posts = Post.objects.filter(need__iexact=need).exclude(author_id=request.user.id)
         else:
             posts = None
 
@@ -99,25 +96,20 @@ class PostListByNeed(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PostListByTrade(APIView):
-    def get(self, request, format=None):
-        offer = request.query_params.get("offer", "")
-        need = request.query_params.get("need", "")
+    def get(self, request, need, offer, format=None):
 
         if offer and need:
-            posts = Post.objects.filter(offer__iexact=offer, need__iexact=need)
+            posts = Post.objects.filter(offer__iexact=offer, need__iexact=need).exclude(author_id=request.user.id)
         else:
             posts = None
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
 
 class FilterPosts(APIView):
-
     permission_classes =[permissions.IsAuthenticated]
 
-    def get(self, request, pk, pk_list, offer_list, loc_coords, format=None):
+    def get(self, request, pk, pk_list, offer_list, loc_coords, user_list, format=None):
 
         offers = json.loads(offer_list)
 
@@ -131,8 +123,14 @@ class FilterPosts(APIView):
         source = f"{source_latitude},{source_longitude}"
 
         postList = json.loads(pk_list)
+        userList = json.loads(user_list)
+        if userList is None: 
+            userList = []
+        else:
+            userList = [int(i) for i in userList]
+        
 
-        print("this is the post list", postList)
+
         for post in postList:
             curr_post = Post.objects.filter(id=post["id"])
             if request.user and (request.user.username != str(curr_post[0].author_id)):
@@ -163,9 +161,9 @@ class FilterPosts(APIView):
                         print(f"Error fetching directions: {str(e)}")
 
         if (len(offers)> 0):
-            posts = Post.objects.filter(id__in=post_ids, need__in=offers)
+            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers)
         else:
-             posts = Post.objects.filter(id__in=post_ids)
+             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids)
 
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)

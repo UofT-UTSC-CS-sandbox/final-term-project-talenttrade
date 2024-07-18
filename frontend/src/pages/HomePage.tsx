@@ -1,13 +1,11 @@
 import React from "react";
 import Category from "../components/category";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
 import useRequest from "../utils/requestHandler";
 import { useAuth } from "../utils/AuthService";
-import Post from "./Post";
 import { PostType } from "./Post";
-import "./Post.css";
+import { Box, Container, Stack, Typography } from "@mui/material";
+
 export interface TopNeedType {
   need: string;
   count: number;
@@ -34,7 +32,7 @@ const HomePage: React.FC = () => {
     getTopNeed();
   }, []);
   useEffect(() => {
-    console.log("logged in", loggedIn)
+    console.log("logged in", loggedIn);
     if (!loggedIn) {
       const getLoggedInStatus = async () => {
         try {
@@ -51,11 +49,8 @@ const HomePage: React.FC = () => {
   }, [refreshToken]);
 
   const getTopNeed = async () => {
-    axios
-      .get(`${host}/posts/need/`)
-      .then((res) => setTopNeed(res.data))
-      .then(() => console.log())
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/need/`);
+    setTopNeed(response);
   };
 
   const [topOffer, setTopOffer] = useState<TopOfferType[]>([]);
@@ -65,10 +60,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const getTopOffer = async () => {
-    axios
-      .get(`${host}/posts/offer/`)
-      .then((res) => setTopOffer(res.data))
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/offer/`);
+    setTopOffer(response);
   };
 
   const [topTrade, setTopTrade] = useState<TopTradeType[]>([]);
@@ -79,10 +72,23 @@ const HomePage: React.FC = () => {
   }, [loggedIn]);
 
   const getTopTrade = async () => {
-    axios
-      .get(`${host}/posts/trade/`)
-      .then((res) => setTopTrade(res.data))
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/trade/`);
+    setTopTrade(response);
+  };
+
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    getAndSetUser();
+  }, []);
+
+  const getAndSetUser = async () => {
+    const response = await apiFetch("accounts/get-current-user-id", {
+      method: "GET",
+    });
+    if (response) {
+      setFirstName(response.user_name.split(" ")[0]);
+    }
   };
 
   const suggestedPosts = async () => {
@@ -91,31 +97,78 @@ const HomePage: React.FC = () => {
       .get(`${host}/posts/suggested-posts/`)
       .then((res) => console.log(res.data))
       .catch((error) => alert(error)); */
-    if(loggedIn){
-      const response = await apiFetch(`posts/suggested-posts`,  { method: "GET", });
-      response && setPostList(response)
-      }
+    if (loggedIn) {
+      const response = await apiFetch(`posts/suggested-posts`, {
+        method: "GET",
+      });
+      response && setPostList(response);
     }
+  };
 
   return (
-    <div>
-      <div className="post-container ">
-        {postList.length > 0 && (
-          <div>
-            <h3>Suggested Posts:</h3>
-            {postList.map((post) => (
-              <div key={post.id}>
-                <Post post={post} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <Category title="Most Needed Talents" popularListings={topNeed} />
-        <Category title="Most Offered Talents" popularListings={topOffer} />
-        <Category title="Most Popular Trades" popularListings={topTrade} />
-      </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Container
+        sx={{
+          height: "200px",
+          width: "100%",
+          marginBottom: "2rem",
+          marginLeft: 0,
+          marginRight: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Stack
+          direction="row"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Box
+            component="img"
+            sx={{ maxHeight: "200px", maxWidth: "200px" }}
+            alt="The house from the offer."
+            src="./hammer.jpg"
+          />
+          <Stack>
+            <Typography
+              variant="h4"
+              noWrap
+              gutterBottom
+              component="div"
+              sx={{
+                display: { xs: "none", sm: "block" },
+                paddingLeft: 5,
+                fontWeight: "bold",
+              }}
+            >
+              Welcome back, {firstName}
+            </Typography>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: "none", sm: "block" }, paddingLeft: 5 }}
+            >
+              Start searching for individuals with various skills and trades to
+              connect and exchange services!
+            </Typography>
+          </Stack>
+        </Stack>
+      </Container>
+      <Category title="Most Needed Talents" popularListings={topNeed} />
+      <Category title="Most Offered Talents" popularListings={topOffer} />
+      <Category title="Most Popular Trades" popularListings={topTrade} />
     </div>
   );
 };

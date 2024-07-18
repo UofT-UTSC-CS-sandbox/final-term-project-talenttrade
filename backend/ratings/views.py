@@ -6,6 +6,7 @@ from .models import Rating
 from .serializers import RatingSerializer
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from django.db.models import Avg
 
 # Create your views here.
 class RatingListCreate(generics.ListCreateAPIView):
@@ -49,3 +50,21 @@ def GetRating (request):
 
     serializer = RatingSerializer(rating, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# get user IDs with average rating of specified value and above
+class UsersWithRatingAbove(APIView):
+    def get(self, request, min_rating):
+        
+        if min_rating is None:
+            return Response({'error': 'Rating parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        min_rating = float(min_rating)
+        print(min_rating)
+        
+        users_with_avg_rating = Rating.objects.values('receiver').annotate(avg_rating=Avg('rating')).filter(avg_rating__gte=min_rating)
+        
+        user_ids = [user['receiver'] for user in users_with_avg_rating]
+        
+        print(user_ids)
+
+        return Response(user_ids, status=status.HTTP_200_OK)

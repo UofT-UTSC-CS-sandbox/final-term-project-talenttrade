@@ -3,10 +3,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
-import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
 import { useNavigate } from "react-router-dom";
+import { UserProfileType } from "../pages/ViewProfile";
+import { stringToColor } from "./topbar";
 
 export interface UserType {
   id: number;
@@ -24,8 +25,10 @@ const User: React.FC<UserProps> = ({ user }) => {
   const apiFetch = useRequest();
   const navigate = useNavigate();
   const [numRatings, setNumRatings] = useState(0);
+  const [profile, setProfile] = useState<UserProfileType | null>(null);
 
   useEffect(() => {
+    getProfile();
     getAvgRating(user.id);
   }, [rating]);
 
@@ -35,6 +38,13 @@ const User: React.FC<UserProps> = ({ user }) => {
     });
     setRating(response.average);
     setNumRatings(response.numRatings);
+  };
+
+  const getProfile = async () => {
+    const response = await apiFetch(`accounts/profile/${user.id}/`, {
+      method: "GET",
+    });
+    setProfile(response);
   };
 
   const viewOtherUser = () => {
@@ -65,14 +75,15 @@ const User: React.FC<UserProps> = ({ user }) => {
           >
             <Avatar
               sx={{
-                bgcolor: deepOrange[500],
                 width: "50%",
                 height: "auto",
                 aspectRatio: "1",
                 fontSize: "1.5rem",
+                backgroundColor: stringToColor(profile?.full_name || ""),
               }}
-              alt={user.first_name}
-              src="/broken-image.jpg"
+              alt={`${user.first_name} ${user.last_name}`}
+              // {...stringAvatar(`${user.first_name} ${user.last_name}`)}
+              src={profile?.profile_picture}
             />
           </Grid>
           <Grid
@@ -127,6 +138,7 @@ const User: React.FC<UserProps> = ({ user }) => {
                   value={rating}
                   readOnly
                   size="small"
+                  precision={0.1}
                   sx={{
                     "& .MuiRating-iconEmpty": {
                       color: "#FFD700",
