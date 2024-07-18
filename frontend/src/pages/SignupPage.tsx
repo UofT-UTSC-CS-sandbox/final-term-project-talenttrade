@@ -4,7 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthRedirect from "../utils/AuthRedirect";
 import { IFormData, userMessage } from "../utils/types";
 import { formatErrors } from "../utils/formatErrors";
-import { Container, TextField, Button, Typography, Box, Alert } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert,
+} from "@mui/material";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -109,9 +116,15 @@ const SignupPage = () => {
         label={field.label}
         type={field.type}
         id={field.id}
-        onChange={(e) => handleChange(field.id as keyof IFormData, e.target.value)}
+        onChange={(e) =>
+          handleChange(field.id as keyof IFormData, e.target.value)
+        }
         value={formData[field.id as keyof IFormData]}
-        required={field.id === "username" || field.id === "password1" || field.id === "password2"}
+        required={
+          field.id === "username" ||
+          field.id === "password1" ||
+          field.id === "password2"
+        }
         variant="outlined"
         margin="normal"
         fullWidth
@@ -125,11 +138,11 @@ const SignupPage = () => {
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           p: 3,
-          alignItems: 'center',
-          bgcolor: 'background.paper',
+          alignItems: "center",
+          bgcolor: "background.paper",
           borderRadius: 2,
           boxShadow: 1,
         }}
@@ -140,7 +153,14 @@ const SignupPage = () => {
         <Typography variant="body2" color="textSecondary" align="center">
           Already a member? <Link to="/login">Sign in!</Link>
         </Typography>
-        <Box component="form" onSubmit={(e) => { e.preventDefault(); submitLoginRequest(); }} sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitLoginRequest();
+          }}
+          sx={{ mt: 1 }}
+        >
           {renderInputs()}
           {hasError.status === "error" && (
             <Alert severity="error">{hasError.message}</Alert>
