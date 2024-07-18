@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import host from "../utils/links";
 import { Link } from "react-router-dom";
 import "./TopInCategory.css";
+import "./../components/category.css";
 
 interface TopType {
   offer?: string;
