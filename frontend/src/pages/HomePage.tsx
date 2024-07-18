@@ -1,8 +1,6 @@
 import React from "react";
 import Category from "../components/category";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import useRequest from "../utils/requestHandler";
 
@@ -66,23 +64,9 @@ const HomePage: React.FC = () => {
     const response = await apiFetch("accounts/get-current-user-id", {
       method: "GET",
     });
-
-    setFirstName(response.user_name.split(" ")[0]);
-  };
-
-  const [firstName, setFirstName] = useState("");
-  const apiFetch = useRequest();
-
-  useEffect(() => {
-    getAndSetUser();
-  }, []);
-
-  const getAndSetUser = async () => {
-    const response = await apiFetch("accounts/get-current-user-id", {
-      method: "GET",
-    });
-
-    setFirstName(response.user_name.split(" ")[0]);
+    if (response) {
+      setFirstName(response.user_name.split(" ")[0]);
+    }
   };
 
   return (

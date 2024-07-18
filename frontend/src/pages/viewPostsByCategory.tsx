@@ -1,6 +1,4 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
 import Post from "./Post";
 import { PostType } from "./Post";
 import React from "react";
@@ -23,7 +21,6 @@ const ViewPostByCategory: React.FC = () => {
   const [distance, setDistance] = useState<number | number[]>(-1);
   const [rating, setRating] = useState("-1");
   const [userList, setUserList] = useState<String[]>([]);
-  const [showBool, setShowBool] = useState(false);
   const [postList, setPostList] = useState<PostType[]>([]);
   const [filteredPostList, setFilteredPostList] = useState<PostType[]>([]);
   const [selectedOffers, setSelectedOffers] = useState<selectedOffersType[]>(
@@ -36,11 +33,8 @@ const ViewPostByCategory: React.FC = () => {
   }, [rating]);
 
   useEffect(() => {
-    if (show === "true") {
-      setShowBool(true);
-    }
     getPostList();
-  }, [need, showBool]);
+  }, [need]);
 
   useEffect(() => {
     if (postList) {
@@ -72,15 +66,13 @@ const ViewPostByCategory: React.FC = () => {
     if (need && offer) {
       response = await apiFetch(`posts/post-trade/${need}/${offer}`);
     } else if (need) {
-      if (showBool) {
-        response = await apiFetch(`posts/post-offer/${need}/${show}`, {
-          method: "GET",
-        });
+      if (show == "true") {
+        response = await apiFetch(`posts/post-offer/${need}/${show}`);
       } else {
         response = await apiFetch(`posts/post-need/${need}`);
       }
     } else if (offer) {
-      response = await apiFetch(`posts/post-offer/${need}/${show}`, {
+      response = await apiFetch(`posts/post-offer/${offer}/${show}`, {
         method: "GET",
       });
     }
@@ -119,16 +111,16 @@ const ViewPostByCategory: React.FC = () => {
     <div>
       <div className="Filtering-Container">
         <div className="Filtering">
-          {showBool && (
+          {show == "true" && (
             <OfferFilter
               selectedOffers={selectedOffers}
               setSelectedOffers={setSelectedOffers}
             />
           )}
-          {filteredPostList && showBool && (
+          {filteredPostList && show == "true" && (
             <FilterByLocation value={distance} setValue={setDistance} />
           )}
-          {showBool && <Ratings rating={rating} setRating={setRating} />}
+          {show == "true" && <Ratings rating={rating} setRating={setRating} />}
         </div>
       </div>
 
