@@ -102,8 +102,7 @@
 
 - URL: `/posts/post-need/`
 - Method: GET
-- URL Params: None
-- Query Params:
+- URL Params:
   - `need`: the need to filter posts by.
 - Success Response:
   - `200`
@@ -132,8 +131,7 @@
 
 - URL: `/posts/post-trade/`
 - Method: GET
-- URL Params: None
-- Query Params:
+- URL Params:
   - `offer`: the offer to filter posts by.
   - `need`: the need to filter posts by.
 - Success Response:

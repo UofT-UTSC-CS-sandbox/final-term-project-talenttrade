@@ -29,11 +29,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const getTopNeed = async () => {
-    axios
-      .get(`${host}/posts/need/`)
-      .then((res) => setTopNeed(res.data))
-      .then(() => console.log())
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/need/`);
+    setTopNeed(response);
   };
 
   const [topOffer, setTopOffer] = useState<TopOfferType[]>([]);
@@ -43,10 +40,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const getTopOffer = async () => {
-    axios
-      .get(`${host}/posts/offer/`)
-      .then((res) => setTopOffer(res.data))
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/offer/`);
+    setTopOffer(response);
   };
 
   const [topTrade, setTopTrade] = useState<TopTradeType[]>([]);
@@ -56,10 +51,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const getTopTrade = async () => {
-    axios
-      .get(`${host}/posts/trade/`)
-      .then((res) => setTopTrade(res.data))
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/trade/`);
+    setTopTrade(response);
   };
 
   const [firstName, setFirstName] = useState("");
