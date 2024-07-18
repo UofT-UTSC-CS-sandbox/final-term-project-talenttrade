@@ -9,6 +9,8 @@ import host from "../utils/links";
 import { PostType } from "../pages/Post";
 import Post from "../pages/Post";
 import axios from "axios";
+import useRequest from "../utils/requestHandler";
+
 
 interface CategoryProps {
   title: string;
@@ -22,6 +24,8 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
   const top3 = popularListings.slice(0, 3);
   const [currentSet, setCurrentSet] = useState<PostType[]>([]);
   const [setNum, setSetNum] = useState(1);
+  const apiFetch = useRequest();
+
 
   useEffect(() => {
     if (postList.length == 0) {
@@ -29,7 +33,7 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
       getPostList(index);
     }
   }, [selectedButton, top3]);
-
+  
   useEffect(() => {
     if (postList.length != 0) {
       setCurrentSet(postList.slice(0, 3));
@@ -61,18 +65,14 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
     try {
       let response;
       if (need && offer) {
-        response = await axios.get(`${host}/posts/post-trade/`, {
-          params: { need, offer },
-        });
+        response = await apiFetch(`posts/post-trade/${need}/${offer}`);
       } else if (need) {
-        response = await axios.get(`${host}/posts/post-need/`, {
-          params: { need },
-        });
+        response = await apiFetch(`posts/post-need/${need}`);
       } else if (offer) {
-        response = await axios.get(`${host}/posts/post-offer/${offer}/false`);
+        response = await apiFetch(`/posts/post-offer/${offer}/false`);
       }
       if (response) {
-        setPostList(response.data);
+        setPostList(response);
       }
     } catch (error) {
       alert(error);
@@ -165,8 +165,10 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
               onClick={(e) => handleButtonClick(e, `button${index}`)}
               sx={{
                 fontSize: "1rem",
+                minWidth: "250px",
                 minHeight: "55px",
                 textAlign: "start",
+                justifyContent: "space-between",
                 gap: 0,
                 whiteSpace: "pre-line",
                 textTransform: "none",
@@ -179,25 +181,22 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
                 backgroundColor:
                   selectedButton === `button${index}` ? "#f4f4f4" : "white",
               }}
-              endIcon={
-                <InputAdornment position="end">
-                  <Typography
-                    sx={{
-                      fontSize: "0.8rem",
-                      color: "#757575",
-                      textTransform: "none",
-                    }}
-                  >
-                    {top.count.toString() + " posts"}
-                  </Typography>
-                </InputAdornment>
-              }
             >
               {isTopTradeType(top)
                 ? `NEED: ${top.need} \nOFFER: ${top.offer}`
                 : isTopNeedType(top)
                 ? `${top.need}`
                 : `${top.offer}`}
+              <Typography
+                sx={{
+                  fontSize: "0.8rem",
+                  color: "#757575",
+                  textTransform: "none",
+                }}
+              >
+                {top.count.toString() + " posts"}
+              </Typography>
+
             </Button>
           ))}
           <Button
@@ -205,6 +204,7 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
             disableElevation
             onClick={(e) => handleButtonClick(e, `seeMore`)}
             sx={{
+              minWidth: "250px",
               textAlign: "start",
               whiteSpace: "pre-line",
               border: selectedButton === `seeMore` ? 1 : 0,
