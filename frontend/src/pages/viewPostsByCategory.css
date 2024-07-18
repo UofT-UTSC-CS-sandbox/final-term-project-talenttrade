@@ -54,8 +54,11 @@ button:hover, .post:hover {
 }
 
 .Filtering{
-    width: 500px;
+    width: auto;
+    max-width: 1000px;
     display: flex;
+    column-gap: 20px;
+    flex-wrap: wrap;
     justify-content: flex-start;
     gap: 6%;
 }

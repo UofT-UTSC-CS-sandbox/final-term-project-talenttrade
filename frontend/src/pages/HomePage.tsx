@@ -70,6 +70,21 @@ const HomePage: React.FC = () => {
     setFirstName(response.user_name.split(" ")[0]);
   };
 
+  const [firstName, setFirstName] = useState("");
+  const apiFetch = useRequest();
+
+  useEffect(() => {
+    getAndSetUser();
+  }, []);
+
+  const getAndSetUser = async () => {
+    const response = await apiFetch("accounts/get-current-user-id", {
+      method: "GET",
+    });
+
+    setFirstName(response.user_name.split(" ")[0]);
+  };
+
   return (
     <div
       style={{

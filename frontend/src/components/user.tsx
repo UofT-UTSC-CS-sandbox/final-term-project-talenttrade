@@ -138,6 +138,7 @@ const User: React.FC<UserProps> = ({ user }) => {
                   value={rating}
                   readOnly
                   size="small"
+                  precision={0.1}
                   sx={{
                     "& .MuiRating-iconEmpty": {
                       color: "#FFD700",

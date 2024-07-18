@@ -1,17 +1,19 @@
 # API Documentation
 
 ## Base URL
-`/accounts`
 
+`/accounts`
 
 ## Endpoints
 
 ### 1. Get Current User ID
+
 **URL**: `/get-current-user-id/`  
 **Method**: `GET`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -24,11 +26,13 @@
 **Error Response(s)**: None
 
 ### 2. Signup
+
 **URL**: `/signup/`  
 **Method**: `POST`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 201 Created
 - **Content**:
   ```json
@@ -38,6 +42,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 400 Bad Request
 - **Content**:
   ```json
@@ -47,11 +52,13 @@
   ```
 
 ### 3. Login
+
 **URL**: `/login/`  
 **Method**: `POST`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -61,6 +68,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 400 Bad Request
 - **Content**:
   ```json
@@ -70,11 +78,13 @@
   ```
 
 ### 4. Logout
+
 **URL**: `/logout/`  
 **Method**: `POST`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -84,6 +94,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 400 Bad Request
 - **Content**:
   ```json
@@ -100,20 +111,25 @@
   ```
 
 ### 5. Search User by Username
-**URL**: `/search-user/<str:username>/`  
+
+**URL**: `/search-user/<str:username>/<str:user_list>`  
 **Method**: `GET`  
-**URL Parameters**: `username` (string)
+**URL Parameters**:
+
+- `username` (string): the username to search for
+- `user_list` (string of a list): the userids to filter by
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
   [
     {
       "id": "<user_id>",
-      "username": "<username>",
+      "username": "<username>"
       // Other user details
-    },
+    }
     // More users
   ]
   ```
@@ -121,11 +137,13 @@
 **Error Response(s)**: None
 
 ### 6. Create Profile
+
 **URL**: `/profile/create/`  
 **Method**: `POST`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 201 Created
 - **Content**:
   ```json
@@ -135,6 +153,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 400 Bad Request
 - **Content**:
   ```json
@@ -144,11 +163,13 @@
   ```
 
 ### 7. Update Profile
+
 **URL**: `/profile/`  
 **Method**: `PUT`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -158,6 +179,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 400 Bad Request
 - **Content**:
   ```json
@@ -167,11 +189,13 @@
   ```
 
 ### 8. View Profile
+
 **URL**: `/profile/<int:user_id>/`  
 **Method**: `GET`  
 **URL Parameters**: `user_id` (integer)
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -181,6 +205,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 404 Not Found
 - **Content**:
   ```json
@@ -190,11 +215,13 @@
   ```
 
 ### 9. View Profile Without ID
+
 **URL**: `/profile/`  
 **Method**: `GET`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
@@ -204,6 +231,7 @@
   ```
 
 **Error Response(s)**:
+
 - **Code**: 404 Not Found
 - **Content**:
   ```json
@@ -213,17 +241,37 @@
   ```
 
 ### 10. Delete Profile
+
 **URL**: `/profile/delete/`  
 **Method**: `DELETE`  
 **URL Parameters**: None
 
 **Success Response**:
+
 - **Code**: 200 OK
 - **Content**:
   ```json
   {
     "message": "Profile deletion successful"
   }
+  ```
+
+**Error Response(s)**: None
+
+### 11. Get List Of All Users
+
+**URL**: `/users/`  
+**Method**: `GET`  
+**URL Parameters**: None
+
+**Success Response**:
+
+- **Code**: 200 OK
+- **Content**:
+  ```json
+  [
+    "<user_id1>", "<user_id2>", ...
+  ]
   ```
 
 **Error Response(s)**: None

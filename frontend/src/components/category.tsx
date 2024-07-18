@@ -11,6 +11,7 @@ import Post from "../pages/Post";
 import axios from "axios";
 import useRequest from "../utils/requestHandler";
 
+
 interface CategoryProps {
   title: string;
   popularListings: TopNeedType[] | TopOfferType[] | TopTradeType[];
@@ -25,20 +26,14 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
   const [setNum, setSetNum] = useState(1);
   const apiFetch = useRequest();
 
+
   useEffect(() => {
     if (postList.length == 0) {
       const index = parseInt(selectedButton.replace("button", ""));
       getPostList(index);
     }
   }, [selectedButton, top3]);
-
-  // useEffect(() => {
-  //   if (postList.length == 0) {
-  //     const index = parseInt(selectedButton.replace("button", ""));
-  //     getPostList(index);
-  //   }
-  // }, []);
-
+  
   useEffect(() => {
     if (postList.length != 0) {
       setCurrentSet(postList.slice(0, 3));
@@ -201,6 +196,7 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
               >
                 {top.count.toString() + " posts"}
               </Typography>
+
             </Button>
           ))}
           <Button
@@ -208,7 +204,7 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
             disableElevation
             onClick={(e) => handleButtonClick(e, `seeMore`)}
             sx={{
-              minWidth: "300px",
+              minWidth: "250px",
               textAlign: "start",
               whiteSpace: "pre-line",
               border: selectedButton === `seeMore` ? 1 : 0,
