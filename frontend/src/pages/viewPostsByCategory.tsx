@@ -7,7 +7,9 @@ import { useLocation } from "react-router-dom";
 import OfferFilter from "../components/offerFilter";
 import FilterByLocation from "../components/filterByLocation";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
 import Ratings from "../components/ratings";
+
 export interface selectedOffersType {
   title: string;
 }
@@ -150,4 +152,4 @@ const ViewPostByCategory: React.FC = () => {
   );
 };
 
-export default ViewPostByCategory;
+export default withProfileCheck(ViewPostByCategory);

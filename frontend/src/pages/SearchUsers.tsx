@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import User, { UserType } from "../components/user";
 import { Box, Grid } from "@mui/material";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
 import Ratings from "../components/ratings";
 
 const SearchUser: React.FC = () => {
@@ -76,4 +77,4 @@ const SearchUser: React.FC = () => {
   );
 };
 
-export default SearchUser;
+export default withProfileCheck(SearchUser);

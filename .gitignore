@@ -304,3 +304,6 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/pydev,python,visualstudiocode,react,django
+
+# Ignore all files under backend/static/images
+backend/static/images/*

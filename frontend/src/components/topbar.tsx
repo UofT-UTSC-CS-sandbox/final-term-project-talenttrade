@@ -22,7 +22,8 @@ import {
 import { useEffect, useState } from "react";
 import useRequest from "../utils/requestHandler";
 import { useAuth } from "../utils/AuthService";
-import { UserProfileType } from "../pages/ViewProfile";
+import UserProfileType from "../interfaces/User";
+import host from "../utils/links";
 
 //help with styling from: https://mui.com/material-ui/react-app-bar/
 
@@ -202,6 +203,12 @@ const TopBar: React.FC<TopBarProps> = ({ onSearchFocusChange }) => {
   const [loggedIn, setLoggedIn] = useState<Boolean>();
 
   const { logOut } = useAuth();
+
+  useEffect(() => {
+    getProfile();
+    const interval = setInterval(getProfile, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const logoutFunction = async () => {
     setAnchorElUser(null);
@@ -393,7 +400,7 @@ const TopBar: React.FC<TopBarProps> = ({ onSearchFocusChange }) => {
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
                     alt={profile?.full_name}
-                    src={profile?.profile_picture}
+                    src={`${host}${profile?.profile_picture}`}
                     sx={{
                       backgroundColor: stringToColor(profile?.full_name || ""),
                       fontSize: "1rem",

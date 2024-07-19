@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 import host from "../utils/links";
 import "./CreatePost.css";
@@ -20,7 +21,7 @@ import {
   Checkbox,
 } from "@mui/material";
 
-export default function CreatePost() {
+const CreatePost: React.FC = () => {
   const [need, setNeed] = useState("");
   const [offer, setOffer] = useState("");
   const [description, setDescription] = useState("");
@@ -57,7 +58,7 @@ export default function CreatePost() {
     getAndSetLocation(response.user_id);
   };
 
-  const getAndSetLocation= async (id: number)  => {
+  const getAndSetLocation = async (id: number) => {
     const response = await apiFetch(`accounts/profile/${id}`, {
       method: "GET",
     });
@@ -102,7 +103,7 @@ export default function CreatePost() {
     };
     axios
       .post(`${host}/posts/`, post)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => alert(error));
 
     setMessage("Post Created Successfully!");
@@ -126,7 +127,7 @@ export default function CreatePost() {
 
     axios
       .put(`${host}/posts/${postId}/`, post)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => alert(error));
 
     setMessage("Post Edited Successfully!");
@@ -295,3 +296,5 @@ export default function CreatePost() {
     </>
   );
 }
+
+export default withProfileCheck(CreatePost);

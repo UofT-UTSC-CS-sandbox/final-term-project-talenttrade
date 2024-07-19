@@ -6,7 +6,8 @@ import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
 import { useNavigate } from "react-router-dom";
-import { UserProfileType } from "../pages/ViewProfile";
+import UserProfileType from "../interfaces/User";
+import host from "../utils/links";
 import { stringToColor } from "./topbar";
 
 export interface UserType {
@@ -28,20 +29,25 @@ const User: React.FC<UserProps> = ({ user }) => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
 
   useEffect(() => {
-    getProfile();
     getAvgRating(user.id);
-  }, [rating]);
+    getProfile(user.id);
+  }, [user.id]); // Only run when user.id changes
 
   const getAvgRating = async (user_id: number) => {
-    const response = await apiFetch(`ratings/avg/?receiver=${user_id}`, {
-      method: "GET",
-    });
-    setRating(response.average);
-    setNumRatings(response.numRatings);
+    try {
+      const response = await apiFetch(`ratings/avg/?receiver=${user_id}`, {
+        method: "GET",
+      });
+      setRating(response.average);
+      setNumRatings(response.numRatings);
+    } catch (error) {
+      console.error("Error fetching average rating:", error);
+    }
   };
 
-  const getProfile = async () => {
-    const response = await apiFetch(`accounts/profile/${user.id}/`, {
+
+  const getProfile = async (user_id: number) => {
+    const response = await apiFetch(`accounts/profile/${user_id}/`, {
       method: "GET",
     });
     setProfile(response);
@@ -83,7 +89,7 @@ const User: React.FC<UserProps> = ({ user }) => {
               }}
               alt={`${user.first_name} ${user.last_name}`}
               // {...stringAvatar(`${user.first_name} ${user.last_name}`)}
-              src={profile?.profile_picture}
+              src={`${host}${profile?.profile_picture}`}
             >
               {profile?.full_name.split(" ")[0][0]}
               {profile?.full_name.split(" ")[1][0]}

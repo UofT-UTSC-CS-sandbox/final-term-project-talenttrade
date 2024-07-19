@@ -1,6 +1,8 @@
 import React from "react";
 import Category from "../components/category";
 import { useEffect, useState } from "react";
+import host from "../utils/links";
+import withProfileCheck from "../hoc/withProfileCheck";
 import useRequest from "../utils/requestHandler";
 import { useAuth } from "../utils/AuthService";
 import { PostType } from "./Post";
@@ -169,4 +171,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default withProfileCheck(HomePage);
