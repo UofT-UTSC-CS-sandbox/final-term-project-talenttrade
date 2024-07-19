@@ -10,6 +10,7 @@ body {
   font-family: "Poppins", sans-serif !important;
   background-color: #f4f4f4 !important;
   color: #333 !important;
+  overflow-x: hidden;
 }
 
 #root {
