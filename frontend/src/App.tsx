@@ -28,6 +28,21 @@ function App() {
         <AuthProvider>
           <div>
             <ConditionalTopBar />
+            {
+              isSearchFocused && (
+                <div
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.3)",
+                    zIndex: 1,
+                  }}
+                ></div>
+              )
+            }
             <div style={{ marginTop: "60px" }}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
@@ -63,29 +78,14 @@ function App() {
       </Router>
     </>
   );
-}
 
-function ConditionalTopBar() {
-  const location = useLocation();
-  const showTopBar = location.pathname !== "/login" && location.pathname !== "/signup";
-  if (showTopBar) {
-    <TopBar onSearchFocusChange={handleSearchFocusChange} />
-            {isSearchFocused && (
-              <div
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "rgba(0, 0, 0, 0.3)",
-                  zIndex: 1,
-                }}
-              ></div>
-            )}
-  } else {
-    return null;
+  function ConditionalTopBar() {
+    const location = useLocation();
+    const showTopBar = location.pathname !== "/login" && location.pathname !== "/signup";
+    return showTopBar ? <TopBar onSearchFocusChange={handleSearchFocusChange} /> : null;
   }
 }
+
+
 
 export default App;

@@ -29,7 +29,6 @@ const User: React.FC<UserProps> = ({ user }) => {
   const [profile, setProfile] = useState<UserProfileType | null>(null);
 
   useEffect(() => {
-    getProfile();
     getAvgRating(user.id);
     getProfile(user.id);
   }, [user.id]); // Only run when user.id changes
@@ -46,19 +45,9 @@ const User: React.FC<UserProps> = ({ user }) => {
     }
   };
 
-  const getProfile = async (user_id: number) => {
-    try {
-      const response = await apiFetch(`accounts/profile/${user_id}/`, {
-        method: "GET"
-      });
-      setProfilePic(response.profile_picture);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
-  };
 
-  const getProfile = async () => {
-    const response = await apiFetch(`accounts/profile/${user.id}/`, {
+  const getProfile = async (user_id: number) => {
+    const response = await apiFetch(`accounts/profile/${user_id}/`, {
       method: "GET",
     });
     setProfile(response);
