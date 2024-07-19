@@ -1,3 +1,4 @@
+import json
 from datetime import timezone
 from .models import UserProfile
 from rest_framework.views import APIView
@@ -68,10 +69,10 @@ class LogoutView(APIView):
 
 
 class SearchByUser(APIView):
-    def get(self, request, username=None, format=None):
+    def get(self, request, username=None, user_list=[], format=None):
         if username:
-            print(request.user.id)
-            users = User.objects.filter(username__istartswith=username).exclude(id=request.user.id)
+            userList = json.loads(user_list)
+            users = User.objects.filter(id__in= userList, username__istartswith=username).exclude(id=request.user.id)
             serializer = UserSerializer(users, many=True)
             serialized_users = []
                 
@@ -80,7 +81,6 @@ class SearchByUser(APIView):
                 serialized_users.append(serialized_data)
 
             return Response(serialized_users, status=status.HTTP_200_OK)
-    
 
 class ProfileCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -130,3 +130,11 @@ class ProfileDeleteView(APIView):
         user_profile = UserProfile.objects.get(user=request.user)
         user_profile.delete()
         return Response({'message': 'Profile deletion successful'}, status=status.HTTP_200_OK)
+
+class UserListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        users = User.objects.all().values_list('id', flat=True)
+        return Response(list(users), status=status.HTTP_200_OK)
+

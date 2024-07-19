@@ -3,12 +3,12 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Avatar, Box, CardActionArea, Grid } from "@mui/material";
-import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
 import { useNavigate } from "react-router-dom";
 import UserProfileType from "../interfaces/User";
 import host from "../utils/links";
+import { stringToColor } from "./topbar";
 
 export interface UserType {
   id: number;
@@ -26,9 +26,10 @@ const User: React.FC<UserProps> = ({ user }) => {
   const apiFetch = useRequest();
   const navigate = useNavigate();
   const [numRatings, setNumRatings] = useState(0);
-  const [profilePic, setProfilePic] = useState("");
+  const [profile, setProfile] = useState<UserProfileType | null>(null);
 
   useEffect(() => {
+    getProfile();
     getAvgRating(user.id);
     getProfile(user.id);
   }, [user.id]); // Only run when user.id changes
@@ -54,6 +55,13 @@ const User: React.FC<UserProps> = ({ user }) => {
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
+  };
+
+  const getProfile = async () => {
+    const response = await apiFetch(`accounts/profile/${user.id}/`, {
+      method: "GET",
+    });
+    setProfile(response);
   };
 
   const viewOtherUser = () => {
@@ -84,15 +92,19 @@ const User: React.FC<UserProps> = ({ user }) => {
           >
             <Avatar
               sx={{
-                bgcolor: deepOrange[500],
                 width: "50%",
                 height: "auto",
                 aspectRatio: "1",
-                fontSize: "1.5rem",
+                fontSize: "2rem",
+                backgroundColor: stringToColor(profile?.full_name || ""),
               }}
-              alt={user.first_name}
-              src={`${host}${profilePic}`}
-            />
+              alt={`${user.first_name} ${user.last_name}`}
+              // {...stringAvatar(`${user.first_name} ${user.last_name}`)}
+              src={`${host}${profile?.profile_picture}`}
+            >
+              {profile?.full_name.split(" ")[0][0]}
+              {profile?.full_name.split(" ")[1][0]}
+            </Avatar>
           </Grid>
           <Grid
             container
@@ -146,6 +158,7 @@ const User: React.FC<UserProps> = ({ user }) => {
                   value={rating}
                   readOnly
                   size="small"
+                  precision={0.1}
                   sx={{
                     "& .MuiRating-iconEmpty": {
                       color: "#FFD700",

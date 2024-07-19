@@ -1,6 +1,6 @@
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import TopBar from "./components/topbar";
+import TopBar from "./components/topbar.tsx";
 import SignupPage from "./pages/SignupPage";
 import LogInPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
@@ -13,8 +13,15 @@ import TopInCategory from "./pages/TopInCategory";
 import FilterBar from "./components/filterBar";
 import SearchUser from "./pages/SearchUsers";
 import ViewProfile from "./pages/ViewProfile";
+import { useState } from "react";
 
 function App() {
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  const handleSearchFocusChange = (focused: boolean) => {
+    setIsSearchFocused(focused);
+  };
+
   return (
     <>
       <Router>
@@ -61,7 +68,24 @@ function App() {
 function ConditionalTopBar() {
   const location = useLocation();
   const showTopBar = location.pathname !== "/login" && location.pathname !== "/signup";
-  return showTopBar ? <TopBar /> : null;
+  if (showTopBar) {
+    <TopBar onSearchFocusChange={handleSearchFocusChange} />
+            {isSearchFocused && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  zIndex: 1,
+                }}
+              ></div>
+            )}
+  } else {
+    return null;
+  }
 }
 
 export default App;

@@ -4,6 +4,7 @@ import User, { UserType } from "../components/user";
 import { Box, Grid } from "@mui/material";
 import useRequest from "../utils/requestHandler";
 import withProfileCheck from "../hoc/withProfileCheck";
+import Ratings from "../components/ratings";
 
 const SearchUser: React.FC = () => {
   const location = useLocation();
@@ -11,20 +12,50 @@ const SearchUser: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const username = queryParams.get("username");
   const [userList, setUserList] = useState<UserType[]>([]);
+  const [rating, setRating] = useState<string>("-1");
+  const [userIds, setUserIds] = useState<string[]>([]);
 
   useEffect(() => {
-    getUserList();
-  }, [username]);
+    getUserIds(rating);
+  }, [rating]);
+
+  useEffect(() => {
+    if (username) {
+      getUserList();
+    }
+  }, [username, userIds]);
+
+  const getUserIds = async (rating: string) => {
+    try {
+      let users;
+      if (rating === "-1") {
+        users = await apiFetch("accounts/users/", {
+          method: "GET",
+        });
+      } else {
+        users = await apiFetch(`ratings/users-with-rating/${rating}`, {
+          method: "GET",
+        });
+      }
+      setUserIds(users);
+    } catch (error) {
+      console.error("Error fetching user IDs:", error);
+    }
+  };
 
   const getUserList = async () => {
-    const res = await apiFetch(`accounts/search-user/${username}/`, {
-      method: "GET",
-    });
+    const res = await apiFetch(
+      `accounts/search-user/${username}/${JSON.stringify(userIds)}`,
+      {
+        method: "GET",
+      }
+    );
     setUserList(res);
   };
 
   return (
     <div>
+      <Ratings rating={rating} setRating={setRating} />
       <div className="header">
         <h1>Showing results for:</h1>
         <h2> {username} </h2>

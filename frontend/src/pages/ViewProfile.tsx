@@ -24,8 +24,6 @@ import ReviewCard from "../components/reviewCard";
 import ReviewDialog from "../components/reviewDialog";
 import UserProfileType from "../interfaces/User";
 
-
-
 interface LocationResult {
     name: string;
     lat: string;
@@ -256,7 +254,6 @@ const ViewProfile: React.FC = () => {
         },
         [apiFetch]
     );
-
     const handleLocationSelect = (location: LocationResult) => {
         if (editableProfile) {
             setEditableProfile({
