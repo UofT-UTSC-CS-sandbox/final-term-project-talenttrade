@@ -1,4 +1,6 @@
+import json
 from datetime import timezone
+from .models import UserProfile
 from .models import UserProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .serializers import ProfileSerializer, UserSerializer
+from .serializers import ProfileSerializer, UserSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -14,6 +17,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser, FormParser
 
 @api_view(['GET'])
 def get_current_user_id(request):
@@ -27,6 +31,8 @@ class SignupView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
+            user_profile = UserProfile.objects.create(user=serializer.instance)
 
             user_profile = UserProfile.objects.create(user=serializer.instance)
             return Response({'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
@@ -67,10 +73,10 @@ class LogoutView(APIView):
 
 
 class SearchByUser(APIView):
-    def get(self, request, username=None, format=None):
+    def get(self, request, username=None, user_list=[], format=None):
         if username:
-            print(request.user.id)
-            users = User.objects.filter(username__istartswith=username).exclude(id=request.user.id)
+            userList = json.loads(user_list)
+            users = User.objects.filter(id__in= userList, username__istartswith=username).exclude(id=request.user.id)
             serializer = UserSerializer(users, many=True)
             serialized_users = []
                 
@@ -79,10 +85,10 @@ class SearchByUser(APIView):
                 serialized_users.append(serialized_data)
 
             return Response(serialized_users, status=status.HTTP_200_OK)
-    
 
 class ProfileCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         serializer = ProfileSerializer(data=request.data)
@@ -94,14 +100,18 @@ class ProfileCreateView(APIView):
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Profile update successful'}, status=status.HTTP_200_OK)
-        
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            request_data = request.data.copy()
+            if isinstance(request_data.get('profile_picture'), str):
+                request_data['profile_picture'] = user_profile.profile_picture
+            serializer = ProfileSerializer(user_profile, data=request_data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
     
 class ProfileView(APIView):
     def get(self, request, user_id=None):
@@ -124,4 +134,11 @@ class ProfileDeleteView(APIView):
         user_profile = UserProfile.objects.get(user=request.user)
         user_profile.delete()
         return Response({'message': 'Profile deletion successful'}, status=status.HTTP_200_OK)
+
+class UserListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        users = User.objects.all().values_list('id', flat=True)
+        return Response(list(users), status=status.HTTP_200_OK)
 

@@ -1,6 +1,4 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
 import Post from "./Post";
 import { PostType } from "./Post";
 import React from "react";
@@ -9,6 +7,9 @@ import { useLocation } from "react-router-dom";
 import OfferFilter from "../components/offerFilter";
 import FilterByLocation from "../components/filterByLocation";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
+import Ratings from "../components/ratings";
+
 export interface selectedOffersType {
   title: string;
 }
@@ -19,8 +20,9 @@ const ViewPostByCategory: React.FC = () => {
   const need = queryParams.get("need");
   const offer = queryParams.get("offer");
   const show = queryParams.get("show");
-  const [distance, setDistance] = useState(-1);
-  const [showBool, setShowBool] = useState(false);
+  const [distance, setDistance] = useState<number | number[]>(-1);
+  const [rating, setRating] = useState("-1");
+  const [userList, setUserList] = useState<String[]>([]);
   const [postList, setPostList] = useState<PostType[]>([]);
   const [filteredPostList, setFilteredPostList] = useState<PostType[]>([]);
   const [selectedOffers, setSelectedOffers] = useState<selectedOffersType[]>(
@@ -29,45 +31,58 @@ const ViewPostByCategory: React.FC = () => {
   const apiFetch = useRequest();
 
   useEffect(() => {
-    if (show === "true") {
-      setShowBool(true);
-    }
-    getPostList();
-  }, [need, showBool]);
+    getUserIds(rating);
+  }, [rating]);
 
   useEffect(() => {
-    filterPosts(distance);
-  }, [selectedOffers, postList, distance]);
+    getPostList();
+  }, [need]);
 
-  const getPostList = async () => {
-    if (need && offer) {
-      axios
-        .get(`${host}/posts/post-trade/`, { params: { need, offer } })
-        .then((res) => setPostList(res.data))
-        .catch((error) => alert(error));
-    } else if (need) {
-      if (showBool) {
-        const response = await apiFetch(`posts/post-offer/${need}/${show}`, {
+  useEffect(() => {
+    if (postList) {
+      filterPosts(distance, rating);
+    }
+  }, [selectedOffers, postList, distance, userList]);
+
+  const getUserIds = async (rating: string) => {
+    try {
+      let users;
+      if (rating === "-1") {
+        users = await apiFetch("accounts/users/", {
           method: "GET",
         });
-        setPostList(response);
       } else {
-        axios
-          .get(`${host}/posts/post-need/`, { params: { need } })
-          .then((res) => setPostList(res.data))
-          .catch((error) => alert(error));
+        users = await apiFetch(`ratings/users-with-rating/${rating}`, {
+          method: "GET",
+        });
+        console.log(users);
       }
-    } else if (offer) {
-      axios
-        .get(`${host}/posts/post-offer/${offer}/${show}`)
-        .then((res) => setPostList(res.data))
-        .catch((error) => alert(error));
+      setUserList(users);
+    } catch (error) {
+      console.error("Error fetching user IDs:", error);
     }
   };
 
-  const filterPosts = async (distance: number) => {
-    console.log("the current list before filtering", filteredPostList);
-    if (selectedOffers.length === 0 && distance == -1) {
+  const getPostList = async () => {
+    let response;
+    if (need && offer) {
+      response = await apiFetch(`posts/post-trade/${need}/${offer}`);
+    } else if (need) {
+      if (show == "true") {
+        response = await apiFetch(`posts/post-offer/${need}/${show}`);
+      } else {
+        response = await apiFetch(`posts/post-need/${need}`);
+      }
+    } else if (offer) {
+      response = await apiFetch(`posts/post-offer/${offer}/${show}`, {
+        method: "GET",
+      });
+    }
+    setPostList(response);
+  };
+
+  const filterPosts = async (distance: number | number[], rating: string) => {
+    if (selectedOffers.length === 0 && distance == -1 && rating == "-1") {
       setFilteredPostList(postList);
     } else {
       let offers = selectedOffers.map((offer) => offer.title);
@@ -82,7 +97,9 @@ const ViewPostByCategory: React.FC = () => {
         const response = await apiFetch(
           `posts/filter/${distance.toString()}/${JSON.stringify(
             postList
-          )}/${JSON.stringify(offers)}/${profile.location_coords}`,
+          )}/${JSON.stringify(offers)}/${
+            profile.location_coords
+          }/${JSON.stringify(userList)}`,
           { method: "GET" }
         );
         setFilteredPostList(response);
@@ -96,15 +113,16 @@ const ViewPostByCategory: React.FC = () => {
     <div>
       <div className="Filtering-Container">
         <div className="Filtering">
-          {showBool && (
+          {show == "true" && (
             <OfferFilter
               selectedOffers={selectedOffers}
               setSelectedOffers={setSelectedOffers}
             />
           )}
-          {filteredPostList && showBool && (
-            <FilterByLocation distanceState={[distance, setDistance]} />
+          {filteredPostList && show == "true" && (
+            <FilterByLocation value={distance} setValue={setDistance} />
           )}
+          {show == "true" && <Ratings rating={rating} setRating={setRating} />}
         </div>
       </div>
 
@@ -134,4 +152,4 @@ const ViewPostByCategory: React.FC = () => {
   );
 };
 
-export default ViewPostByCategory;
+export default withProfileCheck(ViewPostByCategory);

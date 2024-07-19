@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 import host from "../utils/links";
 import "./CreatePost.css";
@@ -20,7 +21,7 @@ import {
   Checkbox,
 } from "@mui/material";
 
-export default function CreatePost() {
+const CreatePost: React.FC = () => {
   const [need, setNeed] = useState("");
   const [offer, setOffer] = useState("");
   const [description, setDescription] = useState("");
@@ -57,12 +58,12 @@ export default function CreatePost() {
     getAndSetLocation(response.user_id);
   };
 
-  const getAndSetLocation= async (id: number)  => {
+  const getAndSetLocation = async (id: number) => {
     const response = await apiFetch(`accounts/profile/${id}`, {
       method: "GET",
     });
-    setProfileLocation(response.location_name)
-  }
+    setProfileLocation(response.location_name);
+  };
 
   const formatText = (text: string) => {
     const words = text.split(" ");
@@ -137,11 +138,9 @@ export default function CreatePost() {
   };
 
   const handleCheckboxChange = () => {
-    if (location == profileLocation)
-      setLocation("")
-    else
-      setLocation(profileLocation)
-  }
+    if (location == profileLocation) setLocation("");
+    else setLocation(profileLocation);
+  };
 
   const handleSubmit = () => {
     if (
@@ -294,4 +293,6 @@ export default function CreatePost() {
       </Snackbar>
     </>
   );
-}
+};
+
+export default withProfileCheck(CreatePost);

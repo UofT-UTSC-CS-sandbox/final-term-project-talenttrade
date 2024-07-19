@@ -22,26 +22,8 @@ import host from "../utils/links";
 import "./ViewProfile.css";
 import ReviewCard from "../components/reviewCard";
 import ReviewDialog from "../components/reviewDialog";
-/* Code to use Review Dialog
-import ReviewDialog from "../components/reviewDialog";
-const [openDialog, setOpenDialog] = useState(false);
-
-//button may need additional styling
-<button onClick={() => setOpenDialog(true)}>temp</button>
-<ReviewDialog receiverId={___} receiverName={___} open={openDialog} handleClose={() => setOpenDialog(false)}/>
-*/
-
-interface UserProfileType {
-  user: number;
-  username: string;
-  full_name: string;
-  bio: string;
-  location_name: string;
-  location_coords: string;
-  date_of_birth: string;
-  profile_picture: string;
-  is_exact_location: boolean;
-}
+import UserProfileType from "../interfaces/User";
+import { stringToColor } from "../components/topbar";
 
 interface LocationResult {
   name: string;
@@ -65,12 +47,16 @@ const ViewProfile: React.FC = () => {
   const [useExactLocation, setUseExactLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string>("");
   const [rating, setRating] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [numRatings, setNumRatings] = useState(0);
+  const [isCityInvalid, setIsCityInvalid] = useState<boolean>(false);
+  const [isDobInvalid, setIsDobInvalid] = useState<boolean>(false);
+  const [isOfferingInvalid, setIsOfferingInvalid] = useState<boolean>(false);
 
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
@@ -109,9 +95,61 @@ const ViewProfile: React.FC = () => {
     if (!userId) {
       setEditableProfile(response);
     }
+    if (!response.date_of_birth) {
+      setNotification("You must fill in your profile.");
+      setSnackbarOpen(true);
+    }
   };
 
   const handleSave = async () => {
+    if (!editableProfile) {
+      setNotification("Profile invalid.");
+      setLoading(false);
+      setSnackbarOpen(true);
+      return false;
+    }
+    if (
+      !editableProfile.location_name ||
+      editableProfile.location_name.length <= 8
+    ) {
+      setNotification("City is not valid.");
+      setLoading(false);
+      setSnackbarOpen(true);
+      setIsCityInvalid(true);
+      return;
+    }
+    setIsCityInvalid(false);
+
+    if (!editableProfile.date_of_birth) {
+      setNotification("Please enter a date of birth.");
+      setLoading(false);
+      setSnackbarOpen(true);
+      setIsDobInvalid(true);
+      return;
+    }
+    setIsDobInvalid(false);
+
+    if (
+      editableProfile.profile_picture &&
+      editableProfile.profile_picture instanceof File
+    ) {
+      const file = editableProfile.profile_picture as File;
+      if (!file.type.startsWith("image/")) {
+        setNotification("Profile picture must be an image.");
+        setLoading(false);
+        setSnackbarOpen(true);
+        return;
+      }
+    }
+
+    if (!editableProfile.offerings || editableProfile.offerings.length <= 2) {
+      setNotification("You must enter at least one offering.");
+      setLoading(false);
+      setSnackbarOpen(true);
+      setIsOfferingInvalid(true);
+      return;
+    }
+
     if (editableProfile) {
       setLoading(true);
       if (editableProfile.is_exact_location) {
@@ -141,6 +179,7 @@ const ViewProfile: React.FC = () => {
       `worldcities/search/?q=${profileData.location_name}`,
       { method: "GET" }
     );
+
     const results = response.slice(0, 1); // Get the top result
     if (results.length > 0) {
       const location = results[0];
@@ -150,30 +189,54 @@ const ViewProfile: React.FC = () => {
   };
 
   const saveProfile = async (profileData: UserProfileType) => {
-    const response = await apiFetch("accounts/profile/create/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profileData),
+    const formData = new FormData();
+    (Object.keys(profileData) as (keyof UserProfileType)[]).forEach((key) => {
+      const value = profileData[key];
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, value as string);
+      }
     });
+
+    const response = await apiFetch(
+      "accounts/profile/create/",
+      {
+        method: "PUT",
+        body: formData,
+      },
+      "multipart/form-data"
+    );
+
     setLoading(false);
+    setNotification("Profile updated successfully");
     setSnackbarOpen(true);
     setProfile(profileData);
+    navigate(`/profile/${currentUserId}`);
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    if (editableProfile) {
-      setEditableProfile({
-        ...editableProfile,
-        [name]: value,
-      });
+    if (e.target instanceof HTMLInputElement && e.target.files) {
+      const files = e.target.files;
+      if (editableProfile) {
+        setEditableProfile({
+          ...editableProfile,
+          [name]: files[0],
+        });
+      }
+    } else {
+      if (editableProfile) {
+        setEditableProfile({
+          ...editableProfile,
+          [name]: value,
+        });
 
-      if (name === "location_name") {
-        fetchLocationResults(value);
+        if (name === "location_name") {
+          fetchLocationResults(value);
+        }
       }
     }
   };
@@ -201,7 +264,6 @@ const ViewProfile: React.FC = () => {
     },
     [apiFetch]
   );
-
   const handleLocationSelect = (location: LocationResult) => {
     if (editableProfile) {
       setEditableProfile({
@@ -255,7 +317,7 @@ const ViewProfile: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/profile/");
   };
 
   const handleCloseSnackbar = () => {
@@ -273,7 +335,16 @@ const ViewProfile: React.FC = () => {
                   alt={profile.full_name}
                   src={`${host}${profile.profile_picture}`}
                   className="profile-avatar"
-                />
+                  sx={{
+                    width: 86,
+                    height: 86,
+                    fontSize: "2rem",
+                    backgroundColor: stringToColor(profile?.full_name || ""),
+                  }}
+                >
+                  {profile?.full_name.split(" ")[0][0]}
+                  {profile?.full_name.split(" ")[1][0]}
+                </Avatar>
               </Box>
               <Typography
                 variant="h4"
@@ -284,6 +355,13 @@ const ViewProfile: React.FC = () => {
               </Typography>
               {!userId ? (
                 <>
+                  <TextField
+                    name="profile_picture"
+                    type="file"
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                  />
                   <TextField
                     name="bio"
                     label="Bio"
@@ -296,11 +374,14 @@ const ViewProfile: React.FC = () => {
                   />
                   <TextField
                     name="location_name"
+                    required
                     label="City/Town"
                     value={editableProfile?.location_name || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    error={isCityInvalid}
+                    helperText={isCityInvalid && "City is not valid."}
                   />
                   {locationResults.length > 0 && (
                     <List className="location-results-list">
@@ -330,6 +411,7 @@ const ViewProfile: React.FC = () => {
                     name="date_of_birth"
                     label="Date of Birth"
                     type="date"
+                    required
                     value={editableProfile?.date_of_birth || ""}
                     onChange={handleChange}
                     fullWidth
@@ -337,6 +419,22 @@ const ViewProfile: React.FC = () => {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    error={isDobInvalid}
+                    helperText={isDobInvalid && "Please enter a date of birth."}
+                  />
+                  <TextField
+                    name="offerings"
+                    label='Offerings (e.g. "Web design, Graphic design, Carpentry")'
+                    value={editableProfile?.offerings || ""}
+                    onChange={handleChange}
+                    required
+                    fullWidth
+                    margin="normal"
+                    error={isOfferingInvalid}
+                    helperText={
+                      isOfferingInvalid &&
+                      "Pleae enter your offerings/services."
+                    }
                   />
                   <Box className="profile-actions">
                     <Button
@@ -359,94 +457,109 @@ const ViewProfile: React.FC = () => {
               ) : (
                 <>
                   <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    className="profile-detail profile-bio"
-                  >
-                    Bio: {profile.bio}
-                  </Typography>
-                  <Typography
-                    variant="body2"
+                    variant="h6"
                     color="textSecondary"
-                    className="profile-detail"
+                    className="profile-details"
                   >
-                    Location: {profile.location_name}
+                    Offerings: {profile.offerings}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    className="profile-detail"
-                  >
-                    Date of Birth: {profile.date_of_birth}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    className="profile-detail"
-                    sx={{ paddingTop: 2 }}
-                  >
-                    Rating
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Rating
-                      name="read-only"
-                      size="medium"
-                      value={rating}
-                      precision={0.5}
-                      readOnly
-                    />
-                    <Box> {`(${numRatings})`}</Box>
-                  </Box>
-                  {currentUserId != parseInt(userId) && (
-                    <Box>
-                      <button onClick={() => setOpenDialog(true)}>
-                        Rate this user
-                      </button>
-                      <ReviewDialog
-                        receiverId={parseInt(userId)}
-                        receiverName={profile.full_name}
-                        open={openDialog}
-                        handleClose={() => setOpenDialog(false)}
-                      />
-                    </Box>
-                  )}
-
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    className="profile-detail"
-                    sx={{ paddingTop: 2 }}
-                  >
-                    Reviews
-                  </Typography>
-                  {reviews.length ? (
-                    <div>
-                      {reviews.map((review) => (
-                        <div className="review-card">
-                          <ReviewCard
-                            review={review.review}
-                            date={review.published}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div>
+                  {profile.bio && (
+                    <Card className="profile-detail-card">
                       <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        className="profile-detail"
+                        variant="body1"
+                        color="textPrimary"
+                        className="profile-detail profile-bio"
                       >
-                        There are no reviews
+                        {profile.bio}
                       </Typography>
-                    </div>
+                    </Card>
                   )}
+                  <Card className="profile-detail-card">
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      className="profile-detail"
+                    >
+                      Location: {profile.location_name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      className="profile-detail"
+                    >
+                      Date of Birth: {profile.date_of_birth}
+                    </Typography>
+                  </Card>
 
+                  <Card className="profile-detail-card">
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      className="profile-detail"
+                      sx={{ paddingTop: 2 }}
+                    >
+                      Rating
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Rating
+                        name="read-only"
+                        size="medium"
+                        value={rating}
+                        precision={0.5}
+                        readOnly
+                      />
+                      <Box> {`(${numRatings})`}</Box>
+                    </Box>
+                    {currentUserId != parseInt(userId) && (
+                      <Box>
+                        <button onClick={() => setOpenDialog(true)}>
+                          Rate this user
+                        </button>
+                        <ReviewDialog
+                          receiverId={parseInt(userId)}
+                          receiverName={profile.full_name}
+                          open={openDialog}
+                          handleClose={() => setOpenDialog(false)}
+                        />
+                      </Box>
+                    )}
+
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      className="profile-detail"
+                      sx={{ paddingTop: 2 }}
+                    >
+                      Reviews
+                    </Typography>
+                    {reviews.length ? (
+                      <div>
+                        {reviews.map((review) => (
+                          <div className="review-card">
+                            <ReviewCard
+                              review={review.review}
+                              date={review.published}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          className="profile-detail"
+                        >
+                          There are no reviews
+                        </Typography>
+                      </div>
+                    )}
+                  </Card>
                   <Box className="profile-actions">
                     <Button
                       variant="contained"
@@ -490,7 +603,7 @@ const ViewProfile: React.FC = () => {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        message="Profile updated successfully"
+        message={notification}
       />
     </Box>
   );

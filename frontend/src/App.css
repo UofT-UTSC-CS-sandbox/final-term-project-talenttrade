@@ -8,13 +8,14 @@ button {
 
 body {
   font-family: "Poppins", sans-serif !important;
-  background-color: #f4f4f4 !important;
+  background-color: "white"!important;
   color: #333 !important;
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
-  width: 100%;
   margin: 0 auto;
-  padding-top: 5rem;
+  padding-top: 4rem;
+  
 }
