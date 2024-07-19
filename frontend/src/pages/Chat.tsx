@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import host from "../utils/links";
 import useRequest from "../utils/requestHandler";
 import axios from "axios";
-import { Button, TextField } from "@mui/material";
+import { Avatar, Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 
 import "./Chat.css";
+import { stringToColor } from "../components/topbar";
 
 interface message {
   map(arg0: (msg: any) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode;
@@ -85,21 +86,33 @@ export default function Chat() {
             (
               <div className="right" key={msg.id}>
                 <div className="text">{msg.message}</div>
-                <img
-                  src="/Default_pfp.png"
-                  alt="Profile"
-                  className="chatProfileIcon"
-                />
+                <Avatar
+                    alt={msg.sender_profile?.full_name}
+                    src={`${msg.sender_profile?.profile_picture}`}
+                    sx={{
+                      backgroundColor: stringToColor(msg.sender_profile?.full_name || ""),
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {msg.sender_profile?.full_name.split(" ")[0][0]}
+                    {msg.sender_profile?.full_name.split(" ")[1][0]}
+                  </Avatar>
               </div>
             )
             :
             (
               <div className="left" key={msg.id}>
-                <img
-                  src="/Default_pfp.png"
-                  alt="Profile"
-                  className="chatProfileIcon"
-                />
+                <Avatar
+                    alt={msg.sender_profile?.full_name}
+                    src={`${msg.sender_profile?.profile_picture}`}
+                    sx={{
+                      backgroundColor: stringToColor(msg.sender_profile?.full_name || ""),
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {msg.sender_profile?.full_name.split(" ")[0][0]}
+                    {msg.sender_profile?.full_name.split(" ")[1][0]}
+                </Avatar>
                 <div className="text">{msg.message}</div>
               </div>
             )
