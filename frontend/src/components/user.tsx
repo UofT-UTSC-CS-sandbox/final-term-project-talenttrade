@@ -7,6 +7,8 @@ import { deepOrange } from "@mui/material/colors";
 import Rating from "@mui/material/Rating";
 import useRequest from "../utils/requestHandler";
 import { useNavigate } from "react-router-dom";
+import UserProfileType from "../interfaces/User";
+import host from "../utils/links";
 
 export interface UserType {
   id: number;
@@ -24,17 +26,34 @@ const User: React.FC<UserProps> = ({ user }) => {
   const apiFetch = useRequest();
   const navigate = useNavigate();
   const [numRatings, setNumRatings] = useState(0);
+  const [profilePic, setProfilePic] = useState("");
 
   useEffect(() => {
     getAvgRating(user.id);
-  }, [rating]);
+    getProfile(user.id);
+  }, [user.id]); // Only run when user.id changes
 
   const getAvgRating = async (user_id: number) => {
-    const response = await apiFetch(`ratings/avg/?receiver=${user_id}`, {
-      method: "GET",
-    });
-    setRating(response.average);
-    setNumRatings(response.numRatings);
+    try {
+      const response = await apiFetch(`ratings/avg/?receiver=${user_id}`, {
+        method: "GET",
+      });
+      setRating(response.average);
+      setNumRatings(response.numRatings);
+    } catch (error) {
+      console.error("Error fetching average rating:", error);
+    }
+  };
+
+  const getProfile = async (user_id: number) => {
+    try {
+      const response = await apiFetch(`accounts/profile/${user_id}/`, {
+        method: "GET"
+      });
+      setProfilePic(response.profile_picture);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
   };
 
   const viewOtherUser = () => {
@@ -72,7 +91,7 @@ const User: React.FC<UserProps> = ({ user }) => {
                 fontSize: "1.5rem",
               }}
               alt={user.first_name}
-              src="/broken-image.jpg"
+              src={`${host}${profilePic}`}
             />
           </Grid>
           <Grid

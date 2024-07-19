@@ -22,19 +22,9 @@ import host from "../utils/links";
 import "./ViewProfile.css";
 import ReviewCard from "../components/reviewCard";
 import ReviewDialog from "../components/reviewDialog";
+import UserProfileType from "../interfaces/User";
 
-interface UserProfileType {
-    user: number;
-    username: string;
-    full_name: string;
-    bio: string;
-    location_name: string;
-    location_coords: string;
-    date_of_birth: string;
-    profile_picture: File | string;
-    offerings: string;
-    is_exact_location: boolean;
-}
+
 
 interface LocationResult {
     name: string;
@@ -67,6 +57,7 @@ const ViewProfile: React.FC = () => {
     const [numRatings, setNumRatings] = useState(0);
     const [isCityInvalid, setIsCityInvalid] = useState<boolean>(false);
     const [isDobInvalid, setIsDobInvalid] = useState<boolean>(false);
+    const [isOfferingInvalid, setIsOfferingInvalid] = useState<boolean>(false);
 
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
@@ -150,6 +141,7 @@ const ViewProfile: React.FC = () => {
             setNotification("You must enter at least one offering.");
             setLoading(false);
             setSnackbarOpen(true);
+            setIsOfferingInvalid(true);
             return;
         }
 
@@ -211,6 +203,7 @@ const ViewProfile: React.FC = () => {
         setNotification("Profile updated successfully");
         setSnackbarOpen(true);
         setProfile(profileData);
+        navigate(`/profile/${currentUserId}`);
     };
 
     const handleChange = (
@@ -317,7 +310,7 @@ const ViewProfile: React.FC = () => {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/profile/");
     };
 
     const handleCloseSnackbar = () => {
@@ -419,8 +412,11 @@ const ViewProfile: React.FC = () => {
                                         label='Offerings (e.g. "Web design, Graphic design, Carpentry")'
                                         value={editableProfile?.offerings || ""}
                                         onChange={handleChange}
+                                        required
                                         fullWidth
                                         margin="normal"
+                                        error={isOfferingInvalid}
+                                        helperText={isOfferingInvalid && "Pleae enter your offerings/services."}
                                     />
                                     <Box className="profile-actions">
                                         <Button
