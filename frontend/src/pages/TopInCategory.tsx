@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
 import { Link } from "react-router-dom";
 import "./TopInCategory.css";
+import "./../components/category.css";
+import useRequest from "../utils/requestHandler";
 
 interface TopType {
   offer?: string;
@@ -14,6 +14,7 @@ interface Category {
 }
 
 const TopInCategory: React.FC<Category> = ({ category }) => {
+  const apiFetch = useRequest();
   const [top, setTop] = useState<TopType[]>([]);
 
   useEffect(() => {
@@ -21,11 +22,8 @@ const TopInCategory: React.FC<Category> = ({ category }) => {
   }, []);
 
   const getTop = async () => {
-    axios
-      .get(`${host}/posts/${category}/`)
-      .then((res) => setTop(res.data))
-      .then(() => console.log())
-      .catch((error) => alert(error));
+    const response = await apiFetch(`posts/${category}/`);
+    setTop(response);
   };
 
   return (
@@ -44,10 +42,12 @@ const TopInCategory: React.FC<Category> = ({ category }) => {
               <Link
                 to={
                   category == "trade"
-                    ? `/view-posts-by-category?need=${top.need}&offer=${top.offer}`
+                    ? `/view-posts-by-category?need=${top.need}&offer=${
+                        top.offer
+                      }&show=${false}`
                     : category == "need"
-                    ? `/view-posts-by-category?need=${top.need}`
-                    : `/view-posts-by-category?offer=${top.offer}`
+                    ? `/view-posts-by-category?need=${top.need}&show=${false}`
+                    : `/view-posts-by-category?offer=${top.offer}&show=${false}`
                 }
                 key={index}
                 className="card-link"

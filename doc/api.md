@@ -112,9 +112,12 @@
 
 ### 5. Search User by Username
 
-**URL**: `/search-user/<str:username>/`  
+**URL**: `/search-user/<str:username>/<str:user_list>`  
 **Method**: `GET`  
-**URL Parameters**: `username` (string)
+**URL Parameters**:
+
+- `username` (string): the username to search for
+- `user_list` (string of a list): the userids to filter by
 
 **Success Response**:
 
@@ -251,6 +254,24 @@
   {
     "message": "Profile deletion successful"
   }
+  ```
+
+**Error Response(s)**: None
+
+### 11. Get List Of All Users
+
+**URL**: `/users/`  
+**Method**: `GET`  
+**URL Parameters**: None
+
+**Success Response**:
+
+- **Code**: 200 OK
+- **Content**:
+  ```json
+  [
+    "<user_id1>", "<user_id2>", ...
+  ]
   ```
 
 **Error Response(s)**: None
@@ -481,8 +502,7 @@
 
 **URL**: `/posts/post-need/`  
 **Method**: `GET`  
-**URL Params**: None  
-**Query Params**:
+**URL Params**:
 
 - `need`: the need to filter posts by.
 
@@ -533,8 +553,7 @@
 
 **URL**: `/posts/post-trade/`  
 **Method**: `GET`  
-**URL Params**: None  
-**Query Params**:
+**URL Params**:
 
 - `offer`: the offer to filter posts by.
 - `need`: the need to filter posts by.
@@ -558,7 +577,7 @@
 
 ### 11. Filter Posts
 
-**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>`  
+**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>/<str:user_list>`
 **Method**: `GET`  
 **URL Params**:
 
@@ -566,6 +585,7 @@
 - `pk_list`: list of post IDs to filter.
 - `offer_list`: list of offers to filter by.
 - `loc-coords`: String containing latitude and longitude of the location.
+- `user_list`: String containing a list of users to filter by
 
 **Success Response**:
 
@@ -582,6 +602,63 @@
   - **Content**:
   ```json
   { "detail": "No Posts match the given query." }
+  ```
+
+### 12. Suggested Posts
+
+**URL**: `/posts/suggested-posts/`
+**Method**: GET
+**URL Params**: None
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+  [{"id": "int", "author_id": "int", "author_name": "string", "need": "string", "offer": "string", "description": "string", "location": "string", "published": "datetime", "applicants": "int"}, ...]
+  ```
+
+**Error Responses**:
+
+- **Code**: `401` Unauthorized
+  - **Content**:
+    ```json
+    { "detail": "Authentication credentials were not provided." }
+    ```
+- **Code**:`500 ` Internal Server Error
+  - **Content**:
+  ```json
+  { "detail": "Internal server error occurred." }
+  ```
+
+### 13. Record Post Click
+
+**URL**: `/posts/record-click/<int:post_id>`
+**Method**: GET, POST
+**URL Params**:
+
+- `post_id`: id of the post that is clicked.
+
+**Success Response**:
+
+- **Code**: `201 Created`
+- **Content**:
+
+```json
+   {"message": "Click recorded"}`
+```
+
+**Error Responses**:
+
+- **Code**:`400 ` Bad Request
+  - **Content**:
+  ```json
+  { "detail": "Invalid request dat." }
+  ```
+- **Code**:`404` Not Found
+  **Content**:
+  ```json
+  { "detail": "Post not found." }
   ```
 
 ## Ratings Endpoints
@@ -806,6 +883,31 @@
     ```
   - **Condition**: This occurs when there is no rating with the specified ID.
 
+### 8. Get Users with Rating Above min_rating
+
+**URL**: `/ratings/users-with-rating/<str:min_rating>`  
+**Method**: `POST`  
+**URL Params**:
+
+- `min_rating`: minimum average rating to filter users.
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+    ["<user_id1>", "<user_id2>",... ]
+  ```
+
+**Error Response**:
+
+- **Code**: `400 Bad Request`
+  - **Content**:
+
+```json
+{ "error": "Rating parameter is required" }
+```
+
 ## Reviews Endpoints
 
 ### 1. Get Reviews
@@ -935,8 +1037,6 @@
   }
   ```
   - Above is a sample, individual fields may or may not be returned depending on the input
-
-### 5. Update Review
 
 ### 5. Update Review
 

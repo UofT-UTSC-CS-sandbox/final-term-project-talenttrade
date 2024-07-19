@@ -17,3 +17,23 @@ class Post(models.Model):
 
     def __str__(self):
         return self.need+" "+self.offer
+
+
+class Click(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = [['user', 'post']]
+
+    def __str__(self):
+        return f"{self.user.id} {self.post.author_id} {self.timestamp}"
+
+
+class StoreSuggestedPost(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    suggested_posts = models.ManyToManyField(Post)
+    email = models.CharField(max_length=30)
+    def __str__(self):
+        return f"{self.user.username} - {self.email}"
