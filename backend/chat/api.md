@@ -32,6 +32,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
 ## Send Message
 - URL: `/send/`
 - Method: `POST`
+- Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
 - Success Response:
   - `201`
     `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}]`
@@ -59,6 +60,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
 ## Update Message
 - URL: `/<int:pk>/`
 - Method: `PUT`
+- Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
 - Success Response: 
   - `200`
     `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
