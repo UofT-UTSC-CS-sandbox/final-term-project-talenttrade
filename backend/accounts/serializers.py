@@ -43,7 +43,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
         if 'profile_picture' in validated_data:
             instance.profile_picture = validated_data['profile_picture']
-        instance.offerings = validated_data.get('offerings', instance.offerings)
+                #capitalize the offerings
+        offerings = validated_data.get('offerings')
+        words = offerings.split()
+        capitalized_words = [word.capitalize() for word in words]
+        instance.offerings = ' '.join(capitalized_words)
         instance.save()
         return instance
 

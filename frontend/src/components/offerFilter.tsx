@@ -4,6 +4,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { selectedOffersType } from "../pages/viewPostsByCategory";
+import { useEffect, useState } from "react";
+import useRequest from "../utils/requestHandler";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -12,11 +14,28 @@ interface OfferFilterProps {
   selectedOffers: selectedOffersType[];
   setSelectedOffers: (updatedList: selectedOffersType[]) => void;
 }
+interface OffersType {
+  title: string;
+}
 
 const OfferFilter: React.FC<OfferFilterProps> = ({
   selectedOffers,
   setSelectedOffers,
 }) => {
+  const [offers, setOffers] = useState<OffersType[]>([]);
+  const apiFetch = useRequest();
+
+  useEffect(() => {
+    getProfile();
+    console.log(offers);
+  }, []);
+
+  const getProfile = async () => {
+    const response = await apiFetch(`accounts/profile/`, { method: "GET" });
+    setOffers(
+      response.offerings.split(", ").map((title: string) => ({ title }))
+    );
+  };
   return (
     <Autocomplete
       multiple
@@ -36,7 +55,7 @@ const OfferFilter: React.FC<OfferFilterProps> = ({
         </li>
       )}
       style={{
-        width: "275px",
+        width: "255px",
         backgroundColor: "white",
         boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.2)",
         borderRadius: 4,
@@ -74,12 +93,5 @@ const OfferFilter: React.FC<OfferFilterProps> = ({
     />
   );
 };
-
-const offers = [
-  { title: "Web Developer" },
-  { title: "Graphic Design" },
-  { title: "Plumber" },
-  { title: "Gardener" },
-];
 
 export default OfferFilter;
