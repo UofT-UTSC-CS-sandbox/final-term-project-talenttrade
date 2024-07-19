@@ -17,11 +17,16 @@
 }
 
 .review-card {
-  padding-top: 12px;
+    padding-top: 12px;
 }
 
 .profile-avatar-container {
     margin-bottom: 16px;
+}
+
+.profile-detail-card {
+    margin-bottom: 16px;
+    padding: 16px;
 }
 
 .profile-details {

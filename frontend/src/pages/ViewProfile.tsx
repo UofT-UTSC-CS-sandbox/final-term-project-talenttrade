@@ -136,6 +136,23 @@ const ViewProfile: React.FC = () => {
         }
         setIsDobInvalid(false);
 
+        if (editableProfile.profile_picture && editableProfile.profile_picture instanceof File) {
+            const file = editableProfile.profile_picture as File;
+            if (!file.type.startsWith('image/')) {
+                setNotification("Profile picture must be an image.");
+                setLoading(false);
+                setSnackbarOpen(true);
+                return;
+            }
+        }
+
+        if (!editableProfile.offerings || editableProfile.offerings.length <= 2) {
+            setNotification("You must enter at least one offering.");
+            setLoading(false);
+            setSnackbarOpen(true);
+            return;
+        }
+
         if (editableProfile) {
             setLoading(true);
             if (editableProfile.is_exact_location) {
@@ -318,6 +335,7 @@ const ViewProfile: React.FC = () => {
                                     alt={profile.full_name}
                                     src={`${host}${profile.profile_picture}`}
                                     className="profile-avatar"
+                                    sx={{ width: 86, height: 86, fontSize: "2rem" }}
                                 />
                             </Box>
                             <Typography
@@ -425,101 +443,109 @@ const ViewProfile: React.FC = () => {
                             ) : (
                                 <>
                                     <Typography
-                                        variant="body1"
-                                        color="textPrimary"
-                                        className="profile-detail profile-bio"
-                                    >
-                                        Bio: {profile.bio}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
+                                        variant="h6"
                                         color="textSecondary"
-                                        className="profile-detail"
-                                    >
-                                        Location: {profile.location_name}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        className="profile-detail"
-                                    >
-                                        Date of Birth: {profile.date_of_birth}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        className="profile-detail"
+                                        className="profile-details"
                                     >
                                         Offerings: {profile.offerings}
                                     </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        color="textPrimary"
-                                        className="profile-detail"
-                                        sx={{ paddingTop: 2 }}
-                                    >
-                                        Rating
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <Rating
-                                            name="read-only"
-                                            size="medium"
-                                            value={rating}
-                                            precision={0.5}
-                                            readOnly
-                                        />
-                                        <Box> {`(${numRatings})`}</Box>
-                                    </Box>
-                                    {currentUserId != parseInt(userId) && (
-                                        <Box>
-                                            <button onClick={() => setOpenDialog(true)}>
-                                                Rate this user
-                                            </button>
-                                            <ReviewDialog
-                                                receiverId={parseInt(userId)}
-                                                receiverName={profile.full_name}
-                                                open={openDialog}
-                                                handleClose={() => setOpenDialog(false)}
-                                            />
-                                        </Box>
-                                    )}
-
-                                    <Typography
-                                        variant="body1"
-                                        color="textPrimary"
-                                        className="profile-detail"
-                                        sx={{ paddingTop: 2 }}
-                                    >
-                                        Reviews
-                                    </Typography>
-                                    {reviews.length ? (
-                                        <div>
-                                            {reviews.map((review) => (
-                                                <div className="review-card">
-                                                    <ReviewCard
-                                                        review={review.review}
-                                                        date={review.published}
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div>
+                                    {profile.bio && (
+                                        <Card className="profile-detail-card">
                                             <Typography
-                                                variant="body2"
-                                                color="textSecondary"
-                                                className="profile-detail"
+                                                variant="body1"
+                                                color="textPrimary"
+                                                className="profile-detail profile-bio"
                                             >
-                                                There are no reviews
+                                                {profile.bio}
                                             </Typography>
-                                        </div>
+                                        </Card>
                                     )}
+                                    <Card className="profile-detail-card">
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            className="profile-detail"
+                                        >
+                                            Location: {profile.location_name}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            className="profile-detail"
+                                        >
+                                            Date of Birth: {profile.date_of_birth}
+                                        </Typography>
+                                    </Card>
 
+                                    <Card className="profile-detail-card">
+                                        <Typography
+                                            variant="body1"
+                                            color="textPrimary"
+                                            className="profile-detail"
+                                            sx={{ paddingTop: 2 }}
+                                        >
+                                            Rating
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Rating
+                                                name="read-only"
+                                                size="medium"
+                                                value={rating}
+                                                precision={0.5}
+                                                readOnly
+                                            />
+                                            <Box> {`(${numRatings})`}</Box>
+                                        </Box>
+                                        {currentUserId != parseInt(userId) && (
+                                            <Box>
+                                                <button onClick={() => setOpenDialog(true)}>
+                                                    Rate this user
+                                                </button>
+                                                <ReviewDialog
+                                                    receiverId={parseInt(userId)}
+                                                    receiverName={profile.full_name}
+                                                    open={openDialog}
+                                                    handleClose={() => setOpenDialog(false)}
+                                                />
+                                            </Box>
+                                        )}
+
+                                        <Typography
+                                            variant="body1"
+                                            color="textPrimary"
+                                            className="profile-detail"
+                                            sx={{ paddingTop: 2 }}
+                                        >
+                                            Reviews
+                                        </Typography>
+                                        {reviews.length ? (
+                                            <div>
+                                                {reviews.map((review) => (
+                                                    <div className="review-card">
+                                                        <ReviewCard
+                                                            review={review.review}
+                                                            date={review.published}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="textSecondary"
+                                                    className="profile-detail"
+                                                >
+                                                    There are no reviews
+                                                </Typography>
+                                            </div>
+                                        )}
+                                    </Card>
                                     <Box className="profile-actions">
                                         <Button
                                             variant="contained"

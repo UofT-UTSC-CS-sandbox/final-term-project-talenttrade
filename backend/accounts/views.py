@@ -98,7 +98,10 @@ class ProfileCreateView(APIView):
     def put(self, request):
         try:
             user_profile = UserProfile.objects.get(user=request.user)
-            serializer = ProfileSerializer(user_profile, data=request.data, partial=True)
+            request_data = request.data.copy()
+            if isinstance(request_data.get('profile_picture'), str):
+                request_data['profile_picture'] = user_profile.profile_picture
+            serializer = ProfileSerializer(user_profile, data=request_data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
