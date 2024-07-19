@@ -7,19 +7,28 @@ const useRequest = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  return useCallback<any>(
-    async (path: string, options = {}) => {
+  return useCallback(
+    async (path: string, options = {}, contentType: string = "application/json") => {
       // Remove leading slash if exists
       const normalizedPath = path.startsWith("/") ? path.substring(1) : path;
+
+      // Create headers and set default Content-Type
+      const headers = new Headers({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": contentType,
+      });
+
+      // Remove Content-Type if it's form-data (it will be automatically set by the browser)
+      if (contentType === "multipart/form-data") {
+        headers.delete("Content-Type");
+      }
+
       try {
         const response = await fetch(
           `${host}/${normalizedPath}`,
           Object.assign({}, options, {
-            headers: new Headers({
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            }),
-          }),
+            headers,
+          })
         );
 
         // If user is unauthorized, send them back to login page
@@ -35,12 +44,11 @@ const useRequest = () => {
 
         return await response.json();
       } catch (error) {
-        console.log("Error during request");
-
+        console.log("Error during request:", error);
         return null;
       }
     },
-    [token],
+    [token]
   );
 };
 

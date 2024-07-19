@@ -131,6 +131,11 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Ignore Django migration files
+*/migrations/
+*/migrations/*.py
+*/migrations/*.pyc
+
 # SageMath parsed files
 *.sage.py
 
@@ -304,3 +309,6 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/pydev,python,visualstudiocode,react,django
+
+# Ignore all files under backend/static/images
+backend/static/images/*

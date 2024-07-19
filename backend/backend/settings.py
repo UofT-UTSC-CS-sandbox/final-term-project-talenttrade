@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +26,26 @@ SECRET_KEY = 'django-insecure-q1g9$j0k=9_o4=ug!--#dbsl97l5%#wr-7v*lsy6f@z9&4jik4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'talenttradenotif@gmail.com'
+EMAIL_HOST_PASSWORD = 'qqkaqbsrwahvbppr'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+CELERY_BEAT_SCHEDULE = {
+    'send-weekly-suggested-posts': {
+        'task': 'posts.tasks.send_weekly_suggested_posts',
+        'schedule': crontab(minute='*/2'),
+    },
+}
+
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -46,6 +66,8 @@ INSTALLED_APPS = [
     'ratings',
     'reviews',
     'worldcities',
+    'chat',
+    'django_celery_beat',
 ]
 
 REST_FRAMEWORK = {
@@ -57,7 +79,6 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,8 +111,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # User Model
 AUTH_USER_MODEL = 'auth.User'
 
-# User Model
-AUTH_USER_MODEL = 'auth.User'
 
 
 # Database
@@ -132,14 +151,21 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+MEDIA_URL = '/images/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.conf import settings
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -10,6 +11,7 @@ class UserProfile(models.Model):
     is_exact_location = models.BooleanField(default=False)
     date_of_birth = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    offerings = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.user.username

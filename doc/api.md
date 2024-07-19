@@ -112,9 +112,12 @@
 
 ### 5. Search User by Username
 
-**URL**: `/search-user/<str:username>/`  
+**URL**: `/search-user/<str:username>/<str:user_list>`  
 **Method**: `GET`  
-**URL Parameters**: `username` (string)
+**URL Parameters**:
+
+- `username` (string): the username to search for
+- `user_list` (string of a list): the userids to filter by
 
 **Success Response**:
 
@@ -124,10 +127,12 @@
   [
     {
       "id": "<user_id>",
-      "username": "<username>"
-      // Other user details
-    }
-    // More users
+      "username": "<username>",
+      "email": "string",
+      "first_name": "string",
+      "last_name": "string"
+    } ,
+    ...
   ]
   ```
 
@@ -197,7 +202,14 @@
 - **Content**:
   ```json
   {
-    // Profile details
+    "user": "int",
+    "bio": "string",
+    "location_name": "string",
+    "location_coords": "string",
+    "is_exact_location": "Boolean",
+    "date_of_birth": "Date",
+    "profile_picture": "image",
+    "offerings": "string"
   }
   ```
 
@@ -223,7 +235,14 @@
 - **Content**:
   ```json
   {
-    // Profile details
+    "user": "int",
+    "bio": "string",
+    "location_name": "string",
+    "location_coords": "string",
+    "is_exact_location": "Boolean",
+    "date_of_birth": "Date",
+    "profile_picture": "image",
+    "offerings": "string"
   }
   ```
 
@@ -251,6 +270,24 @@
   {
     "message": "Profile deletion successful"
   }
+  ```
+
+**Error Response(s)**: None
+
+### 11. Get List Of All Users
+
+**URL**: `/users/`  
+**Method**: `GET`  
+**URL Parameters**: None
+
+**Success Response**:
+
+- **Code**: 200 OK
+- **Content**:
+  ```json
+  [
+    "<user_id1>", "<user_id2>", ...
+  ]
   ```
 
 **Error Response(s)**: None
@@ -481,8 +518,7 @@
 
 **URL**: `/posts/post-need/`  
 **Method**: `GET`  
-**URL Params**: None  
-**Query Params**:
+**URL Params**:
 
 - `need`: the need to filter posts by.
 
@@ -533,8 +569,7 @@
 
 **URL**: `/posts/post-trade/`  
 **Method**: `GET`  
-**URL Params**: None  
-**Query Params**:
+**URL Params**:
 
 - `offer`: the offer to filter posts by.
 - `need`: the need to filter posts by.
@@ -558,7 +593,7 @@
 
 ### 11. Filter Posts
 
-**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>`  
+**URL**: `/posts/filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>/<str:user_list>`
 **Method**: `GET`  
 **URL Params**:
 
@@ -566,6 +601,7 @@
 - `pk_list`: list of post IDs to filter.
 - `offer_list`: list of offers to filter by.
 - `loc-coords`: String containing latitude and longitude of the location.
+- `user_list`: String containing a list of users to filter by
 
 **Success Response**:
 
@@ -582,6 +618,63 @@
   - **Content**:
   ```json
   { "detail": "No Posts match the given query." }
+  ```
+
+### 12. Suggested Posts
+
+**URL**: `/posts/suggested-posts/`
+**Method**: GET
+**URL Params**: None
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+  [{"id": "int", "author_id": "int", "author_name": "string", "need": "string", "offer": "string", "description": "string", "location": "string", "published": "datetime", "applicants": "int"}, ...]
+  ```
+
+**Error Responses**:
+
+- **Code**: `401` Unauthorized
+  - **Content**:
+    ```json
+    { "detail": "Authentication credentials were not provided." }
+    ```
+- **Code**:`500 ` Internal Server Error
+  - **Content**:
+  ```json
+  { "detail": "Internal server error occurred." }
+  ```
+
+### 13. Record Post Click
+
+**URL**: `/posts/record-click/<int:post_id>`
+**Method**: GET, POST
+**URL Params**:
+
+- `post_id`: id of the post that is clicked.
+
+**Success Response**:
+
+- **Code**: `201 Created`
+- **Content**:
+
+```json
+   {"message": "Click recorded"}`
+```
+
+**Error Responses**:
+
+- **Code**:`400 ` Bad Request
+  - **Content**:
+  ```json
+  { "detail": "Invalid request dat." }
+  ```
+- **Code**:`404` Not Found
+  **Content**:
+  ```json
+  { "detail": "Post not found." }
   ```
 
 ## Ratings Endpoints
@@ -806,6 +899,31 @@
     ```
   - **Condition**: This occurs when there is no rating with the specified ID.
 
+### 8. Get Users with Rating Above min_rating
+
+**URL**: `/ratings/users-with-rating/<str:min_rating>`  
+**Method**: `POST`  
+**URL Params**:
+
+- `min_rating`: minimum average rating to filter users.
+
+**Success Response**:
+
+- **Code**: `200 OK`
+  - **Content**:
+  ```json
+    ["<user_id1>", "<user_id2>",... ]
+  ```
+
+**Error Response**:
+
+- **Code**: `400 Bad Request`
+  - **Content**:
+
+```json
+{ "error": "Rating parameter is required" }
+```
+
 ## Reviews Endpoints
 
 ### 1. Get Reviews
@@ -938,8 +1056,6 @@
 
 ### 5. Update Review
 
-### 5. Update Review
-
 **URL**: `/reviews/<int:id>`  
 **Method**: `PUT`  
 **URL Params**:
@@ -1040,3 +1156,108 @@
     "error": "No query provided"
   }
   ```
+
+# Chat Endpoints
+
+Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si=up-zUGBN-91XyjFU
+
+## Get Message
+
+- URL: `/<int:pk>/`
+- Method: `GET`
+- Success Response:
+  - `200`
+    `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
+    - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
+- Error Response:
+  - `404`
+    `{"detail": "No Message matches the given query."}`
+
+## Get All Messages
+
+- URL: `/all`
+- Method: `GET`
+- Success Response:
+  - `200`
+    `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
+    - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
+
+## Get Messages Between Users
+
+- URL: `/messages/<int:user_id>/<int:user_id>/`
+- Method: `GET`
+- Success Response:
+  - `200`
+    `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
+    - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
+
+## Send Message
+
+- URL: `/send/`
+- Method: `POST`
+- Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
+- Success Response:
+  - `201`
+    `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}]`
+    - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
+- Error Response:
+  - `400`
+    ```
+    {
+    "user": [
+        "Invalid pk \"${user}\" - object does not exist."
+    ],
+    "sender": [
+        "Invalid pk \"${sender}\" - object does not exist."
+    ],
+    "reciever": [
+        "This field may not be null."
+    ],
+    "message": [
+        "This field may not be blank."
+    ]
+    }
+    ```
+    - Above is a sample, individual fields may or may not be returned depending on the input
+
+## Update Message
+
+- URL: `/<int:pk>/`
+- Method: `PUT`
+- Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
+- Success Response:
+  - `200`
+    `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
+    - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
+- Error Response:
+  - `400`
+    ```
+    {
+    "user": [
+        "Invalid pk \"${user}\" - object does not exist."
+    ],
+    "sender": [
+        "Invalid pk \"${sender}\" - object does not exist."
+    ],
+    "reciever": [
+        "This field may not be null."
+    ],
+    "message": [
+        "This field may not be blank."
+    ]
+    }
+    ```
+    - Above is a sample, individual fields may or may not be returned depending on the input
+  - `404`
+    `{"detail": "No Message matches the given query."}`
+
+## Delete Message
+
+- URL: `/<int:pk>/`
+- Method: `DELETE`
+- Success Response:
+  - `204`
+    No response object
+- Error Response
+  - `404`
+    `{"detail": "No Message matches the given query."}`

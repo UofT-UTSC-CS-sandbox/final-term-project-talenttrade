@@ -1,3 +1,4 @@
+from .models import UserProfile
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
@@ -18,20 +19,20 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['first_name'] = validated_data['first_name'].capitalize()
         validated_data['last_name'] = validated_data['last_name'].capitalize()
+        validated_data['first_name'] = validated_data['first_name'].capitalize()
+        validated_data['last_name'] = validated_data['last_name'].capitalize()
         return User.objects.create_user(**validated_data)
 
     def validate_password(self, value):
         validate_password(value)
         return value
 
-class ProfileSerializer(serializers.Serializer):
-    bio = serializers.CharField(required=False, allow_blank=True)
-    location_name = serializers.CharField(required=False, allow_blank=True)
-    location_coords = serializers.CharField(required=False, allow_blank=True)
-    is_exact_location = serializers.BooleanField(required=False)
-    date_of_birth = serializers.DateField(required=False, allow_null=True)
-    profile_picture = serializers.ImageField(required=False, allow_null=True)
+class ProfileSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'location_name', 'location_coords', 'is_exact_location', 'date_of_birth', 'profile_picture', 'offerings', 'full_name']
 
     def get_full_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}"
@@ -42,9 +43,16 @@ class ProfileSerializer(serializers.Serializer):
         instance.location_coords = validated_data.get('location_coords', instance.location_coords)
         instance.is_exact_location = validated_data.get('is_exact_location', instance.is_exact_location)
         instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
-        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        if 'profile_picture' in validated_data:
+            instance.profile_picture = validated_data['profile_picture']
+                #capitalize the offerings
+        offerings = validated_data.get('offerings')
+        words = offerings.split()
+        capitalized_words = [word.capitalize() for word in words]
+        instance.offerings = ' '.join(capitalized_words)
         instance.save()
         return instance
+
     
     # def validate_location_coords(self, value):
     #     if value:
@@ -61,4 +69,4 @@ class ProfileSerializer(serializers.Serializer):
     #         if value.size > 2 * 1024 * 1024:
     #             raise ValidationError('Profile picture is too large')
     #     return value
-    
+
