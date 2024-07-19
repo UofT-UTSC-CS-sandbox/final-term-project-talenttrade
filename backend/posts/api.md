@@ -159,3 +159,31 @@
   - `400` Bad Request
   - `404` Not Found
     - Content: `{"detail": "No Posts match the given query."}`
+
+## Suggested Posts
+
+- URL: `/posts/suggested-posts/`
+- Method: GET
+- URL Params: None
+- Success Response:
+  - `200`
+    - Content: `[{id: int, author_id: int, author_name: string, need: string, offer: string, description: string, location: string, published: datetime, applicants: int}, ...]`
+- Error Responses:
+  - `400` Bad Request
+  - `404` Not Found
+    - Content: `{"detail": "No Posts match the given query."}`
+
+## Record Post Click
+
+- URL: `/posts/record-click/<int:post_id>`
+- Method: GET, POST
+- URL Params:
+  - `post_id`: id of the post that is clicked.
+- Success Response:
+  - `201 Created`
+    - Content: `{"message": "Click recorded"}`
+- Error Responses:
+  - `400` Bad Request
+    - Content: `{"detail": "Invalid request data"}`
+  - `404` Not Found
+    - Content: `{"detail": "Post not found."}`

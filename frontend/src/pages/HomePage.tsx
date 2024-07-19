@@ -1,8 +1,10 @@
 import React from "react";
 import Category from "../components/category";
 import { useEffect, useState } from "react";
-import { Box, Container, Stack, Typography } from "@mui/material";
 import useRequest from "../utils/requestHandler";
+import { useAuth } from "../utils/AuthService";
+import { PostType } from "./Post";
+import { Box, Container, Stack, Typography } from "@mui/material";
 
 export interface TopNeedType {
   need: string;
@@ -20,11 +22,31 @@ export interface TopTradeType {
 }
 
 const HomePage: React.FC = () => {
+  const { refreshToken } = useAuth();
   const [topNeed, setTopNeed] = useState<TopNeedType[]>([]);
+  const [loggedIn, setLoggedIn] = useState<Boolean>(false);
+  const [postList, setPostList] = useState<PostType[]>([]);
+  const apiFetch = useRequest();
 
   useEffect(() => {
     getTopNeed();
   }, []);
+  useEffect(() => {
+    console.log("logged in", loggedIn);
+    if (!loggedIn) {
+      const getLoggedInStatus = async () => {
+        try {
+          const loggedIn = await refreshToken();
+          setLoggedIn(loggedIn);
+          console.log("User logged in:", loggedIn);
+        } catch (error) {
+          console.error("Error checking login status:", error);
+        }
+      };
+
+      getLoggedInStatus();
+    }
+  }, [refreshToken]);
 
   const getTopNeed = async () => {
     const response = await apiFetch(`posts/need/`);
@@ -46,7 +68,8 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     getTopTrade();
-  }, []);
+    suggestedPosts();
+  }, [loggedIn]);
 
   const getTopTrade = async () => {
     const response = await apiFetch(`posts/trade/`);
@@ -54,7 +77,6 @@ const HomePage: React.FC = () => {
   };
 
   const [firstName, setFirstName] = useState("");
-  const apiFetch = useRequest();
 
   useEffect(() => {
     getAndSetUser();
@@ -66,6 +88,16 @@ const HomePage: React.FC = () => {
     });
     if (response) {
       setFirstName(response.user_name.split(" ")[0]);
+    }
+  };
+
+  const suggestedPosts = async () => {
+    if (loggedIn) {
+      const response = await apiFetch(`posts/suggested-posts`, {
+        method: "GET",
+      });
+      console.log(response);
+      response && setPostList(response);
     }
   };
 
@@ -101,7 +133,6 @@ const HomePage: React.FC = () => {
           <Box
             component="img"
             sx={{ maxHeight: "200px", maxWidth: "200px" }}
-            alt="The house from the offer."
             src="./hammer.jpg"
           />
           <Stack>
@@ -130,6 +161,7 @@ const HomePage: React.FC = () => {
           </Stack>
         </Stack>
       </Container>
+      <Category title="Suggested Posts" suggestedPostList={postList} />
       <Category title="Most Needed Talents" popularListings={topNeed} />
       <Category title="Most Offered Talents" popularListings={topOffer} />
       <Category title="Most Popular Trades" popularListings={topTrade} />

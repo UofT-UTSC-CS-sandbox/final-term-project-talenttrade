@@ -449,5 +449,4 @@ const TopBar: React.FC<TopBarProps> = ({ onSearchFocusChange }) => {
     </Box>
   );
 };
-
 export default TopBar;

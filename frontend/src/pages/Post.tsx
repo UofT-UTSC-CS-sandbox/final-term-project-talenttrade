@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import { UserProfileType } from "../pages/ViewProfile";
 import { stringToColor } from "../components/topbar";
-import { useAuth } from "../utils/AuthService";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -51,8 +50,6 @@ const Post: React.FC<PostProps> = ({
   const [numRatings, setNumRatings] = useState(0);
   const apiFetch = useRequest();
   const [profile, setProfile] = useState<UserProfileType | null>(null);
-  const { refreshToken } = useAuth();
-  const [loggedIn, setLoggedIn] = useState<Boolean>();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -85,22 +82,6 @@ const Post: React.FC<PostProps> = ({
   };
 
   useEffect(() => {
-    if (!loggedIn) {
-      const getLoggedInStatus = async () => {
-        try {
-          const loggedIn = await refreshToken();
-          setLoggedIn(loggedIn);
-          console.log("User logged in:", loggedIn);
-        } catch (error) {
-          console.error("Error checking login status:", error);
-        }
-      };
-
-      getLoggedInStatus();
-    }
-  }, [refreshToken]);
-
-  useEffect(() => {
     getProfile();
     getAvgRating(post.author_id);
   }, [rating]);
@@ -118,6 +99,13 @@ const Post: React.FC<PostProps> = ({
       method: "GET",
     });
     setProfile(response);
+  };
+
+  const recordClick = async (postId: number) => {
+    const response = await apiFetch(`posts/record-click/${postId}`, {
+      method: "GET",
+    });
+    console.log(response);
   };
 
   return (
@@ -171,7 +159,11 @@ const Post: React.FC<PostProps> = ({
           <Typography textAlign="center">{"Delete"}</Typography>
         </MenuItem>
       </Menu>
-      <CardActionArea>
+      <CardActionArea
+        onClick={() => {
+          recordClick(post.id);
+        }}
+      >
         <CardMedia sx={{ height: 140 }} image="." />
         <CardContent>
           <Grid

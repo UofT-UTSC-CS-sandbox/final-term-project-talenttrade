@@ -48,7 +48,10 @@
 - URL: `/ratings`
 - Method: `POST`
 - Data Params: `{rater: int, receiver: int, rating: int}`
+  <<<<<<< HEAD
+  - # 0 < rating < 6
   - 0 < rating < 6
+    > > > > > > > dev
 - Success Response:
   - `201`
     `{id: int, rater: int, receiver: int, rating: int}`
