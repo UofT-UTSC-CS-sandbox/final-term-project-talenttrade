@@ -62,8 +62,8 @@ const CreatePost: React.FC = () => {
     const response = await apiFetch(`accounts/profile/${id}`, {
       method: "GET",
     });
-    setProfileLocation(response.location_name)
-  }
+    setProfileLocation(response.location_name);
+  };
 
   const formatText = (text: string) => {
     const words = text.split(" ");
@@ -103,7 +103,7 @@ const CreatePost: React.FC = () => {
     };
     axios
       .post(`${host}/posts/`, post)
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => alert(error));
 
     setMessage("Post Created Successfully!");
@@ -127,7 +127,7 @@ const CreatePost: React.FC = () => {
 
     axios
       .put(`${host}/posts/${postId}/`, post)
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => alert(error));
 
     setMessage("Post Edited Successfully!");
@@ -138,11 +138,9 @@ const CreatePost: React.FC = () => {
   };
 
   const handleCheckboxChange = () => {
-    if (location == profileLocation)
-      setLocation("")
-    else
-      setLocation(profileLocation)
-  }
+    if (location == profileLocation) setLocation("");
+    else setLocation(profileLocation);
+  };
 
   const handleSubmit = () => {
     if (
@@ -295,6 +293,6 @@ const CreatePost: React.FC = () => {
       </Snackbar>
     </>
   );
-}
+};
 
 export default withProfileCheck(CreatePost);

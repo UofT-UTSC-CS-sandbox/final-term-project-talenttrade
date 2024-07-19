@@ -1,12 +1,14 @@
 import json
 from datetime import timezone
 from .models import UserProfile
+from .models import UserProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from .serializers import ProfileSerializer, UserSerializer
 from .serializers import ProfileSerializer, UserSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -29,6 +31,8 @@ class SignupView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
+            user_profile = UserProfile.objects.create(user=serializer.instance)
 
             user_profile = UserProfile.objects.create(user=serializer.instance)
             return Response({'message': 'User creation successful'}, status=status.HTTP_201_CREATED)

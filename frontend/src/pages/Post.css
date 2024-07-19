@@ -1,22 +1,46 @@
-.post-container, h1, h2 {
+.post-container, .your-posts {
     display: flex;
     flex-wrap: wrap;
     gap: 50px;
     width: 100%;
     font-family:  'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     text-decoration: none;
-    font-weight: 100;
     margin-left: 2%;
+    margin-right: 2%;
+    font-weight: 100;
 }
+
 
 h1{
-    margin-top: 3%;
-    margin-top: 3%;
+    margin-top: 7%;
+    margin-bottom: 3%;
 }
 
-h2{
-    margin-bottom: 3%;
-} 
+.post, .post.expand{
+    color: black;
+    text-decoration: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    height: 250px;
+    padding: 20px;
+    border-radius: 5px; 
+    box-shadow: 2px 2px 15px rgba(128, 128, 128, 0.4); 
+    transition: box-shadow 0.3s ease; 
+    background-color: white;
+}
+
+.post {
+    flex: 1 1 calc(33% - 20px); 
+}
+
+.text {
+    overflow: hidden;
+    word-wrap: break-word;
+    text-align: left;
+    margin-bottom: 10px;
+}
 
 .post div:nth-child(4){
     position: absolute;
@@ -37,8 +61,13 @@ h2{
 span {
     font-weight: bold;
 }
+.post.expand {
+    flex: 1 1 calc(100% - 20px); 
+    height: 400px; 
+    width: 400px;
+}
 
-button {
+.delete .edit{
     border: 2px solid darkslategray; 
     padding: 5px 10px;
     cursor: pointer;
@@ -49,21 +78,7 @@ button {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); 
 }
 
-button:hover, .post:hover {
+.delete:hover, .post:hover, .edit:hover {
     border-width: 3px;
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
-}
-
-.Filtering{
-    width: auto;
-    max-width: 1000px;
-    display: flex;
-    column-gap: 20px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 6%;
-}
-
-.FilteringContainer{
-    margin-left: 35px;
 }

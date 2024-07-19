@@ -127,10 +127,12 @@
   [
     {
       "id": "<user_id>",
-      "username": "<username>"
-      // Other user details
-    }
-    // More users
+      "username": "<username>",
+      "email": "string",
+      "first_name": "string",
+      "last_name": "string"
+    } ,
+    ...
   ]
   ```
 
@@ -200,7 +202,14 @@
 - **Content**:
   ```json
   {
-    // Profile details
+    "user": "int",
+    "bio": "string",
+    "location_name": "string",
+    "location_coords": "string",
+    "is_exact_location": "Boolean",
+    "date_of_birth": "Date",
+    "profile_picture": "image",
+    "offerings": "string"
   }
   ```
 
@@ -226,7 +235,14 @@
 - **Content**:
   ```json
   {
-    // Profile details
+    "user": "int",
+    "bio": "string",
+    "location_name": "string",
+    "location_coords": "string",
+    "is_exact_location": "Boolean",
+    "date_of_birth": "Date",
+    "profile_picture": "image",
+    "offerings": "string"
   }
   ```
 
@@ -1146,9 +1162,10 @@
 Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si=up-zUGBN-91XyjFU
 
 ## Get Message
+
 - URL: `/<int:pk>/`
 - Method: `GET`
-- Success Response: 
+- Success Response:
   - `200`
     `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
     - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
@@ -1157,6 +1174,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
     `{"detail": "No Message matches the given query."}`
 
 ## Get All Messages
+
 - URL: `/all`
 - Method: `GET`
 - Success Response:
@@ -1165,6 +1183,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
     - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
 
 ## Get Messages Between Users
+
 - URL: `/messages/<int:user_id>/<int:user_id>/`
 - Method: `GET`
 - Success Response:
@@ -1173,6 +1192,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
     - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
 
 ## Send Message
+
 - URL: `/send/`
 - Method: `POST`
 - Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
@@ -1201,10 +1221,11 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
     - Above is a sample, individual fields may or may not be returned depending on the input
 
 ## Update Message
+
 - URL: `/<int:pk>/`
 - Method: `PUT`
 - Data Params: `{user: int, sender: int, reciever: int, message: string, is_read: bool}`
-- Success Response: 
+- Success Response:
   - `200`
     `[{id: int, user: int, sender: int, reciever: int, sender_profile: object, reciever_profile: object, message: string, is_read: bool, date: string}, ...]`
     - sender_profile and reciever_profile are the same objects as returned by `/accounts/profile/<int:user_id>`
@@ -1231,6 +1252,7 @@ Based on https://youtube.com/playlist?list=PL_KegS2ON4s4jfxISory0aIOHyl8MlJtb&si
     `{"detail": "No Message matches the given query."}`
 
 ## Delete Message
+
 - URL: `/<int:pk>/`
 - Method: `DELETE`
 - Success Response:
