@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'ratings',
     'reviews',
     'worldcities',
+    'chat',
     'django_celery_beat',
 ]
 

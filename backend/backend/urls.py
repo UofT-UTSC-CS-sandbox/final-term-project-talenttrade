@@ -12,6 +12,7 @@ urlpatterns = [
     path('ratings/', include('ratings.urls')),
     path('reviews/', include('reviews.urls')),
     path('worldcities/',include('worldcities.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

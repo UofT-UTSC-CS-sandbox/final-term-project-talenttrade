@@ -13,6 +13,7 @@ import TopInCategory from "./pages/TopInCategory";
 import FilterBar from "./components/filterBar";
 import SearchUser from "./pages/SearchUsers";
 import ViewProfile from "./pages/ViewProfile";
+import Chat from "./pages/Chat";
 import { useState } from "react";
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/MyListings" element={<ViewPost />} />
                 <Route path="/CreatePost" element={<CreatePost />} />
                 <Route path="/filter" element={<FilterBar />} />
+                <Route path="/Chat/:otherUser" element={<Chat />} />
                 <Route
                   path="/view-posts-by-category"
                   element={<ViewPostByCategory />}
