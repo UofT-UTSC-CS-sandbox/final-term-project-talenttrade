@@ -3,6 +3,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Post, Click, StoreSuggestedPost
+from accounts.models import UserProfile
 from .serializers import PostSerializer, ClickSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -204,9 +205,8 @@ class PostSuggestions(APIView):
         # post not by current User
         posts_not_by_user = Post.objects.exclude(author_id=request.user.id)
         
-        #hard coded currently 
-        user_offerings = ["Software engineer", "Plumber","Graphic Design"]
-        # user_offerings = 
+        profile = UserProfile.objects.filter(user=request.user)
+        user_offerings = profile[0].offerings.split(", ")
 
         # post id's of posts clicked by current user
         clicked_posts_ids = Click.objects.filter(user_id=request.user.id).values_list('post_id', flat=True)
