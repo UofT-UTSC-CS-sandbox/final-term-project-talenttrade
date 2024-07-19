@@ -16,7 +16,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { UserProfileType } from "../pages/ViewProfile";
+import UserProfileType from "../interfaces/User";
 import { stringToColor } from "../components/topbar";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axios from "axios";
@@ -115,7 +115,7 @@ const Post: React.FC<PostProps> = ({
           avatar={
             <Avatar
               alt={profile?.full_name}
-              src={profile?.profile_picture}
+              src={`${host}${profile?.profile_picture}`}
               sx={{
                 width: 28,
                 height: 28,
@@ -177,7 +177,7 @@ const Post: React.FC<PostProps> = ({
                 <Grid item xs={2}>
                   <Avatar
                     alt={profile?.full_name}
-                    src={profile?.profile_picture}
+                    src={`${host}${profile?.profile_picture}`}
                     sx={{
                       width: 28,
                       height: 28,

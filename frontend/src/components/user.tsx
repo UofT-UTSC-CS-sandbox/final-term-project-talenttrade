@@ -46,7 +46,6 @@ const User: React.FC<UserProps> = ({ user }) => {
     }
   };
 
-
   const getProfile = async (user_id: number) => {
     const response = await apiFetch(`accounts/profile/${user_id}/`, {
       method: "GET",
@@ -60,65 +59,53 @@ const User: React.FC<UserProps> = ({ user }) => {
 
   const navigateChat = () => {
     navigate(`/Chat/${user.id}`);
-  }
+  };
 
   return (
     <>
-    <Card
-      sx={{
-        width: 200,
-      }}
-      onClick={viewOtherUser}
-    >
-      <CardActionArea>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          style={{ height: "100%", minHeight: 250 }}
-        >
-          <Grid
-            item
-            xs={12}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            paddingTop="15px"
-          >
-            <Avatar
-              sx={{
-                width: "50%",
-                height: "auto",
-                aspectRatio: "1",
-                fontSize: "2rem",
-                backgroundColor: stringToColor(profile?.full_name || ""),
-              }}
-              alt={`${user.first_name} ${user.last_name}`}
-              // {...stringAvatar(`${user.first_name} ${user.last_name}`)}
-              src={`${host}${profile?.profile_picture}`}
-            >
-              {profile?.full_name.split(" ")[0][0]}
-              {profile?.full_name.split(" ")[1][0]}
-            </Avatar>
-          </Grid>
+      <Card
+        sx={{
+          width: 200,
+        }}
+        onClick={viewOtherUser}
+      >
+        <CardActionArea>
           <Grid
             container
-            display="flex"
             justifyContent="center"
             alignItems="center"
+            style={{ height: "100%", minHeight: 250 }}
           >
-            <CardContent
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: "100%",
-              }}
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              paddingTop="15px"
             >
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-                component="div"
+              <Avatar
+                sx={{
+                  width: "50%",
+                  height: "auto",
+                  aspectRatio: "1",
+                  fontSize: "2rem",
+                  backgroundColor: stringToColor(profile?.full_name || ""),
+                }}
+                alt={`${user.first_name} ${user.last_name}`}
+                src={`${host}${profile?.profile_picture}`}
+              >
+                {profile?.full_name.split(" ")[0][0]}
+                {profile?.full_name.split(" ")[1][0]}
+              </Avatar>
+            </Grid>
+            <Grid
+              container
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <CardContent
                 sx={{
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -126,48 +113,61 @@ const User: React.FC<UserProps> = ({ user }) => {
                   maxWidth: "100%",
                 }}
               >
-                {`${user.first_name} ${user.last_name}`}
-              </Typography>
-              <Typography
-                noWrap
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  maxWidth: "100%",
-                  paddingBottom: "10px",
-                }}
-              >
-                {`@${user.username}`}
-              </Typography>
-              <Box
-                sx={{
-                  width: 200,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Rating
-                  value={rating}
-                  readOnly
-                  size="small"
-                  precision={0.1}
+                <Typography
+                  gutterBottom
+                  variant="subtitle1"
+                  component="div"
                   sx={{
-                    "& .MuiRating-iconEmpty": {
-                      color: "#FFD700",
-                    },
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    maxWidth: "100%",
                   }}
-                />
-                <Box>{`(${numRatings})`}</Box>
-              </Box>
-            </CardContent>
+                >
+                  {`${user.first_name} ${user.last_name}`}
+                </Typography>
+                <Typography
+                  noWrap
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    maxWidth: "100%",
+                    paddingBottom: "10px",
+                  }}
+                >
+                  {`@${user.username}`}
+                </Typography>
+                <Box
+                  sx={{
+                    width: 200,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Rating
+                    value={rating}
+                    readOnly
+                    size="small"
+                    precision={0.1}
+                    sx={{
+                      "& .MuiRating-iconEmpty": {
+                        color: "#FFD700",
+                      },
+                    }}
+                  />
+                  <Box>{`(${numRatings})`}</Box>
+                </Box>
+              </CardContent>
+            </Grid>
           </Grid>
-        </Grid>
-      </CardActionArea>
-    </Card>
-    <Button variant="contained" sx={{width: 200}} onClick={navigateChat}>Send Message</Button>
+        </CardActionArea>
+      </Card>
+      <Button variant="contained" sx={{ width: 200 }} onClick={navigateChat}>
+        Send Message
+      </Button>
     </>
   );
 };
