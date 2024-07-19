@@ -1,17 +1,29 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import "./topbar.css";
 import { useAuth } from "../utils/AuthService";
+import useRequest from "../utils/requestHandler";
+import host from "../utils/links";
+import Avatar from "@mui/material/Avatar";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const apiFetch = useRequest();
   const navigate = useNavigate();
   const [selectedValue, setSelectedValue] = useState("Need");
+  const [profilePic, setProfilePic] = useState("");
+  const [username, setUsername] = useState("");
 
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
   }
   const { logOut } = useAuth();
+
+  useEffect(() => {
+    getProfile();
+    const interval = setInterval(getProfile, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const logoutFunction = async () => {
     closeDropdown();
@@ -21,6 +33,18 @@ const TopBar = () => {
       navigate("/login");
     } else {
       alert(sucess);
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const response = await apiFetch(`accounts/profile/`, {
+        method: "GET"
+      });
+      setProfilePic(response.profile_picture);
+      setUsername(response.full_name);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
     }
   };
 
@@ -85,9 +109,9 @@ const TopBar = () => {
         Make a post
       </button>
       <div className="profileContainer">
-        <img
-          src="/Default_pfp.png"
-          alt="Profile"
+        <Avatar
+          src={`${host}${profilePic}`}
+          alt={`${username}`}
           className="profileIcon"
           onClick={toggleDropdown}
         />
