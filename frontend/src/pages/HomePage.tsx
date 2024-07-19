@@ -92,15 +92,11 @@ const HomePage: React.FC = () => {
   };
 
   const suggestedPosts = async () => {
-    /*
-    axios
-      .get(`${host}/posts/suggested-posts/`)
-      .then((res) => console.log(res.data))
-      .catch((error) => alert(error)); */
     if (loggedIn) {
       const response = await apiFetch(`posts/suggested-posts`, {
         method: "GET",
       });
+      console.log(response);
       response && setPostList(response);
     }
   };
@@ -137,7 +133,6 @@ const HomePage: React.FC = () => {
           <Box
             component="img"
             sx={{ maxHeight: "200px", maxWidth: "200px" }}
-            alt="The house from the offer."
             src="./hammer.jpg"
           />
           <Stack>
@@ -166,6 +161,7 @@ const HomePage: React.FC = () => {
           </Stack>
         </Stack>
       </Container>
+      <Category title="Suggested Posts" suggestedPostList={postList} />
       <Category title="Most Needed Talents" popularListings={topNeed} />
       <Category title="Most Offered Talents" popularListings={topOffer} />
       <Category title="Most Popular Trades" popularListings={topTrade} />

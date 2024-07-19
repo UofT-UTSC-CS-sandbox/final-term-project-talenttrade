@@ -78,13 +78,16 @@ const User: React.FC<UserProps> = ({ user }) => {
                 width: "50%",
                 height: "auto",
                 aspectRatio: "1",
-                fontSize: "1.5rem",
+                fontSize: "2rem",
                 backgroundColor: stringToColor(profile?.full_name || ""),
               }}
               alt={`${user.first_name} ${user.last_name}`}
               // {...stringAvatar(`${user.first_name} ${user.last_name}`)}
               src={profile?.profile_picture}
-            />
+            >
+              {profile?.full_name.split(" ")[0][0]}
+              {profile?.full_name.split(" ")[1][0]}
+            </Avatar>
           </Grid>
           <Grid
             container

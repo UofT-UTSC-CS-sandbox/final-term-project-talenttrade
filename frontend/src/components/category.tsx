@@ -11,27 +11,94 @@ import useRequest from "../utils/requestHandler";
 
 interface CategoryProps {
   title: string;
-  popularListings: TopNeedType[] | TopOfferType[] | TopTradeType[];
+  popularListings?: TopNeedType[] | TopOfferType[] | TopTradeType[];
+  suggestedPostList?: PostType[];
 }
 
-const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
+const Category: React.FC<CategoryProps> = ({
+  title,
+  popularListings,
+  suggestedPostList,
+}) => {
   const navigate = useNavigate();
   const [postList, setPostList] = useState<PostType[]>([]);
   const [selectedButton, setSelectedButton] = useState("button0");
-  const top3 = popularListings.slice(0, 3);
   const [currentSet, setCurrentSet] = useState<PostType[]>([]);
   const [setNum, setSetNum] = useState(1);
   const apiFetch = useRequest();
+  let top3: TopNeedType[] | TopOfferType[] | TopTradeType[];
+  top3 = [];
 
-  useEffect(() => {
-    if (postList.length == 0) {
-      const index = parseInt(selectedButton.replace("button", ""));
-      getPostList(index);
-    }
-  }, [selectedButton, top3]);
+  let handleButtonClick = (
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    _newSelectedButton: string
+  ) => {};
+
+  if (popularListings) {
+    top3 = popularListings.slice(0, 3);
+    useEffect(() => {
+      if (postList.length == 0) {
+        const index = parseInt(selectedButton.replace("button", ""));
+        getPostList(index);
+      }
+    }, [selectedButton, top3]);
+
+    const getPostList = async (selected: number) => {
+      let need: string | undefined;
+      let offer: string | undefined;
+      if (selected < top3.length) {
+        const selectedItem = top3[selected];
+        if (isTopTradeType(selectedItem)) {
+          need = selectedItem.need;
+          offer = selectedItem.offer;
+        } else if (isTopNeedType(selectedItem)) {
+          need = selectedItem.need;
+        } else if (isTopOfferType(selectedItem)) {
+          offer = selectedItem.offer;
+        }
+      }
+
+      try {
+        let response;
+        if (need && offer) {
+          response = await apiFetch(`posts/post-trade/${need}/${offer}`);
+        } else if (need) {
+          response = await apiFetch(`posts/post-need/${need}`);
+        } else if (offer) {
+          response = await apiFetch(`/posts/post-offer/${offer}/false`);
+        }
+        if (response) {
+          setPostList(response);
+        }
+      } catch (error) {
+        alert(error);
+      }
+    };
+
+    handleButtonClick = (
+      _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+      newSelectedButton: string
+    ) => {
+      setSelectedButton(newSelectedButton);
+      if (newSelectedButton === "seeMore") {
+        handleSeeAll();
+      } else {
+        const index = parseInt(newSelectedButton.replace("button", ""));
+        getPostList(index);
+      }
+    };
+  } else if (suggestedPostList) {
+    useEffect(() => {
+      setPostList(suggestedPostList);
+      console.log(`after: ${postList}`);
+    }, [suggestedPostList]);
+  }
 
   useEffect(() => {
     if (postList.length != 0) {
+      if (suggestedPostList) {
+        console.log(`suggested: ${postList}`);
+      }
       setCurrentSet(postList.slice(0, 3));
     }
   }, [postList]);
@@ -42,51 +109,6 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
     "offer" in item && !("need" in item);
   const isTopTradeType = (item: any): item is TopTradeType =>
     "offer" in item && "need" in item;
-
-  const getPostList = async (selected: number) => {
-    let need: string | undefined;
-    let offer: string | undefined;
-    if (selected < top3.length) {
-      const selectedItem = top3[selected];
-      if (isTopTradeType(selectedItem)) {
-        need = selectedItem.need;
-        offer = selectedItem.offer;
-      } else if (isTopNeedType(selectedItem)) {
-        need = selectedItem.need;
-      } else if (isTopOfferType(selectedItem)) {
-        offer = selectedItem.offer;
-      }
-    }
-
-    try {
-      let response;
-      if (need && offer) {
-        response = await apiFetch(`posts/post-trade/${need}/${offer}`);
-      } else if (need) {
-        response = await apiFetch(`posts/post-need/${need}`);
-      } else if (offer) {
-        response = await apiFetch(`/posts/post-offer/${offer}/false`);
-      }
-      if (response) {
-        setPostList(response);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const handleButtonClick = (
-    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    newSelectedButton: string
-  ) => {
-    setSelectedButton(newSelectedButton);
-    if (newSelectedButton === "seeMore") {
-      handleSeeAll();
-    } else {
-      const index = parseInt(newSelectedButton.replace("button", ""));
-      getPostList(index);
-    }
-  };
 
   const handleNextClick = (
     _event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -153,68 +175,70 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
         spacing={5}
         sx={{ paddingLeft: 5, paddingBottom: 5 }}
       >
-        <Stack spacing={1} width={"20%"} sx={{ paddingTop: "10px" }}>
-          {top3.map((top, index) => (
+        {top3.length != 0 && (
+          <Stack spacing={1} width={"20%"} sx={{ paddingTop: "10px" }}>
+            {top3.map((top, index) => (
+              <Button
+                key={`button${index}`}
+                disableElevation
+                onClick={(e) => handleButtonClick(e, `button${index}`)}
+                sx={{
+                  fontSize: "1rem",
+                  minWidth: "250px",
+                  minHeight: "55px",
+                  textAlign: "start",
+                  justifyContent: "space-between",
+                  gap: 0,
+                  whiteSpace: "pre-line",
+                  textTransform: "none",
+                  border: selectedButton === `button${index}` ? 1 : 0,
+                  color: "black",
+                  "&:hover": {
+                    backgroundColor: "#f4f4f4",
+                    border: selectedButton === `button${index}` ? 1 : 0,
+                  },
+                  backgroundColor:
+                    selectedButton === `button${index}` ? "#f4f4f4" : "white",
+                }}
+              >
+                {isTopTradeType(top)
+                  ? `NEED: ${top.need} \nOFFER: ${top.offer}`
+                  : isTopNeedType(top)
+                  ? `${top.need}`
+                  : `${top.offer}`}
+                <Typography
+                  sx={{
+                    fontSize: "0.8rem",
+                    color: "#757575",
+                    textTransform: "none",
+                  }}
+                >
+                  {top.count.toString() + " posts"}
+                </Typography>
+              </Button>
+            ))}
             <Button
-              key={`button${index}`}
+              key={`seeMore`}
               disableElevation
-              onClick={(e) => handleButtonClick(e, `button${index}`)}
+              onClick={(e) => handleButtonClick(e, `seeMore`)}
               sx={{
-                fontSize: "1rem",
                 minWidth: "250px",
-                minHeight: "55px",
                 textAlign: "start",
-                justifyContent: "space-between",
-                gap: 0,
                 whiteSpace: "pre-line",
-                textTransform: "none",
-                border: selectedButton === `button${index}` ? 1 : 0,
+                border: selectedButton === `seeMore` ? 1 : 0,
                 color: "black",
                 "&:hover": {
                   backgroundColor: "#f4f4f4",
-                  border: selectedButton === `button${index}` ? 1 : 0,
+                  border: selectedButton === `seeMore` ? 1 : 0,
                 },
                 backgroundColor:
-                  selectedButton === `button${index}` ? "#f4f4f4" : "white",
+                  selectedButton === `seeMore` ? "#f4f4f4" : "white",
               }}
             >
-              {isTopTradeType(top)
-                ? `NEED: ${top.need} \nOFFER: ${top.offer}`
-                : isTopNeedType(top)
-                ? `${top.need}`
-                : `${top.offer}`}
-              <Typography
-                sx={{
-                  fontSize: "0.8rem",
-                  color: "#757575",
-                  textTransform: "none",
-                }}
-              >
-                {top.count.toString() + " posts"}
-              </Typography>
+              See all
             </Button>
-          ))}
-          <Button
-            key={`seeMore`}
-            disableElevation
-            onClick={(e) => handleButtonClick(e, `seeMore`)}
-            sx={{
-              minWidth: "250px",
-              textAlign: "start",
-              whiteSpace: "pre-line",
-              border: selectedButton === `seeMore` ? 1 : 0,
-              color: "black",
-              "&:hover": {
-                backgroundColor: "#f4f4f4",
-                border: selectedButton === `seeMore` ? 1 : 0,
-              },
-              backgroundColor:
-                selectedButton === `seeMore` ? "#f4f4f4" : "white",
-            }}
-          >
-            See all
-          </Button>
-        </Stack>
+          </Stack>
+        )}
         <Stack
           direction="row"
           spacing={2}
@@ -235,28 +259,30 @@ const Category: React.FC<CategoryProps> = ({ title, popularListings }) => {
             </IconButton>
           )}
           <Stack spacing={0.5}>
-            <Typography
-              variant="overline"
-              noWrap
-              component="div"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                paddingLeft: 5,
-                textAlign: "end",
-                minWidth: "855px",
-              }}
-            >
-              <Link
-                to={getLink(top3)}
-                className="link"
-                style={{
-                  color: "black",
+            {popularListings && (
+              <Typography
+                variant="overline"
+                noWrap
+                component="div"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  paddingLeft: 5,
+                  textAlign: "end",
+                  minWidth: "855px",
                 }}
               >
-                See all
-              </Link>
-            </Typography>
-            <Stack direction="row" spacing={2} sx={{ minWidth: "855px" }}>
+                <Link
+                  to={getLink(top3)}
+                  className="link"
+                  style={{
+                    color: "black",
+                  }}
+                >
+                  See all
+                </Link>
+              </Typography>
+            )}
+            <Stack direction="row" spacing={2} sx={{ minWidth: "900px" }}>
               {currentSet.map((post, _index) => (
                 <Post key={post.id} post={post} />
               ))}
