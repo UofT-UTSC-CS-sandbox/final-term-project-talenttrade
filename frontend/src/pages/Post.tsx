@@ -224,6 +224,7 @@ const Post: React.FC<PostProps> = ({
                     value={rating}
                     readOnly
                     size="small"
+                    precision={0.5}
                     sx={{
                       "& .MuiRating-iconEmpty": {
                         color: "#FFD700",
