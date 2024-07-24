@@ -79,7 +79,7 @@ class MostPopularTrade(ListPopular):
 
 class PostListByOffer(APIView):
     def get(self, request, offer, show, format=None):
-        posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
+        posts = Post.objects.filter(offer__istartswith=offer, active = True).exclude(author_id=request.user.id)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -163,9 +163,9 @@ class FilterPosts(APIView):
                         print(f"Error fetching directions: {str(e)}")
 
         if (len(offers)> 0):
-            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers)
+            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers, active = True)
         else:
-             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids)
+             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, active = True)
 
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)
