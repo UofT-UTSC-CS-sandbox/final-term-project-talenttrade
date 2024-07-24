@@ -48,6 +48,7 @@ const Post: React.FC<PostProps> = ({
 }) => {
   const [rating, setRating] = useState(0);
   const [numRatings, setNumRatings] = useState(0);
+  const [status, setStatus] = useState(false);
   const apiFetch = useRequest();
   const [profile, setProfile] = useState<UserProfileType | null>(null);
   const navigate = useNavigate();
@@ -77,11 +78,21 @@ const Post: React.FC<PostProps> = ({
     }
   };
 
+  const changeStatus = async (id: number, status: boolean) => {
+    if (setPostList && postList) {
+      axios
+        .patch(`${host}/posts/${id}/`, {active: status})
+        .then(() => {setStatus(status)})
+        .catch((error) => alert(error));
+    }
+  }
+
   const navigateEdit = (id: number) => {
     navigate("/CreatePost", { state: { create: false, id: id } });
   };
 
   useEffect(() => {
+    setStatus(post.active);
     getProfile();
     getAvgRating(post.author_id);
   }, [rating]);
@@ -154,6 +165,9 @@ const Post: React.FC<PostProps> = ({
       >
         <MenuItem key={"Edit"} onClick={() => navigateEdit(post.id)}>
           <Typography textAlign="center">{"Edit"}</Typography>
+        </MenuItem>
+        <MenuItem key={"Status"} onClick={() => changeStatus(post.id, !status)}>
+          <Typography textAlign="center">{status ? "Deactivate" : "Activate"}</Typography>
         </MenuItem>
         <MenuItem key={"Delete"} onClick={() => deleteButton(post.id)}>
           <Typography textAlign="center">{"Delete"}</Typography>
@@ -305,8 +319,7 @@ const Post: React.FC<PostProps> = ({
                   </Typography>
                 </Grid>
                 <Grid item xs={3}>
-                  {post.active ? (
-                    <Typography
+                  <Typography
                       gutterBottom
                       component="div"
                       sx={{
@@ -315,27 +328,11 @@ const Post: React.FC<PostProps> = ({
                         whiteSpace: "nowrap",
                         maxWidth: "100%",
                         fontSize: "0.9rem",
-                        color: "green",
+                        color: status ? "green" : "red",
                       }}
                     >
-                      Active
+                      {status ? "Active" : "Inactive"}
                     </Typography>
-                  ) : (
-                    <Typography
-                      gutterBottom
-                      component="div"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "100%",
-                        fontSize: "0.9rem",
-                        color: "#aa0000",
-                      }}
-                    >
-                      Inactive
-                    </Typography>
-                  )}
                 </Grid>
               </Grid>
             )}
