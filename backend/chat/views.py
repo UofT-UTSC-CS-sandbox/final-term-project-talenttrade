@@ -5,6 +5,7 @@ from .models import Message
 from accounts.models import UserProfile
 from .serializers import MessageSerializer
 from django.db.models import Subquery, Q, OuterRef
+from django.contrib.auth.models import User
 
 # Create your views here.
 class GetMessages(generics.ListAPIView):
@@ -17,9 +18,36 @@ class GetMessages(generics.ListAPIView):
       sender__in=[senderId, recieverId], reciever__in=[senderId, recieverId]
     )
     return messages
-  
+
+# send an email notification
+def sendEmail(message):
+  email = User.objects.filter(username=message.reciever).first().email
+  print(email)
+
+
 class SendMessage(generics.CreateAPIView):
   serializer_class = MessageSerializer
+
+  def perform_create(self, serializer):
+        message = serializer.save()
+        messages = Message.objects.filter(
+            Q(sender=message.sender, reciever=message.reciever) | 
+            Q(sender=message.reciever, reciever=message.sender) 
+        ).exclude(id=message.id).order_by('date')
+
+        # no messages/first message being sent
+        if (messages.count() == 0):
+          sendEmail(message)
+        
+        # message has been sent before
+        else:
+          recent = messages[messages.count() - 1] # negative indexing not supported???
+          
+          # check if a day has past since last message
+          # swap to recent.date - message.date if testing needs a day, results in negative day
+          if "day" in str(recent.date - message.date):
+            sendEmail(message)
+
 
 class AllMessages(generics.ListAPIView):
   queryset = Message.objects.all()
