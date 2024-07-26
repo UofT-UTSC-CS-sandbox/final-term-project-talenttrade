@@ -21,6 +21,7 @@ import ViewProfile from "./pages/ViewProfile";
 import Chat from "./pages/Chat";
 import { useState } from "react";
 import ViewAPost from "./pages/ViewAPost.tsx";
+import ViewSavedPosts from "./pages/ViewSavedPosts.tsx";
 
 function App() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -56,6 +57,7 @@ function App() {
             <Route path="/login" element={<LogInPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/MyListings" element={<ViewPost />} />
+            <Route path="/SavedListings" element={<ViewSavedPosts />} />
             <Route path="/CreatePost" element={<CreatePost />} />
             <Route path="/filter" element={<FilterBar />} />
             <Route path="/Chat/:otherUser" element={<Chat />} />

@@ -15,6 +15,7 @@ import {
   CardHeader,
   Menu,
   MenuItem,
+  Button,
 } from "@mui/material";
 import UserProfileType from "../interfaces/User";
 import { stringToColor } from "../components/topbar";
@@ -32,6 +33,7 @@ export interface PostType {
   location: string;
   published: Date;
   active: boolean;
+  photo: string;
 }
 
 export interface PostProps {
@@ -49,6 +51,8 @@ const Post: React.FC<PostProps> = ({
 }) => {
   const [rating, setRating] = useState(0);
   const [numRatings, setNumRatings] = useState(0);
+  const [status, setStatus] = useState(false);
+  const [saved, setSaved] = useState(false);
   const apiFetch = useRequest();
   const [profile, setProfile] = useState<UserProfileType | null>(null);
   const navigate = useNavigate();
@@ -70,10 +74,20 @@ const Post: React.FC<PostProps> = ({
         .delete(`${host}/posts/${id}/`)
         .then((res) => {
           if (res.status === 204) {
-            alert("the Post was deleted successfully");
+            alert("The post was deleted successfully");
             setPostList(postList.filter((post) => post.id !== id));
           } else alert("Error deleting the post.");
         })
+        .catch((error) => alert(error));
+    }
+  };
+
+  const changeStatus = async (id: number, status: boolean) => {
+    if (setPostList && postList) {
+      axios
+        .patch(`${host}/posts/${id}/`, { active: status })
+        .then(() => {
+          setStatus(status);
         .catch((error) => alert(error));
     }
   };
@@ -83,8 +97,10 @@ const Post: React.FC<PostProps> = ({
   };
 
   useEffect(() => {
+    setStatus(post.active);
     getProfile();
     getAvgRating(post.author_id);
+    checkSavedStatus();
   }, [rating]);
 
   const getAvgRating = async (user_id: number) => {
@@ -107,6 +123,22 @@ const Post: React.FC<PostProps> = ({
       method: "GET",
     });
     console.log(response);
+  };
+
+  const checkSavedStatus = async () => {
+    const response = await apiFetch(`posts/save-post/`);
+    const savedPosts = response.map((post: PostType) => post.id);
+    setSaved(savedPosts.includes(post.id));
+  };
+
+  const savePost = async (postId: number) => {
+    await apiFetch(`posts/save-post/${postId}`, { method: "POST" });
+    setSaved(true);
+  };
+
+  const unsavePost = async (postId: number) => {
+    await apiFetch(`posts/save-post/${postId}`, { method: "DELETE" });
+    setSaved(false);
   };
 
   return (
@@ -156,6 +188,11 @@ const Post: React.FC<PostProps> = ({
         <MenuItem key={"Edit"} onClick={() => navigateEdit(post.id)}>
           <Typography textAlign="center">{"Edit"}</Typography>
         </MenuItem>
+        <MenuItem key={"Status"} onClick={() => changeStatus(post.id, !status)}>
+          <Typography textAlign="center">
+            {status ? "Deactivate" : "Activate"}
+          </Typography>
+        </MenuItem>
         <MenuItem key={"Delete"} onClick={() => deleteButton(post.id)}>
           <Typography textAlign="center">{"Delete"}</Typography>
         </MenuItem>
@@ -166,7 +203,12 @@ const Post: React.FC<PostProps> = ({
           navigate(`/view-a-post/${post.id}`);
         }}
       >
-        <CardMedia sx={{ height: 140 }} image="." />
+        <CardMedia
+          sx={{ height: 140 }}
+          image={
+            post.photo && post.photo.startsWith("http") ? post.photo : `${host}${post.photo}`
+          }
+        />
         <CardContent>
           <Grid
             container
@@ -212,6 +254,7 @@ const Post: React.FC<PostProps> = ({
                     value={rating}
                     readOnly
                     size="small"
+                    precision={0.5}
                     sx={{
                       "& .MuiRating-iconEmpty": {
                         color: "#FFD700",
@@ -307,41 +350,32 @@ const Post: React.FC<PostProps> = ({
                   </Typography>
                 </Grid>
                 <Grid item xs={3}>
-                  {post.active ? (
-                    <Typography
-                      gutterBottom
-                      component="div"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "100%",
-                        fontSize: "0.9rem",
-                        color: "green",
-                      }}
-                    >
-                      Active
-                    </Typography>
-                  ) : (
-                    <Typography
-                      gutterBottom
-                      component="div"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "100%",
-                        fontSize: "0.9rem",
-                        color: "#aa0000",
-                      }}
-                    >
-                      Inactive
-                    </Typography>
-                  )}
+                  <Typography
+                    gutterBottom
+                    component="div"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "100%",
+                      fontSize: "0.9rem",
+                      color: status ? "green" : "red",
+                    }}
+                  >
+                    {status ? "Active" : "Inactive"}
+                  </Typography>
                 </Grid>
               </Grid>
             )}
           </Grid>
+          <Button
+            variant="contained"
+            color={saved ? "secondary" : "primary"}
+            onClick={() => (saved ? unsavePost(post.id) : savePost(post.id))}
+            sx={{ marginTop: "10px" }}
+          >
+            {saved ? "Unsave" : "Save"}
+          </Button>
         </CardContent>
       </CardActionArea>
     </Card>

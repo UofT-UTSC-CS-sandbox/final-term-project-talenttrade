@@ -26,6 +26,7 @@ const CreatePost: React.FC = () => {
   const [offer, setOffer] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [photo, setPhoto] = useState<File | null>(null);
   const [applicants, setApplicants] = useState(0);
   const [active, setActive] = useState(true);
   const [postId, setPostId] = useState(-1);
@@ -41,7 +42,7 @@ const CreatePost: React.FC = () => {
   const locationRouter = useLocation();
   const apiFetch = useRequest();
 
-  const INPUT_LEN = 30;
+  const INPUT_LEN = 40;
 
   useEffect(() => {
     setCreate(locationRouter.state.create);
@@ -91,19 +92,22 @@ const CreatePost: React.FC = () => {
   };
 
   const createPost = async () => {
-    const post = {
-      author_id: userId,
-      author_name: userName,
-      need: formatText(need),
-      offer: formatText(offer),
-      description: description,
-      location: location,
-      applicants: applicants,
-      active: active,
-    };
+    const formData = new FormData();
+    formData.append("author_id", userId.toString());
+    formData.append("author_name", userName);
+    formData.append("need", formatText(need));
+    formData.append("offer", formatText(offer));
+    formData.append("description", description);
+    formData.append("location", location);
+    formData.append("applicants", applicants.toString());
+    formData.append("active", active.toString());
+    if (photo) {
+      formData.append("photo", photo);
+    }
+
     axios
-      .post(`${host}/posts/`, post)
-      .then((res) => {})
+      .post(`${host}/posts/`, formData)
+      .then((res) => { })
       .catch((error) => alert(error));
 
     setMessage("Post Created Successfully!");
@@ -114,20 +118,22 @@ const CreatePost: React.FC = () => {
   };
 
   const editPost = async () => {
-    const post = {
-      author_id: userId,
-      author_name: userName,
-      need: formatText(need),
-      offer: formatText(offer),
-      description: description,
-      location: location,
-      applicants: applicants,
-      active: active,
-    };
+    const formData = new FormData();
+    formData.append("author_id", userId.toString());
+    formData.append("author_name", userName);
+    formData.append("need", formatText(need));
+    formData.append("offer", formatText(offer));
+    formData.append("description", description);
+    formData.append("location", location);
+    formData.append("applicants", applicants.toString());
+    formData.append("active", active.toString());
+    if (photo) {
+      formData.append("photo", photo);
+    }
 
     axios
-      .put(`${host}/posts/${postId}/`, post)
-      .then((res) => {})
+      .put(`${host}/posts/${postId}/`, formData)
+      .then((res) => { })
       .catch((error) => alert(error));
 
     setMessage("Post Edited Successfully!");
@@ -230,7 +236,7 @@ const CreatePost: React.FC = () => {
                     Description
                   </InputLabel>
                   <OutlinedInput
-                    id="need_idescription_inputnput"
+                    id="description_input"
                     type="text"
                     required
                     multiline
@@ -272,6 +278,30 @@ const CreatePost: React.FC = () => {
                   label={"Use " + profileLocation}
                   className="input_field"
                 />
+              </div>
+              <div>
+                <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="upload-photo"
+                  type="file"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setPhoto(e.target.files[0]);
+                    }
+                  }}
+                />
+                <label htmlFor="upload-photo">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    style={{ marginBottom: "16px" }}
+                  >
+                    Upload Photo
+                  </Button>
+                  {photo && <span>{photo.name}</span>}
+                </label>
               </div>
             </CardContent>
             <Button onClick={handleSubmit} variant="contained">
