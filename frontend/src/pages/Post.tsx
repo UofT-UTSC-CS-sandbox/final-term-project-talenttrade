@@ -87,7 +87,6 @@ const Post: React.FC<PostProps> = ({
         .patch(`${host}/posts/${id}/`, { active: status })
         .then(() => {
           setStatus(status);
-        })
         .catch((error) => alert(error));
     }
   };
