@@ -31,6 +31,7 @@ export interface PostType {
   description: string;
   published: Date;
   active: boolean;
+  photo: string;
 }
 
 export interface PostProps {
@@ -81,8 +82,8 @@ const Post: React.FC<PostProps> = ({
   const changeStatus = async (id: number, status: boolean) => {
     if (setPostList && postList) {
       axios
-        .patch(`${host}/posts/${id}/`, {active: status})
-        .then(() => {setStatus(status)})
+        .patch(`${host}/posts/${id}/`, { active: status })
+        .then(() => { setStatus(status) })
         .catch((error) => alert(error));
     }
   }
@@ -178,7 +179,7 @@ const Post: React.FC<PostProps> = ({
           recordClick(post.id);
         }}
       >
-        <CardMedia sx={{ height: 140 }} image="." />
+        <CardMedia sx={{ height: 140 }} image={post.photo.startsWith("http") ? post.photo : `${host}${post.photo}`} />
         <CardContent>
           <Grid
             container
@@ -321,19 +322,19 @@ const Post: React.FC<PostProps> = ({
                 </Grid>
                 <Grid item xs={3}>
                   <Typography
-                      gutterBottom
-                      component="div"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "100%",
-                        fontSize: "0.9rem",
-                        color: status ? "green" : "red",
-                      }}
-                    >
-                      {status ? "Active" : "Inactive"}
-                    </Typography>
+                    gutterBottom
+                    component="div"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "100%",
+                      fontSize: "0.9rem",
+                      color: status ? "green" : "red",
+                    }}
+                  >
+                    {status ? "Active" : "Inactive"}
+                  </Typography>
                 </Grid>
               </Grid>
             )}

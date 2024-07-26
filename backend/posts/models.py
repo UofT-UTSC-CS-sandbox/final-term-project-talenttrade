@@ -16,6 +16,7 @@ class Post(models.Model):
     published = models.DateTimeField(auto_now_add=True)
     applicants = models.PositiveIntegerField()
     active = models.BooleanField(default=True)
+    photo = models.ImageField(upload_to='post_photos/', blank=True, null=True)
 
     def __str__(self):
         return self.need+" "+self.offer
