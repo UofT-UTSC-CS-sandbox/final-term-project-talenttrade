@@ -29,6 +29,7 @@ export interface PostType {
   need: string;
   offer: string;
   description: string;
+  location: string;
   published: Date;
   active: boolean;
 }
@@ -162,6 +163,7 @@ const Post: React.FC<PostProps> = ({
       <CardActionArea
         onClick={() => {
           recordClick(post.id);
+          navigate(`/view-a-post/${post.id}`);
         }}
       >
         <CardMedia sx={{ height: 140 }} image="." />

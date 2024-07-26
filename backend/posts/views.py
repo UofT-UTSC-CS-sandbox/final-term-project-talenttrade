@@ -325,7 +325,16 @@ class PostSuggestions(APIView):
                 
         return JsonResponse(serializer.data, safe=False)
 
+class PostView(APIView):
+    def get(self, request, post_id=None):
+        try:
+            if post_id:
+                post = Post.objects.get(id=post_id)
+            serializer = PostSerializer(post)
 
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
     
 
 

@@ -31,7 +31,7 @@ interface LocationResult {
   lng: string;
 }
 
-interface Review {
+export interface Review {
   review: string;
   published: string;
   pages: number;

@@ -33,8 +33,6 @@ class SignupView(APIView):
             serializer.save()
 
             user_profile = UserProfile.objects.create(user=serializer.instance)
-
-            user_profile = UserProfile.objects.create(user=serializer.instance)
             return Response({'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
         
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
