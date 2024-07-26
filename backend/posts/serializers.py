@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Post
-from .models import Click
+from .models import Click, SavedPost
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
@@ -13,3 +13,10 @@ class ClickSerializer(serializers.ModelSerializer):
     class Meta:
         model = Click
         fields = ['user_id', 'post_id', 'times', 'timestamp']
+
+class SavedPostSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source='user.id')
+    post_id = serializers.ReadOnlyField(source='post.id')
+    class Meta:
+        model = SavedPost
+        fields = ['user_id', 'post_id', 'timestamp']

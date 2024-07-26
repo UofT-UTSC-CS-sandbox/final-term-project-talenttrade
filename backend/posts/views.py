@@ -3,9 +3,9 @@ from rest_framework import generics, status, permissions
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Click, StoreSuggestedPost
+from .models import Post, Click, SavedPost, StoreSuggestedPost
 from accounts.models import UserProfile
-from .serializers import PostSerializer, ClickSerializer
+from .serializers import PostSerializer, ClickSerializer, SavedPostSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db.models import Count, Max, Min, F, ExpressionWrapper, FloatField, Case, When, Value
@@ -269,8 +269,9 @@ class PostSuggestions(APIView):
         # get posts by num of clicks 
         if len(Click.objects.all()) > 0:
             posts_with_click_counts =  score.annotate(click_count=Count('click')) 
-            max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click']
+            max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click'] or 0
         else:
+            max_click_count = 0
             posts_with_click_counts = score
 
         # Calculate the time range
@@ -312,12 +313,10 @@ class PostSuggestions(APIView):
 
         
 
-        print("posts sorted", len(posts_sorted))
         
         store_suggested_post, created = StoreSuggestedPost.objects.get_or_create(user=request.user, email=str(request.user.email))
         store_suggested_post.suggested_posts.set(posts_sorted[:10])
         store_suggested_post.save()
-        print("posts sorted", store_suggested_post.email)
         
 
 
@@ -326,7 +325,23 @@ class PostSuggestions(APIView):
         return JsonResponse(serializer.data, safe=False)
 
 
-    
+class SavedPostView(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
 
+    def get(self, request):
+        saved_posts = SavedPost.objects.filter(user=request.user)
+        serializer = PostSerializer([post.post for post in saved_posts], many=True)
+        return Response(serializer.data)
+
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        saved_post = SavedPost.objects.create(user=request.user, post=post)
+        serializer = SavedPostSerializer(saved_post)
+        return Response(serializer.data)
+    
+    def delete(self, request, post_id):
+        saved_post = SavedPost.objects.get(user=request.user, post_id=post_id)
+        saved_post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
