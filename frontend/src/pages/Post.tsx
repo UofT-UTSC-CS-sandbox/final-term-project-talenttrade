@@ -322,19 +322,19 @@ const Post: React.FC<PostProps> = ({
                 </Grid>
                 <Grid item xs={3}>
                   <Typography
-                    gutterBottom
-                    component="div"
-                    sx={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      maxWidth: "100%",
-                      fontSize: "0.9rem",
-                      color: status ? "green" : "red",
-                    }}
-                  >
-                    {status ? "Active" : "Inactive"}
-                  </Typography>
+                      gutterBottom
+                      component="div"
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "100%",
+                        fontSize: "0.9rem",
+                        color: status ? "green" : "red",
+                      }}
+                    >
+                      {status ? "Active" : "Inactive"}
+                    </Typography>
                 </Grid>
               </Grid>
             )}
