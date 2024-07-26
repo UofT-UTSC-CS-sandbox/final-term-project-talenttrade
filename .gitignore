@@ -312,3 +312,9 @@ sketch
 
 # Ignore all files under backend/static/images
 backend/static/images/*
+
+
+# Django migration files
+migrations/
+migrations/*.py
+migrations/*.pyc

@@ -5,7 +5,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["id", "author_id", "author_name", "need", "offer", "description", 
-                  "location", "published", "applicants", "active"]
+                  "location", "published", "applicants", "active", "photo"]
 
 class ClickSerializer(serializers.ModelSerializer):
     user_id = serializers.ReadOnlyField(source='user.id')
