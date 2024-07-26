@@ -15,4 +15,6 @@ urlpatterns = [
   path('filter/<str:pk>/<str:pk_list>/<str:offer_list>/<str:loc_coords>/<str:user_list>', views.FilterPosts.as_view(), name="filter"),
   path('suggested-posts/', views.PostSuggestions.as_view(), name="post_list_by_suggestions"),
   path('record-click/<int:post_id>', views.RecordPostClick.as_view(), name="post_clicked_by_user"),
+  path('save-post/<int:post_id>', views.SavedPostView.as_view(), name="save_post_post_delete"),
+  path('save-post/', views.SavedPostView.as_view(), name="save_post_get"),
 ]

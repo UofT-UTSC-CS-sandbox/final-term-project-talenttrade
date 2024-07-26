@@ -42,7 +42,7 @@ const CreatePost: React.FC = () => {
   const locationRouter = useLocation();
   const apiFetch = useRequest();
 
-  const INPUT_LEN = 30;
+  const INPUT_LEN = 40;
 
   useEffect(() => {
     setCreate(locationRouter.state.create);
