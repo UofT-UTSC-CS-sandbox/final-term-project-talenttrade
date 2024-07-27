@@ -30,6 +30,7 @@ export interface PostType {
   need: string;
   offer: string;
   description: string;
+  location: string;
   published: Date;
   active: boolean;
   photo: string;
@@ -86,7 +87,7 @@ const Post: React.FC<PostProps> = ({
       axios
         .patch(`${host}/posts/${id}/`, { active: status })
         .then(() => {
-          setStatus(status);
+          setStatus(status)})
         .catch((error) => alert(error));
     }
   };
@@ -199,6 +200,7 @@ const Post: React.FC<PostProps> = ({
       <CardActionArea
         onClick={() => {
           recordClick(post.id);
+          navigate(`/view-a-post/${post.id}`);
         }}
       >
         <CardMedia

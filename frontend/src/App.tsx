@@ -20,6 +20,7 @@ import SearchUser from "./pages/SearchUsers";
 import ViewProfile from "./pages/ViewProfile";
 import Chat from "./pages/Chat";
 import { useState } from "react";
+import ViewAPost from "./pages/ViewAPost.tsx";
 import ViewSavedPosts from "./pages/ViewSavedPosts.tsx";
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             <Route path="/search-users" element={<SearchUser />} />
             <Route path="/profile/:userId" element={<ViewProfile />} />
             <Route path="/profile" element={<ViewProfile />} />
+            <Route path="/view-a-post/:postId" element={<ViewAPost />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
