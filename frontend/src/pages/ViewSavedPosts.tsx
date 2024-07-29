@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Post from "./Post";
 import { PostType } from "./Post";
 import useRequest from "../utils/requestHandler";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 const ViewSavedPosts: React.FC = () => {
     const [savedPostList, setSavedPostList] = useState<PostType[]>([]);
@@ -34,4 +35,4 @@ const ViewSavedPosts: React.FC = () => {
     );
 };
 
-export default ViewSavedPosts;
+export default withProfileCheck(ViewSavedPosts);

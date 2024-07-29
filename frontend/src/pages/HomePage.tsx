@@ -6,6 +6,7 @@ import { useAuth } from "../utils/AuthService";
 import { PostType } from "./Post";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import Category from "../components/category";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 export interface TopNeedType {
   need: string;
@@ -194,4 +195,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default withProfileCheck(HomePage);
