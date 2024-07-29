@@ -276,9 +276,11 @@ const ViewPost: React.FC = () => {
                       height="400"
                       width="400"
                       image={
-                        !post.photo ? `/ hammerPost.jpg` : (post.photo.startsWith("http")
-                          ? post.photo
-                          : `${host}${post.photo}`)
+                        !post.photo 
+                        ? "/hammerPost.jpg" 
+                        : (post.photo.startsWith("http")
+                        ? post.photo
+                        : `${host}${post.photo}`)
                       }
                     />
                   </Card>
