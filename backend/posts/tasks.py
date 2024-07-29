@@ -17,7 +17,7 @@ def send_weekly_suggested_posts():
 
         # Prepare the email content
         subject = 'Weekly Suggested Posts'
-        html_message = render_to_string('weekly_suggested_posts.html', {'suggested_posts': suggested_posts})
+        html_message = render_to_string('weekly_suggested_posts.html', {'suggested_posts': suggested_posts, 'frontend_host': settings.REACT_APP_API_URL})
         plain_message = strip_tags(html_message)
 
         try:

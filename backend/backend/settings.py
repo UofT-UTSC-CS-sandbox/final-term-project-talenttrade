@@ -24,6 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-q1g9$j0k=9_o4=ug!--#dbsl97l5%#wr-7v*lsy6f@z9&4jik4'
 
+REACT_APP_API_URL= 'http://localhost:5173'
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -47,6 +50,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition

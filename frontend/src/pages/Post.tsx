@@ -204,9 +204,13 @@ const Post: React.FC<PostProps> = ({
         }}
       >
         <CardMedia
-          sx={{ height: 140 }}
+          sx={{ height: 180 }}
           image={
-            post.photo && post.photo.startsWith("http") ? post.photo : `${host}${post.photo}`
+            !post.photo 
+            ? "/hammerPost.jpg" 
+            : (post.photo.startsWith("http")
+            ? post.photo
+            : `${host}${post.photo}`)
           }
         />
         <CardContent>
