@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../utils/AuthService";
-import React from "react";
+import React, { useEffect } from "react";
 import AuthRedirect from "../utils/AuthRedirect";
 import { Container, TextField, Button, Typography, Box, Alert } from "@mui/material";
 
@@ -12,10 +12,31 @@ const LogInPage = () => {
 
   const { logIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const redirectToPost = params.get("redirectToPost");
+    const postId = params.get("postId");
+
+    if (redirectToPost && postId) {
+      localStorage.setItem("redirectToPost", "true");
+      localStorage.setItem("postId", postId);
+    }
+  }, [location]);
 
   const logInRequest = async () => {
     if (await logIn(username, password)) {
-      navigate("/");
+      const redirectToPost = localStorage.getItem("redirectToPost");
+      const postId = localStorage.getItem("postId");
+
+      if (redirectToPost === "true" && postId) {
+        localStorage.removeItem("redirectToPost");
+        localStorage.removeItem("postId");
+        navigate(`/view-a-post/${postId}`);
+      } else {
+        navigate("/");
+      }
     } else {
       setHasError(true);
       setPassword("");
