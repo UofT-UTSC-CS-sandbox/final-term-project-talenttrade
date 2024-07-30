@@ -86,6 +86,7 @@ const ViewPostByCategory: React.FC = () => {
       setFilteredPostList(postList);
     } else {
       let offers = selectedOffers.map((offer) => offer.title);
+      const post_ids = postList.map((post) => post.id);
       try {
         const userId = await apiFetch("accounts/get-current-user-id", {
           method: "GET",
@@ -96,7 +97,7 @@ const ViewPostByCategory: React.FC = () => {
         );
         const response = await apiFetch(
           `posts/filter/${distance.toString()}/${JSON.stringify(
-            postList
+            post_ids
           )}/${JSON.stringify(offers)}/${
             profile.location_coords
           }/${JSON.stringify(userList)}`,
