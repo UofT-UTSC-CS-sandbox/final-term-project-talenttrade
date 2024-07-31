@@ -132,10 +132,8 @@ class FilterPosts(APIView):
         else:
             userList = [int(i) for i in userList]
         
-
-
         for post in postList:
-            curr_post = Post.objects.filter(id=post["id"])
+            curr_post = Post.objects.filter(id=post)
             if request.user and (request.user.username != str(curr_post[0].author_id)):
                 #lat = post.latitude
                 #long = post.longitude
