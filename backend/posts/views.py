@@ -113,7 +113,8 @@ class FilterPosts(APIView):
 
     def get(self, request, pk, pk_list, offer_list, loc_coords, user_list, format=None):
 
-        offers = json.loads(offer_list)
+        
+        offers = json.loads(offer_list)        
 
         post_ids =[]
 
@@ -123,7 +124,7 @@ class FilterPosts(APIView):
         source_latitude = location[0]
         source_longitude = location[1]
         source = f"{source_latitude},{source_longitude}"
-
+        
         postList = json.loads(pk_list)
         userList = json.loads(user_list)
         if userList is None: 

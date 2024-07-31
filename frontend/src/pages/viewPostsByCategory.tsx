@@ -119,7 +119,7 @@ const ViewPostByCategory: React.FC = () => {
               setSelectedOffers={setSelectedOffers}
             />
           )}
-          {filteredPostList && show == "true" && (
+          {show == "true" && (
             <FilterByLocation value={distance} setValue={setDistance} />
           )}
           {show == "true" && <Ratings rating={rating} setRating={setRating} />}
