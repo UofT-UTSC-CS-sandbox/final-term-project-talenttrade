@@ -1,12 +1,12 @@
 import React from "react";
-import Category from "../components/category";
 import { useEffect, useState } from "react";
-import host from "../utils/links";
-import withProfileCheck from "../hoc/withProfileCheck";
+import { useNavigate, useLocation } from "react-router-dom";
 import useRequest from "../utils/requestHandler";
 import { useAuth } from "../utils/AuthService";
 import { PostType } from "./Post";
 import { Box, Container, Stack, Typography } from "@mui/material";
+import Category from "../components/category";
+import withProfileCheck from "../hoc/withProfileCheck";
 
 export interface TopNeedType {
   need: string;
@@ -16,7 +16,6 @@ export interface TopOfferType {
   offer: string;
   count: number;
 }
-
 export interface TopTradeType {
   offer: string;
   need: string;
@@ -25,14 +24,20 @@ export interface TopTradeType {
 
 const HomePage: React.FC = () => {
   const { refreshToken } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [topNeed, setTopNeed] = useState<TopNeedType[]>([]);
+  const [topOffer, setTopOffer] = useState<TopOfferType[]>([]);
+  const [topTrade, setTopTrade] = useState<TopTradeType[]>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(false);
   const [postList, setPostList] = useState<PostType[]>([]);
   const apiFetch = useRequest();
+  const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
     getTopNeed();
   }, []);
+
   useEffect(() => {
     console.log("logged in", loggedIn);
     if (!loggedIn) {
@@ -50,39 +55,58 @@ const HomePage: React.FC = () => {
     }
   }, [refreshToken]);
 
-  const getTopNeed = async () => {
-    const response = await apiFetch(`posts/need/`);
-    setTopNeed(response);
-  };
-
-  const [topOffer, setTopOffer] = useState<TopOfferType[]>([]);
-
   useEffect(() => {
     getTopOffer();
   }, []);
-
-  const getTopOffer = async () => {
-    const response = await apiFetch(`posts/offer/`);
-    setTopOffer(response);
-  };
-
-  const [topTrade, setTopTrade] = useState<TopTradeType[]>([]);
 
   useEffect(() => {
     getTopTrade();
     suggestedPosts();
   }, [loggedIn]);
 
+  useEffect(() => {
+    getAndSetUser();
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const redirectToPost = params.get("redirectToPost");
+    const postId = params.get("postId");
+    console.log(redirectToPost, postId);
+
+    if (redirectToPost && postId) {
+      localStorage.setItem("redirectToPost", "true");
+      localStorage.setItem("postId", postId);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (loggedIn) {
+      const redirectToPost = localStorage.getItem("redirectToPost");
+      const postId = localStorage.getItem("postId");
+
+      if (redirectToPost === "true" && postId) {
+        localStorage.removeItem("redirectToPost");
+        localStorage.removeItem("postId");
+        navigate(`/view-a-post/${postId}`);
+      }
+    }
+  }, [loggedIn, navigate]);
+
+  const getTopNeed = async () => {
+    const response = await apiFetch(`posts/need/`);
+    setTopNeed(response);
+  };
+
+  const getTopOffer = async () => {
+    const response = await apiFetch(`posts/offer/`);
+    setTopOffer(response);
+  };
+
   const getTopTrade = async () => {
     const response = await apiFetch(`posts/trade/`);
     setTopTrade(response);
   };
-
-  const [firstName, setFirstName] = useState("");
-
-  useEffect(() => {
-    getAndSetUser();
-  }, []);
 
   const getAndSetUser = async () => {
     const response = await apiFetch("accounts/get-current-user-id", {

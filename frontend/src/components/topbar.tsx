@@ -277,6 +277,10 @@ const TopBar: React.FC<TopBarProps> = ({ onSearchFocusChange }) => {
     navigate("/MyListings");
   };
 
+  const handleSavedListings = () => {
+    navigate("/SavedListings");
+  };
+
   const handleLogout = () => {
     logoutFunction();
     navigate("/login");
@@ -432,6 +436,9 @@ const TopBar: React.FC<TopBarProps> = ({ onSearchFocusChange }) => {
                 </MenuItem>
                 <MenuItem key={"Listings"} onClick={handleListings}>
                   <Typography textAlign="center">{"My Listings"}</Typography>
+                </MenuItem>
+                <MenuItem key={"Saved"} onClick={handleSavedListings}>
+                  <Typography textAlign="center">{"Saved Listings"}</Typography>
                 </MenuItem>
                 <MenuItem key={"Logout"} onClick={handleLogout}>
                   <Typography textAlign="center">{"Logout"}</Typography>

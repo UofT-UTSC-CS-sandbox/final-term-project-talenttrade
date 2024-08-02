@@ -3,9 +3,9 @@ from rest_framework import generics, status, permissions
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Click, StoreSuggestedPost
+from .models import Post, Click, SavedPost, StoreSuggestedPost
 from accounts.models import UserProfile
-from .serializers import PostSerializer, ClickSerializer
+from .serializers import PostSerializer, ClickSerializer, SavedPostSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db.models import Count, Max, Min, F, ExpressionWrapper, FloatField, Case, When, Value
@@ -79,7 +79,7 @@ class MostPopularTrade(ListPopular):
 
 class PostListByOffer(APIView):
     def get(self, request, offer, show, format=None):
-        posts = Post.objects.filter(offer__istartswith=offer).exclude(author_id=request.user.id)
+        posts = Post.objects.filter(offer__istartswith=offer, active = True).exclude(author_id=request.user.id)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -113,7 +113,8 @@ class FilterPosts(APIView):
 
     def get(self, request, pk, pk_list, offer_list, loc_coords, user_list, format=None):
 
-        offers = json.loads(offer_list)
+        
+        offers = json.loads(offer_list)        
 
         post_ids =[]
 
@@ -123,7 +124,7 @@ class FilterPosts(APIView):
         source_latitude = location[0]
         source_longitude = location[1]
         source = f"{source_latitude},{source_longitude}"
-
+        
         postList = json.loads(pk_list)
         userList = json.loads(user_list)
         if userList is None: 
@@ -131,10 +132,8 @@ class FilterPosts(APIView):
         else:
             userList = [int(i) for i in userList]
         
-
-
         for post in postList:
-            curr_post = Post.objects.filter(id=post["id"])
+            curr_post = Post.objects.filter(id=post)
             if request.user and (request.user.username != str(curr_post[0].author_id)):
                 #lat = post.latitude
                 #long = post.longitude
@@ -163,9 +162,9 @@ class FilterPosts(APIView):
                         print(f"Error fetching directions: {str(e)}")
 
         if (len(offers)> 0):
-            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers)
+            posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, need__in=offers, active = True)
         else:
-             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids)
+             posts = Post.objects.filter(author_id__in = userList, id__in=post_ids, active = True)
 
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -269,8 +268,9 @@ class PostSuggestions(APIView):
         # get posts by num of clicks 
         if len(Click.objects.all()) > 0:
             posts_with_click_counts =  score.annotate(click_count=Count('click')) 
-            max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click']
+            max_click_count = posts_with_click_counts.aggregate(max_click=Max('click_count'))['max_click'] or 0
         else:
+            max_click_count = 0
             posts_with_click_counts = score
 
         # Calculate the time range
@@ -312,12 +312,10 @@ class PostSuggestions(APIView):
 
         
 
-        print("posts sorted", len(posts_sorted))
         
         store_suggested_post, created = StoreSuggestedPost.objects.get_or_create(user=request.user, email=str(request.user.email))
         store_suggested_post.suggested_posts.set(posts_sorted[:10])
         store_suggested_post.save()
-        print("posts sorted", store_suggested_post.email)
         
 
 
@@ -325,8 +323,35 @@ class PostSuggestions(APIView):
                 
         return JsonResponse(serializer.data, safe=False)
 
+class PostView(APIView):
+    def get(self, request, post_id=None):
+        try:
+            if post_id:
+                post = Post.objects.get(id=post_id)
+            serializer = PostSerializer(post)
 
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
     
 
+class SavedPostView(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        saved_posts = SavedPost.objects.filter(user=request.user)
+        serializer = PostSerializer([post.post for post in saved_posts], many=True)
+        return Response(serializer.data)
+
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        saved_post = SavedPost.objects.create(user=request.user, post=post)
+        serializer = SavedPostSerializer(saved_post)
+        return Response(serializer.data)
+    
+    def delete(self, request, post_id):
+        saved_post = SavedPost.objects.get(user=request.user, post_id=post_id)
+        saved_post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
