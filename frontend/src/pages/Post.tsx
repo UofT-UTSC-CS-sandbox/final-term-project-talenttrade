@@ -87,7 +87,8 @@ const Post: React.FC<PostProps> = ({
       axios
         .patch(`${host}/posts/${id}/`, { active: status })
         .then(() => {
-          setStatus(status)})
+          setStatus(status);
+        })
         .catch((error) => alert(error));
     }
   };
@@ -206,11 +207,11 @@ const Post: React.FC<PostProps> = ({
         <CardMedia
           sx={{ height: 180 }}
           image={
-            !post.photo 
-            ? "/hammerPost.jpg" 
-            : (post.photo.startsWith("http")
-            ? post.photo
-            : `${host}${post.photo}`)
+            !post.photo
+              ? "/hammerPost.jpg"
+              : post.photo.startsWith("http")
+              ? post.photo
+              : `${host}${post.photo}`
           }
         />
         <CardContent>
@@ -372,16 +373,16 @@ const Post: React.FC<PostProps> = ({
               </Grid>
             )}
           </Grid>
-          <Button
-            variant="contained"
-            color={saved ? "secondary" : "primary"}
-            onClick={() => (saved ? unsavePost(post.id) : savePost(post.id))}
-            sx={{ marginTop: "10px" }}
-          >
-            {saved ? "Unsave" : "Save"}
-          </Button>
         </CardContent>
       </CardActionArea>
+      <Button
+        variant="contained"
+        color={saved ? "secondary" : "primary"}
+        onClick={() => (saved ? unsavePost(post.id) : savePost(post.id))}
+        sx={{ width: "100%" }}
+      >
+        {saved ? "Unsave" : "Save"}
+      </Button>
     </Card>
   );
 };

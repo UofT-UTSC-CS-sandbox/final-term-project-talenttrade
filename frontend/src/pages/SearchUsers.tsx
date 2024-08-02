@@ -54,7 +54,7 @@ const SearchUser: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ marginLeft: "35px" }}>
       <Ratings rating={rating} setRating={setRating} />
       <div className="header">
         <h1>Showing results for:</h1>
