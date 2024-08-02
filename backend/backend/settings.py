@@ -49,7 +49,7 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'talenttrade-backend.onrender.com']
 
 CORS_ORIGIN_ALLOW_ALL = True
 

@@ -14,12 +14,10 @@ services:
     container_name: backend
     ports:
       - '8000:8000'
-    depends_on:
-      - redis
 
-  redis:
-    container_name: redis
-    image: redis:latest
-    restart: always
-    ports:
-      - '6379:6379' 
+  # redis:
+  #   container_name: redis
+  #   image: redis:latest
+  #   restart: always
+  #   ports:
+  #     - '6379:6379' 
