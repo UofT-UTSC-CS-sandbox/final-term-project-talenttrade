@@ -1,0 +1,24 @@
+.top-categories {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+}
+.top-category {
+    display: flex;
+    padding: 0;
+  }
+  .top-title {
+    color: black;
+    font-size: 1.8rem;
+    margin-top: 0;
+    font-weight: 600;
+    margin-bottom: 0;
+  }
+.category-cards {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-left:10px;
+    padding-left: 0;
+    margin-top: 50px;
+}

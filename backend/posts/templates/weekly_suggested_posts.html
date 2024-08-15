@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weekly Suggested Posts</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+            color: black;
+        }
+        li {
+            margin-bottom: 20px;
+        }
+        .post-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            color: black;
+        }
+        .post-link:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weekly Suggested Posts</h1>
+    <ul>
+        {% for post in suggested_posts %}
+            <li>
+                <a href="{{ frontend_host }}/login?redirectToPost=true&postId={{ post.id }}" class="post-link">
+                    <strong>{{ post.need }}</strong> - {{ post.offer }}<br>
+                    {{ post.description }}<br>
+                    <em>Location: {{ post.location }}</em><br>
+                    <em>Published: {{ post.published }}</em>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

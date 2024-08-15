@@ -1,0 +1,16 @@
+.create_post_container {
+  margin: auto;
+  text-align: center;
+  width: 500px;
+}
+
+.create_post {
+  display: flex;
+  flex-direction: column;
+}
+
+.input_field {
+  width: 80%;
+  text-align: left;
+  padding-bottom: 15px;
+}
